@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         allergomainwin.cpp \
     information.cpp \
     account.cpp \
-    domain.cpp
+    domain.cpp \
+    globalsettings.cpp
 
 HEADERS  += allergomainwin.h \
     information.h \
     account.h \
-    domain.h
+    domain.h \
+    globalsettings.h
 
 FORMS    += allergomainwin.ui

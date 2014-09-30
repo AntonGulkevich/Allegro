@@ -8,10 +8,12 @@ class Account
 {
     QString email;
     QString password;
-
-    Domain *_domain;
+    Domain *domain;
+    QString domain_name;
 public:
-    Account();
+    Account (const QString &_email,const QString &_password);
+    ~Account();
+
 };
 
 #endif // ACCOUNT_H

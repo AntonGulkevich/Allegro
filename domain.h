@@ -19,6 +19,20 @@ private:
 
 public:
     Domain();
+    ~Domain();
+    Domain(QString _name,
+
+           QString _pop3SSLhost,
+           int _pop3SSLport,
+
+           QString _pop3TSLhost,
+           int _pop3TSLport,
+
+           QString _imapTSLhost,
+           int _imapTSLport,
+
+           QString _imapSSLHost,
+           int _imapSSLport);
 };
 
 #endif // DOMAIN_H

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "account.h"
+
 namespace Ui {
 class AllergoMainWin;
 }
@@ -11,9 +13,13 @@ class AllergoMainWin : public QMainWindow
 {
     Q_OBJECT
 
+private Q_SLOTS:
+    void DomenSetup();
 public:
     explicit AllergoMainWin(QWidget *parent = 0);
     ~AllergoMainWin();
+
+
 
 private:
     Ui::AllergoMainWin *ui;
