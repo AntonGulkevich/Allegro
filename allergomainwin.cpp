@@ -9,8 +9,8 @@ AllergoMainWin::AllergoMainWin(QWidget *parent) :
     connect(ui->CLB, SIGNAL(clicked()),SLOT(DomenSetup()));
 
     QPalette pal;
-    pal.setColor(ui->DomainLabel->foregroundRole(), Qt::black);
-    ui->DomainLabel->setPalette(pal);
+//    pal.setColor(ui->DomainLabel->foregroundRole(), Qt::black);
+//    ui->DomainLabel->setPalette(pal);
 }
 
 AllergoMainWin::~AllergoMainWin()
