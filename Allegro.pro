@@ -26,3 +26,6 @@ HEADERS  += allergomainwin.h \
     globalsettings.h
 
 FORMS    += allergomainwin.ui
+
+RESOURCES += \
+    resources.qrc
