@@ -15,6 +15,8 @@ private:
     QColor title_text;
     QColor sub_title_text;
     QColor common_text;
+    QColor main_background;
+
     /*End all about pallette and colours*/
 
 signals:

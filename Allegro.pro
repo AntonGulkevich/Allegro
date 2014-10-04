@@ -13,16 +13,26 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        allergomainwin.cpp \
     information.cpp \
     account.cpp \
     domain.cpp \
-    globalsettings.cpp
+    globalsettings.cpp \
+    agbutton.cpp \
+    mainwindow.cpp \
+    exlabel.cpp
 
-HEADERS  += allergomainwin.h \
+HEADERS  += \
     information.h \
     account.h \
     domain.h \
-    globalsettings.h
+    globalsettings.h \
+    agbutton.h \
+    mainwindow.h \
+    exlabel.h
 
-FORMS    += allergomainwin.ui
+FORMS    +=
+
+RESOURCES += \
+    images.qrc
+
+OTHER_FILES +=

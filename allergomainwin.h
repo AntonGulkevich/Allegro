@@ -15,12 +15,10 @@ class AllergoMainWin : public QMainWindow
 
 private Q_SLOTS:
     void DomenSetup();
+    void On_Domain_Cursor_up();
 public:
     explicit AllergoMainWin(QWidget *parent = 0);
     ~AllergoMainWin();
-
-
-
 private:
     Ui::AllergoMainWin *ui;
 };

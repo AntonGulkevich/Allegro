@@ -1,19 +1,15 @@
-#include "allergomainwin.h"
 #include <QApplication>
+#include <QFrame>
+#include <QBoxLayout>
+#include <QPalette>
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    AllergoMainWin w;
-    /*background*/
+    QApplication app(argc, argv);
 
-    QPalette main_back;
-    main_back.setColor(w.backgroundRole(), Qt::white);
-    w.setPalette(main_back);
-
-    /*end background*/
-
+    MainWindow w;
     w.show();
 
-    return a.exec();
+    return app.exec();
 }
