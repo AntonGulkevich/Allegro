@@ -13,6 +13,7 @@ AllergoMainWin::AllergoMainWin(QWidget *parent) :
 {
     ui->setupUi(this);
 
+<<<<<<< HEAD
 
     AGButton * addNewDomain= new AGButton(0, ui->centralWidget);
     addNewDomain->resize(100, 40);
@@ -25,6 +26,11 @@ AllergoMainWin::AllergoMainWin(QWidget *parent) :
     connect(addNewDomain, SIGNAL(OnCaptionChanged(QString)),ui->statusBar, SLOT(showMessage(QString)));
     connect(addNewDomain->button, SIGNAL(clicked()), SLOT(DomenSetup()));
 
+=======
+    QPalette pal;
+//    pal.setColor(ui->DomainLabel->foregroundRole(), Qt::black);
+//    ui->DomainLabel->setPalette(pal);
+>>>>>>> origin/master
 }
 
 AllergoMainWin::~AllergoMainWin()

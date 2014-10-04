@@ -30,9 +30,8 @@ HEADERS  += \
     mainwindow.h \
     exlabel.h
 
-FORMS    +=
-
 RESOURCES += \
     images.qrc
 
 OTHER_FILES +=
+
