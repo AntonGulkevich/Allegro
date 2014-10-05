@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     globalsettings.cpp \
     agbutton.cpp \
     mainwindow.cpp \
-    exlabel.cpp
+    exlabel.cpp \
+    subwindow.cpp
 
 HEADERS  += \
     information.h \
@@ -28,10 +29,11 @@ HEADERS  += \
     globalsettings.h \
     agbutton.h \
     mainwindow.h \
-    exlabel.h
+    exlabel.h \
+    subwindow.h
 
 RESOURCES += \
-    images.qrc
+    Images.qrc
 
 OTHER_FILES +=
 

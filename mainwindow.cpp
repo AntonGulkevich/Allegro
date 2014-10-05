@@ -4,7 +4,6 @@
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent)
 {
-    wad_is_active=false;
     QFrame *mainframe = new QFrame();
     QPalette PW;
     PW.setColor(mainframe->backgroundRole(), Qt::white);
@@ -26,219 +25,437 @@ MainWindow::MainWindow(QWidget *parent):
     addNewDomain= new AGButton(centralWidget());
     addNewDomain->resize(110, 40);
     addNewDomain->move(30, 30);
-    addNewDomain->setIcon(QIcon(":/data/down.PNG"));
-    addNewDomain->setIconOnEnter(QIcon(":/data/down_pressed.PNG"));
-    addNewDomain->setIconOnLeave(QIcon(":/data/down.PNG"));
+    addNewDomain->setIconOnEnter(QIcon(":/data/down_sel.png"));
+    addNewDomain->setIconOnLeave(QIcon(":/data/down_def.png"));
     addNewDomain->setText("Domains:");
     addNewDomain->setIconSize(QSize(20, 20));
 
+    window_options=NULL;
 
-    connect(addNewDomain, SIGNAL(clicked()), SLOT(DomenSetup()));
+
+
+    proxyButton= new AGButton(centralWidget());
+    proxyButton->resize(110, 40);
+    proxyButton->move(30, 80);
+    proxyButton->setIconOnEnter(QIcon(":/data/down_sel.png"));
+    proxyButton->setIconOnLeave(QIcon(":/data/down_def.png"));
+    proxyButton->setText("Proxy:");
+    proxyButton->setIconSize(QSize(20, 20));
+
+
+
+    closeButton= new AGButton(centralWidget());
+    closeButton->resize(35, 35);
+    closeButton->setIconOnEnter(QIcon(":/data/close_sel.png"));
+    closeButton->setIconOnLeave(QIcon(":/data/close_def.png"));
+    closeButton->setText("");
+    closeButton->setIconSize(QSize(20, 20));
+    closeButton->setMaximumSize(35, 35);
+
+    minimizeButton= new AGButton(centralWidget());
+    minimizeButton->resize(35, 35);
+    minimizeButton->setIconOnEnter(QIcon(":/data/min_sel.png"));
+    minimizeButton->setIconOnLeave(QIcon(":/data/min_def.png"));
+    minimizeButton->setText("");
+    minimizeButton->setIconSize(QSize(20, 20));
+    minimizeButton->setMaximumSize(35, 35);
+
+    maximizeButton= new AGButton(centralWidget());
+    maximizeButton->resize(35, 35);
+    maximizeButton->setIconOnEnter(QIcon(":/data/max_sel.png"));
+    maximizeButton->setIconOnLeave(QIcon(":/data/max_def.png"));
+    maximizeButton->setText("");
+    maximizeButton->setIconSize(QSize(20, 20));
+    maximizeButton->setMaximumSize(35, 35);
+
+    QFrame *v_line = new QFrame(window_options);
+    v_line->setFrameStyle(QFrame::VLine| QFrame::Raised);
+    v_line->setLineWidth(1);
+    /*direction and positions*/
+
+    QBoxLayout* cblay= new QBoxLayout(QBoxLayout::RightToLeft);
+    cblay->setMargin(0);
+    cblay->setSpacing(0);
+    cblay->addWidget(closeButton, 0,Qt::AlignRight |Qt::AlignTop);
+    cblay->addWidget(maximizeButton, 0,Qt::AlignRight |Qt::AlignTop);
+    cblay->addWidget(minimizeButton, 0,Qt::AlignRight |Qt::AlignTop);
+    cblay->addStretch(1);
+
+    QBoxLayout* mainlay = new QBoxLayout(QBoxLayout::TopToBottom, mainframe);
+    mainlay->setSpacing(10);
+    mainlay->setMargin(0);
+
+    QBoxLayout* buttonsLeftLay= new QBoxLayout(QBoxLayout::TopToBottom);
+    buttonsLeftLay->setSpacing(10);
+    buttonsLeftLay->setMargin(20);
+
+    buttonsLeftLay->addWidget(addNewDomain, 0,Qt::AlignLeft |Qt::AlignTop);
+    buttonsLeftLay->addWidget(proxyButton,  0,Qt::AlignLeft |Qt::AlignTop);
+    buttonsLeftLay->addStretch(1);
+
+
+
+
+    mainlay->addLayout(cblay);
+    mainlay->addLayout(buttonsLeftLay, 1);
+
+    connect(addNewDomain, SIGNAL(clicked()), SLOT(OnCreateLabelClicked()));
+    connect(proxyButton, SIGNAL(clicked()), SLOT(OnManageProxyClicked()));
+    connect(closeButton, SIGNAL(clicked()), SLOT(close()));
+    connect(minimizeButton, SIGNAL(clicked()), SLOT(Mininize()));
+    connect(maximizeButton, SIGNAL(clicked()), SLOT(Maximize()));
 }
 MainWindow::~MainWindow()
 {
 
 }
-void MainWindow::DomenSetup(){
-    if (wad_is_active){
-        Close();
-        return;
+void MainWindow::On_Domain_Cursor_up(){
+
+}
+void MainWindow::OnCreateLabelClicked(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
     }
-    wad_is_active=true;
-    MainBar->setText("Domain setup");
+    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE");
+    window_options->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
+    window_options->SetActiveFirstLabel(true);
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnCreateLabelClicked()));
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnOpenDomainLabelClicked()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnManageDomainsLabelClicked()));
 
-    window_add_domain=new QFrame(this);
-    window_add_domain->installEventFilter(this);
+    MainBar->setText("Create a new domain");
 
-    window_add_domain->setAttribute(Qt::WA_Hover);
-    QPalette PW;
-    PW.setColor(window_add_domain->backgroundRole(), Qt::white);
+    QGridLayout *midlay = new QGridLayout();
+    QVBoxLayout *botlay= new QVBoxLayout();
 
-    window_add_domain->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
-    window_add_domain->setLineWidth(3);
-    window_add_domain->resize(300,400);
-    window_add_domain->move(30, 72);
-    window_add_domain->setAutoFillBackground(true);
-    window_add_domain->setVisible(true);
-    window_add_domain->setPalette(PW);
+    botlay->setSpacing(5);
+    botlay->setMargin(0);
 
-    ExLabel * wind_caption = new ExLabel("CREATE",window_add_domain);
-    wind_caption->setAlignment(Qt::AlignCenter);
-
-    ExLabel* openDomain = new ExLabel("OPEN",window_add_domain);
-    openDomain->setAlignment(Qt::AlignCenter);
-
-    ExLabel* manageDomains = new ExLabel("MANAGE",window_add_domain);
-    manageDomains->setAlignment(Qt::AlignCenter);
-
-    QPalette pal;
-    pal.setColor(wind_caption->foregroundRole(), Qt::blue);
+    midlay->setSpacing(7);
+    midlay->setMargin(10);
 
 
-    QFont centr_label_font_unsel;
-    centr_label_font_unsel.setPixelSize(15);
-    centr_label_font_unsel.setBold(false);
-    centr_label_font_unsel.setUnderline(true);
+    QLabel *d_name_l = new QLabel("Domain name:",window_options);
 
-    QFont centr_label_font_sel;
-    centr_label_font_sel.setPixelSize(15);
-    centr_label_font_sel.setBold(true);
-    centr_label_font_sel.setUnderline(true);
+    QLabel *d_pop3_tsl_host_l =new QLabel("POP3 TSL host:", window_options);
+    QLabel *d_pop3_ssl_host_l =new QLabel ("POP3 SSL host:", window_options);
 
-    wind_caption->setFont(centr_label_font_unsel);
-    wind_caption->SetSelectedFont(centr_label_font_sel);
-    wind_caption->SetUnSelectedFont(centr_label_font_unsel);
-    wind_caption->setPalette(pal);
+    QLabel *d_imap_tsl_host_l =new QLabel ("IMAP TSL host:", window_options);
+    QLabel *d_imap_ssl_host_l =new QLabel ("IMAP SSL host:", window_options);
 
-    openDomain->setFont(centr_label_font_unsel);
-    openDomain->setPalette(pal);
-    openDomain->SetSelectedFont(centr_label_font_sel);
-    openDomain->SetUnSelectedFont(centr_label_font_unsel);
+    QLabel *d_pop3_tsl_port_l =new QLabel ("POP3 TSL port:", window_options);
+    QLabel *d_pop3_ssl_port_l =new QLabel ("POP3 SSL port:", window_options);
 
-    manageDomains->setFont(centr_label_font_unsel);
-    manageDomains->setPalette(pal);
-    manageDomains->SetSelectedFont(centr_label_font_sel);
-    manageDomains->SetUnSelectedFont(centr_label_font_unsel);
+    QLabel *d_imap_tsl_port_l =new QLabel ("IMAP TSL port:", window_options);
+    QLabel *d_imap_ssl_port_l =new QLabel ("IMAP SSL port:", window_options);
 
-    QFrame *hor_line = new QFrame(window_add_domain);
-    hor_line->setFrameStyle(QFrame::HLine| QFrame::Raised);
-    hor_line->setLineWidth(1);
-
-
-    QLabel *d_name_l = new QLabel("Domain name:",window_add_domain);
-
-    QLabel *d_pop3_tsl_host_l =new QLabel("POP3 TSL host:", window_add_domain);
-    QLabel *d_pop3_ssl_host_l =new QLabel ("POP3 SSL host:", window_add_domain);
-
-    QLabel *d_imap_tsl_host_l =new QLabel ("IMAP TSL host:", window_add_domain);
-    QLabel *d_imap_ssl_host_l =new QLabel ("IMAP SSL host:", window_add_domain);
-
-    QLabel *d_pop3_tsl_port_l =new QLabel ("POP3 TSL port:", window_add_domain);
-    QLabel *d_pop3_ssl_port_l =new QLabel ("POP3 SSL port:", window_add_domain);
-
-    QLabel *d_imap_tsl_port_l =new QLabel ("IMAP TSL port:", window_add_domain);
-    QLabel *d_imap_ssl_port_l =new QLabel ("IMAP SSL port:", window_add_domain);
-
-    QLineEdit* d_name_le=new QLineEdit(window_add_domain);
+    QLineEdit* d_name_le=new QLineEdit(window_options);
     d_name_le->setPlaceholderText("ex: gmail.com");
-    QLineEdit *d_pop3_tsl_host_le =new QLineEdit(window_add_domain);
+    QLineEdit *d_pop3_tsl_host_le =new QLineEdit(window_options);
     d_pop3_tsl_host_le->setPlaceholderText("ex: pop3.domainTSL.com");
-    QLineEdit *d_pop3_ssl_host_le =new QLineEdit (window_add_domain);
+    QLineEdit *d_pop3_ssl_host_le =new QLineEdit (window_options);
     d_pop3_ssl_host_le->setPlaceholderText("ex: pop3.domainSSL.com");
-    QLineEdit *d_imap_tsl_host_le =new QLineEdit (window_add_domain);
+    QLineEdit *d_imap_tsl_host_le =new QLineEdit (window_options);
     d_imap_tsl_host_le->setPlaceholderText("ex: imap.domainTSL.com");
-    QLineEdit *d_imap_ssl_host_le =new QLineEdit (window_add_domain);
+    QLineEdit *d_imap_ssl_host_le =new QLineEdit (window_options);
     d_imap_ssl_host_le->setPlaceholderText("ex: imap.domainSSL.com");
-    QLineEdit *d_pop3_tsl_port_le =new QLineEdit (window_add_domain);
+    QLineEdit *d_pop3_tsl_port_le =new QLineEdit (window_options);
     d_pop3_tsl_port_le->setInputMask("999");
     d_pop3_tsl_port_le->setPlaceholderText("000");
-    QLineEdit *d_pop3_ssl_port_le =new QLineEdit (window_add_domain);
+    QLineEdit *d_pop3_ssl_port_le =new QLineEdit (window_options);
     d_pop3_ssl_port_le->setInputMask("999");
     d_pop3_ssl_port_le->setPlaceholderText("000");
-    QLineEdit *d_imap_tsl_port_le =new QLineEdit (window_add_domain);
+    QLineEdit *d_imap_tsl_port_le =new QLineEdit (window_options);
     d_imap_tsl_port_le->setInputMask("999");
     d_imap_tsl_port_le->setPlaceholderText("000");
-    QLineEdit *d_imap_ssl_port_le =new QLineEdit (window_add_domain);
+    QLineEdit *d_imap_ssl_port_le =new QLineEdit (window_options);
     d_imap_ssl_port_le->setInputMask("999");
     d_imap_ssl_port_le->setPlaceholderText("000");
-    QGridLayout *grdlay= new QGridLayout();
-    grdlay->setMargin(10);
-    grdlay->setSpacing(5);
-
-    grdlay->addWidget(d_name_l, 0, 0);
-    grdlay->addWidget(d_name_le, 0, 1);
-    grdlay->addWidget(d_pop3_tsl_host_l,1 ,0 );
-    grdlay->addWidget(d_pop3_tsl_host_le,1 ,1 );
-    grdlay->addWidget(d_pop3_ssl_host_l,2 ,0 );
-    grdlay->addWidget(d_pop3_ssl_host_le,2 ,1 );
-    grdlay->addWidget(d_imap_tsl_host_l,3 ,0 );
-    grdlay->addWidget(d_imap_tsl_host_le,3 ,1 );
-    grdlay->addWidget(d_imap_ssl_host_l,4 ,0 );
-    grdlay->addWidget(d_imap_ssl_host_le,4 ,1 );
-    grdlay->addWidget(d_pop3_tsl_port_l,5 ,0 );
-    grdlay->addWidget(d_pop3_tsl_port_le,5 ,1 );
-    grdlay->addWidget(d_pop3_ssl_port_l,6 ,0 );
-    grdlay->addWidget(d_pop3_ssl_port_le,6 ,1 );
-    grdlay->addWidget(d_imap_tsl_port_l,7 ,0 );
-    grdlay->addWidget(d_imap_tsl_port_le,7 ,1 );
-    grdlay->addWidget(d_imap_ssl_port_l,8 ,0 );
-    grdlay->addWidget(d_imap_ssl_port_le,8 ,1 );
-
-    QBoxLayout* headerlay = new QBoxLayout(QBoxLayout::LeftToRight);
-    headerlay->setSpacing(10);
-    headerlay->setMargin(0);
-    headerlay->addWidget(wind_caption, 1);
-    headerlay->addWidget(openDomain, 1);
-    headerlay->addWidget(manageDomains,1);
 
 
-    QVBoxLayout* toplay=new QVBoxLayout();
-    toplay->setSpacing(10);
-    toplay->setMargin(10);
-    toplay->addLayout(headerlay);
-    toplay->addWidget(hor_line);
+    midlay->addWidget(d_name_l, 0, 0);
+    midlay->addWidget(d_name_le, 0, 1);
+    midlay->addWidget(d_pop3_tsl_host_l,1 ,0 );
+    midlay->addWidget(d_pop3_tsl_host_le,1 ,1 );
+    midlay->addWidget(d_pop3_ssl_host_l,2 ,0 );
+    midlay->addWidget(d_pop3_ssl_host_le,2 ,1 );
+    midlay->addWidget(d_imap_tsl_host_l,3 ,0 );
+    midlay->addWidget(d_imap_tsl_host_le,3 ,1 );
+    midlay->addWidget(d_imap_ssl_host_l,4 ,0 );
+    midlay->addWidget(d_imap_ssl_host_le,4 ,1 );
+    midlay->addWidget(d_pop3_tsl_port_l,5 ,0 );
+    midlay->addWidget(d_pop3_tsl_port_le,5 ,1 );
+    midlay->addWidget(d_pop3_ssl_port_l,6 ,0 );
+    midlay->addWidget(d_pop3_ssl_port_le,6 ,1 );
+    midlay->addWidget(d_imap_tsl_port_l,7 ,0 );
+    midlay->addWidget(d_imap_tsl_port_le,7 ,1 );
+    midlay->addWidget(d_imap_ssl_port_l,8 ,0 );
+    midlay->addWidget(d_imap_ssl_port_le,8 ,1 );
 
-    QVBoxLayout* botlay = new QVBoxLayout();
-    botlay->setMargin(10);
-    botlay->setSpacing(10);
 
-    QFrame *hor_line2 = new QFrame(window_add_domain);
-    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
-    hor_line2->setLineWidth(1);
-
-    QCommandLinkButton* add_domain_CLB= new QCommandLinkButton(window_add_domain);
+    AGButton* add_domain_CLB= new AGButton(window_options);
     add_domain_CLB->setText("Add new domain");
     add_domain_CLB->setEnabled(true);
-    add_domain_CLB->setIcon(QIcon(":/data/plus.png"));
+    add_domain_CLB->setIconOnLeave(QIcon(":/data/plus_def.png"));
+    add_domain_CLB->setIconOnEnter(QIcon(":/data/plus_sel.png"));
     add_domain_CLB->setIconSize(QSize(20, 20));
+
+    QFrame *hor_line2 = new QFrame(window_options);
+    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line2->setLineWidth(1);
 
 
     botlay->addWidget(hor_line2);
     botlay->addWidget(add_domain_CLB);
 
-    QVBoxLayout*biglay = new QVBoxLayout();
-    biglay->setMargin(10);
-    biglay->setSpacing(10);
-    biglay->addLayout(toplay);
-    biglay->addLayout(grdlay);
-    biglay->addLayout(botlay);
-
-
-
-    window_add_domain->setLayout(biglay);
-    connect(wind_caption, SIGNAL(clicked()),SLOT(OnCreateLabelClicked()));
-    connect(openDomain, SIGNAL(clicked()), SLOT(OnOpenDomainLabelClicked()));
-    connect(manageDomains, SIGNAL(clicked()), SLOT(OnManageDomainsLabelClicked()));
-}
-void MainWindow::On_Domain_Cursor_up(){
-
-}
-bool MainWindow::eventFilter(QObject * obj, QEvent * event)
-{
-
-    if(obj==window_add_domain){
-        QEvent::Type type = event->type();
-        if  (type == QEvent::HoverLeave) {
-            Close();
-        }
-    }
-
-    return QWidget::eventFilter(obj, event);
-}
-void MainWindow::Close(){
-    window_add_domain->close();
-    wad_is_active=false;
-}
-void MainWindow::OnCreateLabelClicked(){
-    MainBar->setText("Create a new domain");
+    window_options->AddMidLayout(midlay);
+    window_options->AddBotLayout(botlay);
 
 }
 void MainWindow::OnOpenDomainLabelClicked(){
-    MainBar->setText("Open file with domain list");
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+    }
 
+    MainBar->setText("Open file with domain list");
+    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE");
+    window_options->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
+    window_options->resize(300, 150);
+    window_options->SetActiveSecLabel(true);
+
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnCreateLabelClicked()));
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnOpenDomainLabelClicked()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnManageDomainsLabelClicked()));
+
+    QGridLayout *midlay = new QGridLayout();
+    QVBoxLayout *botlay= new QVBoxLayout();
+
+    botlay->setSpacing(5);
+    botlay->setMargin(0);
+
+    midlay->setSpacing(7);
+    midlay->setMargin(10);
+
+    QLabel* domainLabel = new QLabel("Domain list file:", window_options);
+    QLabel* domainFileName = new QLabel("none", window_options);
+
+    QFont fnt1;
+    fnt1.setPixelSize(15);
+    fnt1.setItalic(false);
+    QFont fnt2;
+    fnt2.setPixelSize(15);
+    fnt2.setItalic(true);
+    fnt2.setUnderline(true);
+
+    domainLabel->setFont(fnt1);
+    domainFileName->setFont(fnt2);
+    domainFileName->setAlignment(Qt::AlignLeft);
+    domainLabel->setAlignment(Qt::AlignRight);
+
+    QFrame *hor_line2 = new QFrame(window_options);
+    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line2->setLineWidth(1);
+
+    AGButton* openDomainCLB= new AGButton(window_options);
+    openDomainCLB->setText("Open file with domains");
+    openDomainCLB->setEnabled(true);
+    openDomainCLB->setIconOnLeave(QIcon(":/data/open_def.png"));
+    openDomainCLB->setIconOnEnter(QIcon(":/data/open_sel.png"));
+    openDomainCLB->setIconSize(QSize(20, 20));
+
+    connect(openDomainCLB, SIGNAL(clicked()), SLOT(OnOpenDomainFile()));
+
+    midlay->addWidget(domainLabel, 0, 0);
+    midlay->addWidget(domainFileName, 0, 1);
+
+    botlay->addWidget(hor_line2);
+    botlay->addWidget(openDomainCLB);
+
+    window_options->AddMidLayout(midlay);
+    window_options->AddBotLayout(botlay);
 }
 void MainWindow::OnManageDomainsLabelClicked(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+    }
+
     MainBar->setText("Manage your domains");
+    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE");
+    window_options->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
+    window_options->SetActiveThirdLabel(true);
+
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnCreateLabelClicked()));
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnOpenDomainLabelClicked()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnManageDomainsLabelClicked()));
+
+    QBoxLayout *midlay = new QBoxLayout(QBoxLayout::TopToBottom);
+    QVBoxLayout *botlay= new QVBoxLayout();
+
+    botlay->setSpacing(5);
+    botlay->setMargin(0);
+
+    midlay->setSpacing(7);
+    midlay->setMargin(10);
+
+    /*midlay*/
+    QTableWidget * DomainTable = new QTableWidget(window_options);
+    DomainTable->setMaximumHeight(500);
+    DomainTable->setMaximumWidth(290);
+
+    midlay->addWidget(DomainTable, 1);
+    /*end midlay*/
+
+    /*botlay*/
+
+    QBoxLayout * butlay= new QBoxLayout(QBoxLayout::LeftToRight);
+    butlay->setSpacing(10);
+    butlay->setMargin(0);
+
+    QFrame *hor_line2 = new QFrame(window_options);
+    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line2->setLineWidth(1);
+
+    AGButton* addNewDomain= new AGButton(window_options);
+    addNewDomain->setText("Add");
+    addNewDomain->setEnabled(true);
+    addNewDomain->setIconOnLeave(QIcon(":/data/plus_def.png"));
+    addNewDomain->setIconOnEnter(QIcon(":/data/plus_sel.png"));
+    addNewDomain->setIconSize(QSize(20, 20));
+
+    AGButton* delDomain= new AGButton(window_options);
+    delDomain->setText("Delete");
+    delDomain->setEnabled(true);
+    delDomain->setIconOnLeave(QIcon(":/data/min_def.png"));
+    delDomain->setIconOnEnter(QIcon(":/data/min_sel.png"));
+    delDomain->setIconSize(QSize(20, 20));
+
+    AGButton* saveDomain= new AGButton(window_options);
+    saveDomain->setText("Save");
+    saveDomain->setEnabled(true);
+    saveDomain->setIconOnLeave(QIcon(":/data/save_def.png"));
+    saveDomain->setIconOnEnter(QIcon(":/data/save_sel.png"));
+    saveDomain->setIconSize(QSize(20, 20));
+
+
+    butlay->addWidget(addNewDomain);
+    butlay->addWidget(delDomain,2);
+    butlay->addWidget(saveDomain);
+    botlay->addWidget(hor_line2);
+    botlay->addLayout(butlay);
+
+    connect(addNewDomain, SIGNAL(clicked()), SLOT(OnCreateLabelClicked()));
+    connect(delDomain, SIGNAL(clicked()), SLOT(OnDelDomain()));
+    connect(saveDomain, SIGNAL(clicked()), SLOT(OnSaveDomain()));
+    /*end botlay*/
+
+
+    window_options->AddMidLayout(midlay);
+    window_options->AddBotLayout(botlay);
+}
+void MainWindow::OnOpenDomainFile(){
+    MainBar->setText("Choose file with domains list");
+}
+void MainWindow::OnDelDomain(){
+    MainBar->setText("Domain deleted");
+}
+void MainWindow::OnSaveDomain(){
+    MainBar->setText("Domains saved to file");
+}
+void MainWindow::mousePressEvent(QMouseEvent *event){
+    mpos=event->pos();
+}
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if (mpos.x() >= 0 && event->buttons() && Qt::LeftButton)
+    {
+        QPoint diff = event->pos() - mpos;
+        QPoint newpos = this->pos() + diff;
+
+        this->move(newpos);
+    }
+}
+void MainWindow::mouseReleaseEvent(QMouseEvent *)
+{
+    if(window_options){
+        int leftX, leftY, botX, botY;
+        leftX=window_options->pos().x();
+        leftY=window_options->pos().y();
+        botX=leftX+window_options->width();
+        botY=leftY+window_options->height();
+        if(mpos.x()>botX||mpos.x()<leftX||mpos.y()>botY||mpos.y()<leftY){
+            window_options->Close();
+            window_options=NULL;
+        }
+    }
+    mpos = QPoint(-1, -1);
+}
+void MainWindow::OnManageProxyClicked(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+    }
+
+    MainBar->setText("Manage proxy");
+    window_options = new SubWindow(this, "MANAGE", "URL", "OPEN");
+    window_options->move(proxyButton->pos().x(), proxyButton->pos().y()+40);
+    window_options->resize(300, 200);
+    window_options->SetActiveFirstLabel(true);
+
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnManageProxyClicked()));
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnUrlProxyClicked()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnOpenProxyClicked()));
+
 
 }
+void MainWindow::OnUrlProxyClicked(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+    }
+
+    MainBar->setText("Connect url with proxy");
+    window_options = new SubWindow(this, "MANAGE", "URL", "OPEN");
+    window_options->move(proxyButton->pos().x(), proxyButton->pos().y()+40);
+    window_options->resize(300, 200);
+    window_options->SetActiveSecLabel(true);
+
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnManageProxyClicked()));
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnUrlProxyClicked()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnOpenProxyClicked()));
+
+}
+void MainWindow::OnOpenProxyClicked(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+    }
+
+    MainBar->setText("Open proxy list");
+    window_options = new SubWindow(this, "MANAGE", "URL", "OPEN");
+    window_options->move(proxyButton->pos().x(), proxyButton->pos().y()+40);
+    window_options->resize(300, 200);
+    window_options->SetActiveThirdLabel(true);
+
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnManageProxyClicked()));
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnUrlProxyClicked()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnOpenProxyClicked()));
+
+}
+void MainWindow::Mininize(){
+    showMinimized();
+}
+void MainWindow::Maximize(){
+    showMaximized();
+    connect(maximizeButton, SIGNAL(clicked()), SLOT(Normal()));
+}
+void MainWindow::Normal(){
+    showNormal();
+    connect(maximizeButton, SIGNAL(clicked()), SLOT(Maximize()));
+}
+
+
+
 

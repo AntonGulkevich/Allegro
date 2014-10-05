@@ -1,10 +1,20 @@
 <RCC>
     <qresource prefix="/">
-        <file>data/down.PNG</file>
-        <file>data/plus.png</file>
-        <file>data/up.PNG</file>
-        <file>data/down_pressed.PNG</file>
-        <file>data/plus_pressed.png</file>
-        <file>data/up_pressed.png</file>
+        <file>data/down_def.png</file>
+        <file>data/down_sel.png</file>
+        <file>data/min_def.png</file>
+        <file>data/min_sel.png</file>
+        <file>data/open_def.png</file>
+        <file>data/open_sel.png</file>
+        <file>data/plus_def.png</file>
+        <file>data/plus_sel.png</file>
+        <file>data/up_def.png</file>
+        <file>data/up_sel.png</file>
+        <file>data/save_def.png</file>
+        <file>data/save_sel.png</file>
+        <file>data/close_def.png</file>
+        <file>data/close_sel.png</file>
+        <file>data/max_def.png</file>
+        <file>data/max_sel.png</file>
     </qresource>
 </RCC>

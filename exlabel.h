@@ -12,6 +12,9 @@ public:
     ~ExLabel();
     void SetSelectedFont(const QFont &font);
     void SetUnSelectedFont(const QFont &font);
+    void SetActiveFont(const QFont &font);
+    bool isActive();
+    void setActive(bool status);
 signals:
     void clicked();
 
@@ -25,6 +28,8 @@ protected:
 private:
     QFont selectedFont;
     QFont unselectedFont;
+    QFont activeFont;
+    bool active;
 };
 
 #endif // EXLABEL_H

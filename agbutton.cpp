@@ -3,10 +3,7 @@
 AGButton::AGButton(QWidget * parent):
     QCommandLinkButton(parent)
 
-{/*
-    installEventFilter(this);
-    setAttribute(Qt::WA_Hover);
-*/
+{
 }
 AGButton::~AGButton(){
 
@@ -32,6 +29,7 @@ void AGButton::setIconOnEnter(const QIcon &icon){
     onEnterIcon=icon;
 }
 void AGButton::setIconOnLeave(const QIcon &icon){
+    setIcon(icon);
     onLeaveIcon=icon;
 }
 
