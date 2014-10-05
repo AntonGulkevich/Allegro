@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent):
     addNewDomain->move(30, 30);
     addNewDomain->setIconOnEnter(QIcon(":/data/down_sel.png"));
     addNewDomain->setIconOnLeave(QIcon(":/data/down_def.png"));
-    addNewDomain->setText("Domains:");
+    addNewDomain->setText("Domains");
     addNewDomain->setIconSize(QSize(20, 20));
 
     window_options=NULL;
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent):
     proxyButton->move(30, 80);
     proxyButton->setIconOnEnter(QIcon(":/data/down_sel.png"));
     proxyButton->setIconOnLeave(QIcon(":/data/down_def.png"));
-    proxyButton->setText("Proxy:");
+    proxyButton->setText("Proxy");
     proxyButton->setIconSize(QSize(20, 20));
 
 
@@ -73,31 +73,61 @@ MainWindow::MainWindow(QWidget *parent):
     v_line->setLineWidth(1);
     /*direction and positions*/
 
+    QBoxLayout* mainlay = new QBoxLayout(QBoxLayout::TopToBottom, mainframe);
     QBoxLayout* cblay= new QBoxLayout(QBoxLayout::RightToLeft);
-    cblay->setMargin(0);
+    QBoxLayout* buttonsLeftLay= new QBoxLayout(QBoxLayout::TopToBottom);
+    QBoxLayout* smainlay = new QBoxLayout(QBoxLayout::LeftToRight);
+    QBoxLayout* tablelay = new QBoxLayout(QBoxLayout::LeftToRight);
+
+    QSplitter *tablespl= new QSplitter (Qt::Horizontal);
+    tablespl->setHandleWidth(3);
+    tablespl->setStyleSheet("QSplitter::handle{background:gray;}");
+    tablespl->setContentsMargins(10, 10, 10, 10);
+
+    QWidget *container= new QWidget;
+    QVBoxLayout *container_layout = new QVBoxLayout;
+
+    QTextEdit* test1= new QTextEdit;
+    QTextEdit* test2= new QTextEdit;
+
+
+    tablespl->addWidget(test1);
+    tablespl->addWidget(test2);
+
+    container_layout->addWidget(tablespl);
+    container->setLayout(container_layout);
+
+    mainlay->setSpacing(10);
+    mainlay->setMargin(0);
+    smainlay->setSpacing(0);
+    smainlay->setMargin(0);
     cblay->setSpacing(0);
+    cblay->setMargin(0);     
+    buttonsLeftLay->setSpacing(10);
+    buttonsLeftLay->setMargin(20);
+    tablelay->setSpacing(10);
+    tablelay->setMargin(10);
+
     cblay->addWidget(closeButton, 0,Qt::AlignRight |Qt::AlignTop);
     cblay->addWidget(maximizeButton, 0,Qt::AlignRight |Qt::AlignTop);
     cblay->addWidget(minimizeButton, 0,Qt::AlignRight |Qt::AlignTop);
     cblay->addStretch(1);
 
-    QBoxLayout* mainlay = new QBoxLayout(QBoxLayout::TopToBottom, mainframe);
-    mainlay->setSpacing(10);
-    mainlay->setMargin(0);
-
-    QBoxLayout* buttonsLeftLay= new QBoxLayout(QBoxLayout::TopToBottom);
-    buttonsLeftLay->setSpacing(10);
-    buttonsLeftLay->setMargin(20);
-
     buttonsLeftLay->addWidget(addNewDomain, 0,Qt::AlignLeft |Qt::AlignTop);
     buttonsLeftLay->addWidget(proxyButton,  0,Qt::AlignLeft |Qt::AlignTop);
-    buttonsLeftLay->addStretch(1);
+    buttonsLeftLay->addStretch(4);
 
+    tablelay->addWidget(v_line);
+    tablelay->addWidget(container);
 
-
+    smainlay->addLayout(buttonsLeftLay, 0);
+    smainlay->addLayout(tablelay, 1);
 
     mainlay->addLayout(cblay);
-    mainlay->addLayout(buttonsLeftLay, 1);
+    mainlay->addLayout(smainlay);
+
+
+
 
     connect(addNewDomain, SIGNAL(clicked()), SLOT(OnCreateLabelClicked()));
     connect(proxyButton, SIGNAL(clicked()), SLOT(OnManageProxyClicked()));
@@ -302,8 +332,7 @@ void MainWindow::OnManageDomainsLabelClicked(){
 
     /*midlay*/
     QTableWidget * DomainTable = new QTableWidget(window_options);
-    DomainTable->setMaximumHeight(500);
-    DomainTable->setMaximumWidth(290);
+
 
     midlay->addWidget(DomainTable, 1);
     /*end midlay*/

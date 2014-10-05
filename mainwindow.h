@@ -9,7 +9,9 @@
 #include <QBoxLayout>
 #include <QLabel>
 #include <QMainWindow>
- #include <QTableWidget>
+#include <QTableWidget>
+#include <QSplitter>
+#include <QTextEdit>
 
 #include "agbutton.h"
 #include "exlabel.h"

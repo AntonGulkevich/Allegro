@@ -86,15 +86,12 @@ SubWindow::SubWindow(QWidget *parent, const QString &firstLabel, const QString &
 
     toplay->addLayout(headerlay, 1);
 
-    toplay->addWidget(hor_line, 1);
+    toplay->addWidget(hor_line, 1, Qt::AlignTop);
 
     QBoxLayout *biglay = new QBoxLayout(QBoxLayout::TopToBottom, this);
     biglay->addLayout(toplay, 1);
     biglay->addLayout(midlay, 5);
     biglay->addLayout(botlay, 1);
-
-
-
 
 }
 void SubWindow::Close(){
