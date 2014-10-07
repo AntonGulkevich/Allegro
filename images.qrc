@@ -16,5 +16,10 @@
         <file>data/close_sel.png</file>
         <file>data/max_def.png</file>
         <file>data/max_sel.png</file>
+        <file>data/left_def.png</file>
+        <file>data/left_sel.png</file>
+        <file>data/clef.png</file>
+        <file>data/minimize_def.png</file>
+        <file>data/minimize_sel.png</file>
     </qresource>
 </RCC>

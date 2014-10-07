@@ -13,10 +13,22 @@ Domain::Domain(QString _name,
 
                QString _imapSSLHost,
                int _imapSSLport):
-name(_name),
-  pop3SslHost(_pop3SSLhost),pop3SslPort(_pop3SSLport),
-  pop3TslHost(_pop3TSLhost), pop3TslPort(_pop3TSLport),
-  imapSslHost(_imapSSLHost), imapSslPort(_imapSSLport),
-  imapTslHost(_imapTSLhost), imapTslPort(_imapTSLport)
+    name(_name),
+    pop3SslHost(_pop3SSLhost),pop3SslPort(_pop3SSLport),
+    pop3TslHost(_pop3TSLhost), pop3TslPort(_pop3TSLport),
+    imapSslHost(_imapSSLHost), imapSslPort(_imapSSLport),
+    imapTslHost(_imapTSLhost), imapTslPort(_imapTSLport)
 {
+    selected= false;
+}
+
+Domain::~Domain(){
+
+}
+
+void Domain::setSelection(bool state){
+    selected= state;
+}
+bool Domain::isSelected(){
+    return selected;
 }

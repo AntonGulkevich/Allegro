@@ -5,72 +5,133 @@ MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent)
 {
     QFrame *mainframe = new QFrame();
-    QPalette PW;
-    PW.setColor(mainframe->backgroundRole(), Qt::white);
+    window_options=NULL;
+    QPalette PW/*main*/,
+            EB/*active*/ ,
+            DP/*default*/,
+            SB/*statusbar palette*/;
+    PW.setColor(backgroundRole(), Qt::white);
     mainframe->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-
     setCentralWidget(mainframe);
-
     setAutoFillBackground(true);
     setPalette(PW);
     resize(800,600);
     move(400, 100);
     setWindowFlags(Qt::FramelessWindowHint);
+    setMinimumSize(500, 550);
+
+    /*setup status bar*/
+    QProgressBar * progressBar = new QProgressBar;
+
 
     MainBar = new QLabel;
-
+    SB.setColor(backgroundRole(), Qt::darkGray);
+    SB.setColor(foregroundRole(), Qt::black);
+    statusBar()->setAutoFillBackground(true);
     statusBar()->addWidget(MainBar);
+    statusBar()->addWidget(progressBar, 1);
+    statusBar()->setPalette(SB);
+    progressBar->setAutoFillBackground(true);
+    progressBar->setPalette(SB);
+    progressBar->setMaximum(100);
+    progressBar->setValue(50);
+
+    progressBar->setStyleSheet("QProgressBar {"
+                               "border: 2px solid grey;"
+                               "border-radius: 5px;"
+                               "text-align: center;}"
+
+                               "QProgressBar::chunk {"
+                               "background-color: #CD96CD;"
+                               "}"  );
+    MainBar->setAutoFillBackground(true);
+    MainBar->setPalette(SB);
+    /*end of setup status bar*/
 
 
     addNewDomain= new AGButton(centralWidget());
-    addNewDomain->resize(110, 40);
-    addNewDomain->move(30, 30);
     addNewDomain->setIconOnEnter(QIcon(":/data/down_sel.png"));
     addNewDomain->setIconOnLeave(QIcon(":/data/down_def.png"));
     addNewDomain->setText("Domains");
     addNewDomain->setIconSize(QSize(20, 20));
-
-    window_options=NULL;
-
-
+    addNewDomain->setMaximumSize(110, 40);
+    addNewDomain->setHint("Manage list of domains...");
 
     proxyButton= new AGButton(centralWidget());
-    proxyButton->resize(110, 40);
-    proxyButton->move(30, 80);
     proxyButton->setIconOnEnter(QIcon(":/data/down_sel.png"));
     proxyButton->setIconOnLeave(QIcon(":/data/down_def.png"));
     proxyButton->setText("Proxy");
     proxyButton->setIconSize(QSize(20, 20));
+    proxyButton->setMaximumSize(110, 40);
+    proxyButton->setHint("Manage list of proxy...");
 
-
+    baseButton= new AGButton(centralWidget());
+    baseButton->resize(110, 40);
+    baseButton->setIconOnEnter(QIcon(":/data/down_sel.png"));
+    baseButton->setIconOnLeave(QIcon(":/data/down_def.png"));
+    baseButton->setText("Data Base");
+    baseButton->setIconSize(QSize(20, 20));
+    baseButton->setMaximumSize(110, 40);
+    baseButton->setHint("Manage bases: open, close, save and etc...");
 
     closeButton= new AGButton(centralWidget());
-    closeButton->resize(35, 35);
     closeButton->setIconOnEnter(QIcon(":/data/close_sel.png"));
     closeButton->setIconOnLeave(QIcon(":/data/close_def.png"));
     closeButton->setText("");
     closeButton->setIconSize(QSize(20, 20));
     closeButton->setMaximumSize(35, 35);
+    closeButton->setMinimumSize(35, 35);
+    closeButton->setHint("Close the application.");
+    EB.setColor(closeButton->backgroundRole(), Qt::red);
+    DP.setColor(closeButton->backgroundRole(), Qt::white);
+    closeButton->setActivePalette(EB);
+    closeButton->setDefaultPalette(DP);
+
 
     minimizeButton= new AGButton(centralWidget());
-    minimizeButton->resize(35, 35);
     minimizeButton->setIconOnEnter(QIcon(":/data/min_sel.png"));
     minimizeButton->setIconOnLeave(QIcon(":/data/min_def.png"));
     minimizeButton->setText("");
     minimizeButton->setIconSize(QSize(20, 20));
     minimizeButton->setMaximumSize(35, 35);
+    minimizeButton->setMinimumSize(35, 35);
+    minimizeButton->setHint("Minimize the application.");
 
     maximizeButton= new AGButton(centralWidget());
-    maximizeButton->resize(35, 35);
     maximizeButton->setIconOnEnter(QIcon(":/data/max_sel.png"));
     maximizeButton->setIconOnLeave(QIcon(":/data/max_def.png"));
     maximizeButton->setText("");
     maximizeButton->setIconSize(QSize(20, 20));
     maximizeButton->setMaximumSize(35, 35);
+    maximizeButton->setMinimumSize(35, 35);
+    maximizeButton->setHint("Maximize the application.");
+
+    /*
+    domainsAccount= new QTableWidget;
+    domainsAccount->setColumnCount(2);
+    domainsAccount->setRowCount(0);
+    domainsAccount->setColumnWidth(0, 112);
+    domainsAccount->setColumnWidth(1, 60);
+    domainsAccount->setHorizontalHeaderItem(0,new QTableWidgetItem("Domain") );
+    domainsAccount->setHorizontalHeaderItem(1,new QTableWidgetItem("Count") );
+    domainsAccount->setFrameStyle(0);
+    domainsAccount->setMaximumSize(190, 200);
+    domainsAccount->verticalHeader()->hide();
+    domainsAccount->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    domainsAccount->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    domainsAccount->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    domainsAccount->setSelectionMode(QAbstractItemView::NoSelection);
+    domainsAccount->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+
+    domainsAccount->setVisible(true);
+    */
+
+
 
     QFrame *v_line = new QFrame(window_options);
     v_line->setFrameStyle(QFrame::VLine| QFrame::Raised);
     v_line->setLineWidth(1);
+
     /*direction and positions*/
 
     QBoxLayout* mainlay = new QBoxLayout(QBoxLayout::TopToBottom, mainframe);
@@ -115,6 +176,7 @@ MainWindow::MainWindow(QWidget *parent):
 
     buttonsLeftLay->addWidget(addNewDomain, 0,Qt::AlignLeft |Qt::AlignTop);
     buttonsLeftLay->addWidget(proxyButton,  0,Qt::AlignLeft |Qt::AlignTop);
+    buttonsLeftLay->addWidget(baseButton, 0,Qt::AlignLeft |Qt::AlignTop);
     buttonsLeftLay->addStretch(4);
 
     tablelay->addWidget(v_line);
@@ -126,14 +188,20 @@ MainWindow::MainWindow(QWidget *parent):
     mainlay->addLayout(cblay);
     mainlay->addLayout(smainlay);
 
-
-
-
-    connect(addNewDomain, SIGNAL(clicked()), SLOT(OnCreateLabelClicked()));
-    connect(proxyButton, SIGNAL(clicked()), SLOT(OnManageProxyClicked()));
     connect(closeButton, SIGNAL(clicked()), SLOT(close()));
     connect(minimizeButton, SIGNAL(clicked()), SLOT(Mininize()));
     connect(maximizeButton, SIGNAL(clicked()), SLOT(Maximize()));
+
+    connect(addNewDomain, SIGNAL(clicked()), SLOT(OnDomainButtonClicked()));
+    connect(proxyButton, SIGNAL(clicked()), SLOT(OnProxyButtonClicked()));
+    connect(baseButton, SIGNAL(clicked()), SLOT(OnBaseButtonClicked()));
+
+    connect(addNewDomain, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(proxyButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(baseButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(closeButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(minimizeButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(maximizeButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
 }
 MainWindow::~MainWindow()
 {
@@ -142,22 +210,21 @@ MainWindow::~MainWindow()
 void MainWindow::On_Domain_Cursor_up(){
 
 }
-void MainWindow::OnCreateLabelClicked(){
-    if(window_options){
-        window_options->Close();
-        window_options=NULL;
-    }
-    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE");
+void MainWindow::CreateLabelClicked(){
+    closeWindowIfOpened();
+
+    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE", 300, 400);
     window_options->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
     window_options->SetActiveFirstLabel(true);
-    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnCreateLabelClicked()));
-    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnOpenDomainLabelClicked()));
-    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnManageDomainsLabelClicked()));
+
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OpenDomainLabelClicked()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(ManageDomainsLabelClicked()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnCreateDomainClose()));
 
     MainBar->setText("Create a new domain");
 
     QGridLayout *midlay = new QGridLayout();
-    QVBoxLayout *botlay= new QVBoxLayout();
+    QBoxLayout *botlay= new QBoxLayout(QBoxLayout::LeftToRight);
 
     botlay->setSpacing(5);
     botlay->setMargin(0);
@@ -230,35 +297,34 @@ void MainWindow::OnCreateLabelClicked(){
     add_domain_CLB->setIconOnLeave(QIcon(":/data/plus_def.png"));
     add_domain_CLB->setIconOnEnter(QIcon(":/data/plus_sel.png"));
     add_domain_CLB->setIconSize(QSize(20, 20));
-
-    QFrame *hor_line2 = new QFrame(window_options);
-    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
-    hor_line2->setLineWidth(1);
-
-
-    botlay->addWidget(hor_line2);
+    add_domain_CLB->setMaximumSize(160, 40);
+    QPalette def;
+    def.setColor(add_domain_CLB->backgroundRole(), QColor(238, 233, 233));
+    add_domain_CLB->setDefaultPalette(def);
+    add_domain_CLB->setActivePalette(def);
+    botlay->addStretch(1);
     botlay->addWidget(add_domain_CLB);
+    botlay->addStretch(1);
+
+    window_options->setGrayZone(window_options->width()-2, add_domain_CLB->height()+29, add_domain_CLB->pos().x()+1, add_domain_CLB->pos().y()+340);
 
     window_options->AddMidLayout(midlay);
     window_options->AddBotLayout(botlay);
 
 }
-void MainWindow::OnOpenDomainLabelClicked(){
-    if(window_options){
-        window_options->Close();
-        window_options=NULL;
-    }
+void MainWindow::OpenDomainLabelClicked(){
+    closeWindowIfOpened();
 
+    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE", 300, 160);
     MainBar->setText("Open file with domain list");
-    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE");
+
     window_options->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
-    window_options->resize(300, 150);
     window_options->SetActiveSecLabel(true);
 
-    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnCreateLabelClicked()));
-    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnOpenDomainLabelClicked()));
-    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnManageDomainsLabelClicked()));
-
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(CreateLabelClicked()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(ManageDomainsLabelClicked()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnOpenDomainFileClose()));
+    /*bim and bot lay*/
     QGridLayout *midlay = new QGridLayout();
     QVBoxLayout *botlay= new QVBoxLayout();
 
@@ -300,26 +366,30 @@ void MainWindow::OnOpenDomainLabelClicked(){
     midlay->addWidget(domainLabel, 0, 0);
     midlay->addWidget(domainFileName, 0, 1);
 
+    QPalette def;
+    def.setColor(openDomainCLB->backgroundRole(), QColor(238, 233, 233));
+    openDomainCLB->setDefaultPalette(def);
+    openDomainCLB->setActivePalette(def);
+
+    window_options->setGrayZone(window_options->width()-2, openDomainCLB->height()+23, openDomainCLB->pos().x()+1, openDomainCLB->pos().y()+106);
+
     botlay->addWidget(hor_line2);
     botlay->addWidget(openDomainCLB);
 
     window_options->AddMidLayout(midlay);
     window_options->AddBotLayout(botlay);
 }
-void MainWindow::OnManageDomainsLabelClicked(){
-    if(window_options){
-        window_options->Close();
-        window_options=NULL;
-    }
+void MainWindow::ManageDomainsLabelClicked(){
+    closeWindowIfOpened();
 
     MainBar->setText("Manage your domains");
-    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE");
+    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE", 300, 400);
     window_options->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
     window_options->SetActiveThirdLabel(true);
 
-    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnCreateLabelClicked()));
-    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnOpenDomainLabelClicked()));
-    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnManageDomainsLabelClicked()));
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(CreateLabelClicked()));
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OpenDomainLabelClicked()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnManageDomainClose()));
 
     QBoxLayout *midlay = new QBoxLayout(QBoxLayout::TopToBottom);
     QVBoxLayout *botlay= new QVBoxLayout();
@@ -333,6 +403,31 @@ void MainWindow::OnManageDomainsLabelClicked(){
     /*midlay*/
     QTableWidget * DomainTable = new QTableWidget(window_options);
 
+    DomainTable->setColumnCount(2);
+    DomainTable->setRowCount(2);
+    DomainTable->setColumnWidth(0, 190);
+    DomainTable->setColumnWidth(1, 55);
+    DomainTable->setHorizontalHeaderItem(0,new QTableWidgetItem("Domain") );
+    DomainTable->setHorizontalHeaderItem(1,new QTableWidgetItem("Enabled") );
+    DomainTable->setFrameStyle(0);
+    DomainTable->verticalHeader()->hide();
+    DomainTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    DomainTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    DomainTable->setEditTriggers(QAbstractItemView::EditKeyPressed);
+    DomainTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    DomainTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+
+    QWidget* t = new QWidget;
+    QBoxLayout *box = new QBoxLayout(QBoxLayout::LeftToRight);
+    box->setSpacing(0);
+    box->setMargin(0);
+    QCheckBox * Cbox= new QCheckBox(t);
+    Cbox->setText("");
+    Cbox->setChecked(false);
+    box->addWidget(Cbox,1, Qt::AlignCenter);
+    t->setLayout(box);
+    DomainTable->setCellWidget(0, 1, t);
+    DomainTable->setItem(0, 0, new QTableWidgetItem("gmail.com"));
 
     midlay->addWidget(DomainTable, 1);
     /*end midlay*/
@@ -368,6 +463,16 @@ void MainWindow::OnManageDomainsLabelClicked(){
     saveDomain->setIconOnEnter(QIcon(":/data/save_sel.png"));
     saveDomain->setIconSize(QSize(20, 20));
 
+    QPalette def;
+    def.setColor(addNewDomain->backgroundRole(), QColor(238, 233, 233));
+    addNewDomain->setDefaultPalette(def);
+    addNewDomain->setActivePalette(def);
+    delDomain->setDefaultPalette(def);
+    delDomain->setActivePalette(def);
+    saveDomain->setDefaultPalette(def);
+    saveDomain->setActivePalette(def);
+
+    window_options->setGrayZone(window_options->width()-2, addNewDomain->height()+30, addNewDomain->pos().x()+1, addNewDomain->pos().y()+339);
 
     butlay->addWidget(addNewDomain);
     butlay->addWidget(delDomain,2);
@@ -375,7 +480,7 @@ void MainWindow::OnManageDomainsLabelClicked(){
     botlay->addWidget(hor_line2);
     botlay->addLayout(butlay);
 
-    connect(addNewDomain, SIGNAL(clicked()), SLOT(OnCreateLabelClicked()));
+    connect(addNewDomain, SIGNAL(clicked()), SLOT(CreateLabelClicked()));
     connect(delDomain, SIGNAL(clicked()), SLOT(OnDelDomain()));
     connect(saveDomain, SIGNAL(clicked()), SLOT(OnSaveDomain()));
     /*end botlay*/
@@ -422,28 +527,102 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *)
     mpos = QPoint(-1, -1);
 }
 void MainWindow::OnManageProxyClicked(){
-    if(window_options){
-        window_options->Close();
-        window_options=NULL;
-    }
+    closeWindowIfOpened();
 
     MainBar->setText("Manage proxy");
     window_options = new SubWindow(this, "MANAGE", "URL", "OPEN");
     window_options->move(proxyButton->pos().x(), proxyButton->pos().y()+40);
-    window_options->resize(300, 200);
+    window_options->resize(300, 230);
     window_options->SetActiveFirstLabel(true);
 
-    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnManageProxyClicked()));
     connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnUrlProxyClicked()));
     connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnOpenProxyClicked()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnCloseManageProxy()));
 
+    /*midlay*/
+
+    QFont fnt1;
+    fnt1.setPixelSize(15);
+    fnt1.setItalic(false);
+    QFont fnt2;
+    fnt2.setPixelSize(15);
+    fnt2.setItalic(true);
+    fnt2.setUnderline(true);
+
+    QGridLayout* midlay = new QGridLayout;
+    QFont chBoxFont;
+    chBoxFont.setPixelSize(20);
+
+    QCheckBox* useUrlCB = new QCheckBox;
+    useUrlCB->setText("Use proxy list from url");
+    useUrlCB->setChecked(false);
+    useUrlCB->setFont(fnt1);
+
+    QCheckBox* useFileCB= new QCheckBox;
+    useFileCB->setText("Use proxy list form file");
+    useFileCB->setChecked(false);
+    useFileCB->setFont(fnt1);
+
+    AGButton* setupUrl= new AGButton(centralWidget());
+    setupUrl->setIconOnEnter(QIcon(":/data/left_sel.png"));
+    setupUrl->setIconOnLeave(QIcon(":/data/left_def.png"));
+    setupUrl->setText("");
+    setupUrl->setIconSize(QSize(20, 20));
+    setupUrl->setMaximumSize(35, 35);
+
+    AGButton* setupProxyFile= new AGButton(centralWidget());
+    setupProxyFile->setIconOnEnter(QIcon(":/data/left_sel.png"));
+    setupProxyFile->setIconOnLeave(QIcon(":/data/left_def.png"));
+    setupProxyFile->setText("");
+    setupProxyFile->setIconSize(QSize(20, 20));
+    setupProxyFile->setMaximumSize(35, 35);
+
+    midlay->addWidget(useUrlCB, 0, 0);
+    midlay->addWidget(setupUrl, 0, 1, Qt::AlignLeft);
+    midlay->addWidget(useFileCB,1, 0);
+    midlay->addWidget(setupProxyFile, 1, 1, Qt::AlignLeft);
+
+    midlay->setMargin(10);
+    midlay->setSpacing(0);
+    /*end mid lay*/
+    /*botlay*/
+    QGridLayout * botlay = new QGridLayout;
+
+    QLabel* proxyLabel = new QLabel("Proxy list file:", window_options);
+    QLabel* proxyFileName = new QLabel("none", window_options);
+
+    proxyLabel->setFont(fnt1);
+    proxyFileName->setFont(fnt2);
+    proxyFileName->setAlignment(Qt::AlignLeft);
+    proxyLabel->setAlignment(Qt::AlignRight);
+
+    QLabel* proxyUrlLabel = new QLabel("Proxy url:", window_options);
+    QLabel* proxyUrlName = new QLabel("none", window_options);
+
+    proxyUrlLabel->setFont(fnt1);
+    proxyUrlName->setFont(fnt2);
+    proxyUrlName->setAlignment(Qt::AlignLeft);
+    proxyUrlLabel->setAlignment(Qt::AlignRight);
+
+    QFrame *hor_line2 = new QFrame(window_options);
+    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line2->setLineWidth(1);
+
+    botlay->addWidget(hor_line2, 0, 0, 0, 2, Qt::AlignTop);
+    botlay->addWidget(proxyLabel, 1, 0);
+    botlay->addWidget(proxyFileName, 1, 1);
+    botlay->addWidget(proxyUrlLabel, 2, 0);
+    botlay->addWidget(proxyUrlName, 2, 1);
+
+    /*end bot lay*/
+    window_options->AddMidLayout(midlay);
+    window_options->AddBotLayout(botlay);
+    connect(setupProxyFile, SIGNAL(clicked()), SLOT(OnOpenProxyClicked()));
+    connect(setupUrl, SIGNAL(clicked()), SLOT(OnUrlProxyClicked()));
 
 }
 void MainWindow::OnUrlProxyClicked(){
-    if(window_options){
-        window_options->Close();
-        window_options=NULL;
-    }
+    closeWindowIfOpened();
 
     MainBar->setText("Connect url with proxy");
     window_options = new SubWindow(this, "MANAGE", "URL", "OPEN");
@@ -452,39 +631,201 @@ void MainWindow::OnUrlProxyClicked(){
     window_options->SetActiveSecLabel(true);
 
     connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnManageProxyClicked()));
-    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnUrlProxyClicked()));
     connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnOpenProxyClicked()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnCloseUrl()));
 
 }
 void MainWindow::OnOpenProxyClicked(){
-    if(window_options){
-        window_options->Close();
-        window_options=NULL;
-    }
+    closeWindowIfOpened();
 
     MainBar->setText("Open proxy list");
-    window_options = new SubWindow(this, "MANAGE", "URL", "OPEN");
+    window_options = new SubWindow(this, "MANAGE", "URL", "OPEN", 300, 160);
     window_options->move(proxyButton->pos().x(), proxyButton->pos().y()+40);
-    window_options->resize(300, 200);
     window_options->SetActiveThirdLabel(true);
 
     connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(OnManageProxyClicked()));
     connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnUrlProxyClicked()));
-    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnOpenProxyClicked()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnCloseOpenProxy()));
 
+    QGridLayout *midlay = new QGridLayout();
+    QVBoxLayout *botlay= new QVBoxLayout();
+
+    botlay->setSpacing(5);
+    botlay->setMargin(0);
+
+    midlay->setSpacing(7);
+    midlay->setMargin(10);
+
+    QLabel* proxyLabel = new QLabel("Proxy list file:", window_options);
+    QLabel* proxyFileName = new QLabel("none", window_options);
+
+    QFont fnt1;
+    fnt1.setPixelSize(15);
+    fnt1.setItalic(false);
+    QFont fnt2;
+    fnt2.setPixelSize(15);
+    fnt2.setItalic(true);
+    fnt2.setUnderline(true);
+
+    proxyLabel->setFont(fnt1);
+    proxyFileName->setFont(fnt2);
+    proxyFileName->setAlignment(Qt::AlignLeft);
+    proxyLabel->setAlignment(Qt::AlignRight);
+
+    QFrame *hor_line2 = new QFrame(window_options);
+    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line2->setLineWidth(1);
+
+    AGButton* openDomainCLB= new AGButton(window_options);
+    openDomainCLB->setText("Open file with proxy list");
+    openDomainCLB->setEnabled(true);
+    openDomainCLB->setIconOnLeave(QIcon(":/data/open_def.png"));
+    openDomainCLB->setIconOnEnter(QIcon(":/data/open_sel.png"));
+    openDomainCLB->setIconSize(QSize(20, 20));
+
+    connect(openDomainCLB, SIGNAL(clicked()), SLOT(OnOpenProxyFile()));
+
+    midlay->addWidget(proxyLabel, 0, 0);
+    midlay->addWidget(proxyFileName, 0, 1);
+
+    botlay->addWidget(hor_line2);
+    botlay->addWidget(openDomainCLB);
+
+    window_options->AddMidLayout(midlay);
+    window_options->AddBotLayout(botlay);
 }
 void MainWindow::Mininize(){
     showMinimized();
 }
 void MainWindow::Maximize(){
     showMaximized();
+    maximizeButton->setIconOnEnter(QIcon(":/data/minimize_sel.png"));
+    maximizeButton->setIconOnLeave(QIcon(":/data/minimize_def.png"));
+
     connect(maximizeButton, SIGNAL(clicked()), SLOT(Normal()));
 }
 void MainWindow::Normal(){
     showNormal();
+    maximizeButton->setIconOnEnter(QIcon(":/data/max_sel.png"));
+    maximizeButton->setIconOnLeave(QIcon(":/data/max_def.png"));
     connect(maximizeButton, SIGNAL(clicked()), SLOT(Maximize()));
 }
+void MainWindow::setupVectorDomains(){
 
+
+}
+void MainWindow::FullBase(){
+    closeWindowIfOpened();
+
+    MainBar->setText("Manage current base");
+    window_options = new SubWindow(this, "Full", "Good", "Searched");
+    window_options->move(proxyButton->pos().x(), baseButton->pos().y()+40);
+    window_options->resize(300, 200);
+    window_options->SetActiveFirstLabel(true);
+
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(GoodBase()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(SearchBase()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnFullBaseClose()));
+}
+void MainWindow::GoodBase(){
+    closeWindowIfOpened();
+
+    MainBar->setText("Manage base with doog account");
+    window_options = new SubWindow(this, "Full", "Good", "Searched");
+    window_options->move(proxyButton->pos().x(), baseButton->pos().y()+40);
+    window_options->resize(300, 200);
+    window_options->SetActiveSecLabel(true);
+
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(FullBase()));
+    connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(SearchBase()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnGoodBaseClose()));
+
+    /*midlay*/
+
+    QBoxLayout* midlay= new QBoxLayout(QBoxLayout::RightToLeft);
+
+
+
+
+
+}
+void MainWindow::SearchBase(){
+    closeWindowIfOpened();
+
+    MainBar->setText("Manage current base");
+    window_options = new SubWindow(this, "Full", "Good", "Searched");
+    window_options->move(proxyButton->pos().x(), baseButton->pos().y()+40);
+    window_options->resize(300, 200);
+    window_options->SetActiveThirdLabel(true);
+
+    connect(window_options, SIGNAL(OnCreateLabelClicked()), SLOT(FullBase()));
+    connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(GoodBase()));
+    connect(window_options, SIGNAL(OnClose()), SLOT(OnSearchBaseClose()));
+
+}
+void MainWindow::OnCloseUrl(){
+    qDebug()<<"OnCloseUrlSetup";
+}
+void MainWindow::OnCloseManageProxy(){
+    qDebug()<<"OnCloseManageProxy";
+}
+void MainWindow::OnCloseOpenProxy(){
+    qDebug()<<"OnCloseOpenProxy";
+}
+void MainWindow::OnFullBaseClose(){
+    qDebug()<<"OnFullBaseClose";
+}
+void MainWindow::OnGoodBaseClose(){
+    qDebug()<<"OnGoodBaseClose";
+}
+void MainWindow::OnSearchBaseClose(){
+    qDebug()<<"OnSearchBaseClose";
+}
+void MainWindow::OnOpenDomainFileClose(){
+    qDebug()<<"OnOpenDomainFileClose";
+}
+void MainWindow::OnManageDomainClose(){
+    qDebug()<<"OnManageDomainClose";
+}
+void MainWindow::OnCreateDomainClose(){
+    qDebug()<<"OnCreateDomainClose";
+}
+void MainWindow::OnDomainButtonClicked(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+        return;
+    }
+    CreateLabelClicked();
+
+}
+void MainWindow::OnBaseButtonClicked(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+        return;
+    }
+    FullBase();
+
+}
+void MainWindow::OnProxyButtonClicked(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+        return;
+    }
+    OnManageProxyClicked();
+
+}
+void MainWindow::closeWindowIfOpened(){
+    if(window_options){
+        window_options->Close();
+        window_options=NULL;
+    }
+}
+void MainWindow::OnOpenProxyFile(){
+
+}
 
 
 

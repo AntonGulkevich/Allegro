@@ -1,7 +1,8 @@
 #include "subwindow.h"
 #include <QDebug>
 
-SubWindow::SubWindow(QWidget *parent, const QString &firstLabel, const QString &seclabel, const QString &thrdlabel) :
+SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString &seclabel, const QString &thrdlabel,
+                      int w, int h) :
     QFrame(parent)
 {
     active=true;
@@ -10,7 +11,7 @@ SubWindow::SubWindow(QWidget *parent, const QString &firstLabel, const QString &
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
     setLineWidth(3);
-    resize(300,400);
+    resize(w,h);
     setAutoFillBackground(true);
     setVisible(true);
     setPalette(PW);
@@ -43,19 +44,17 @@ SubWindow::SubWindow(QWidget *parent, const QString &firstLabel, const QString &
     act.setBold(true);
     act.setUnderline(true);
 
-    newDomainLabel->setFont(unsel);
+    newDomainLabel->setPalette(pal);
     newDomainLabel->SetSelectedFont(sel);
     newDomainLabel->SetUnSelectedFont(unsel);
-    newDomainLabel->setPalette(pal);
     newDomainLabel->SetActiveFont(act);
 
-    openDomainLabel->setFont(unsel);
+
     openDomainLabel->setPalette(pal);
     openDomainLabel->SetSelectedFont(sel);
     openDomainLabel->SetUnSelectedFont(unsel);
     openDomainLabel->SetActiveFont(act);
 
-    manageDomainsLabel->setFont(unsel);
     manageDomainsLabel->setPalette(pal);
     manageDomainsLabel->SetSelectedFont(sel);
     manageDomainsLabel->SetUnSelectedFont(unsel);
@@ -80,11 +79,11 @@ SubWindow::SubWindow(QWidget *parent, const QString &firstLabel, const QString &
     headerlay->setMargin(10);
 
 
-    headerlay->addWidget(newDomainLabel, 0, Qt::AlignTop|Qt::AlignCenter);
-    headerlay->addWidget(openDomainLabel, 0, Qt::AlignTop|Qt::AlignCenter);
-    headerlay->addWidget(manageDomainsLabel,0, Qt::AlignTop|Qt::AlignCenter);
+    headerlay->addWidget(newDomainLabel, 0);
+    headerlay->addWidget(openDomainLabel, 0);
+    headerlay->addWidget(manageDomainsLabel,0);
 
-    toplay->addLayout(headerlay, 1);
+    toplay->addLayout(headerlay, 0);
 
     toplay->addWidget(hor_line, 1, Qt::AlignTop);
 
@@ -92,6 +91,13 @@ SubWindow::SubWindow(QWidget *parent, const QString &firstLabel, const QString &
     biglay->addLayout(toplay, 1);
     biglay->addLayout(midlay, 5);
     biglay->addLayout(botlay, 1);
+
+    grayZone= new QWidget(this);
+    QPalette botGrayPal;
+    botGrayPal.setColor(grayZone->backgroundRole(), QColor(238, 233, 233));
+    grayZone->setPalette(botGrayPal);
+    grayZone->setAutoFillBackground(true);
+    grayZone->setVisible(false);
 
 }
 void SubWindow::Close(){
@@ -113,12 +119,14 @@ void SubWindow::ManageLabelClick(){
 
     emit OnManageDomainsLabelClicked();
 }
+/*
 void SubWindow::leaveEvent(QEvent *event){
     QWidget::leaveEvent(event);
 }
 void SubWindow::enterEvent(QEvent *event){
     QWidget::enterEvent(event);
 }
+*/
 void SubWindow::AddBotLayout(QLayout *lay){
     botlay->addLayout(lay, 1);
 }
@@ -138,4 +146,19 @@ void SubWindow::SetActiveSecLabel(bool state){
 void SubWindow::SetActiveThirdLabel(bool state){
     manageDomainsLabel->setActive(state);
 }
+void SubWindow::focusOutEvent(QFocusEvent *event){
+    close();
+    qDebug()<<"focus out";
+    QWidget::focusOutEvent(event);
+}
+void SubWindow::closeEvent(QCloseEvent *event){
+    emit OnClose();
+    QWidget::closeEvent(event);
 
+}
+void SubWindow::setGrayZone(int w, int h, int top, int left){
+    grayZone->resize(w, h);
+    grayZone->move(top, left);
+    grayZone->setVisible(true);
+
+}

@@ -9,16 +9,18 @@ private:
     QString name;
     QString pop3TslHost;
     QString pop3SslHost;
-    int pop3TslPort;
     int pop3SslPort;
+    int pop3TslPort;
+
 
     QString imapTslHost;
     QString imapSslHost;
     int imapTslPort;
     int imapSslPort;
 
+    bool selected;
+
 public:
-    Domain();
     ~Domain();
     Domain(QString _name,
 
@@ -33,6 +35,8 @@ public:
 
            QString _imapSSLHost,
            int _imapSSLport);
+    void setSelection(bool state);
+    bool isSelected();
 };
 
 #endif // DOMAIN_H

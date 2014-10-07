@@ -3,6 +3,11 @@
 ExLabel::ExLabel(const QString &text, QWidget *parent) :
     QLabel(text, parent)
 {
+
+    selectedFont= new QFont();
+    unselectedFont = new QFont();
+    activeFont= new QFont();
+
     active=false;
 }
 ExLabel::~ExLabel(){
@@ -10,53 +15,51 @@ ExLabel::~ExLabel(){
 }
 void ExLabel::leaveEvent(QEvent *event){
     if (active){
-        setFont(activeFont);
+        setFont(*activeFont);
     }
     else{
-        setFont(unselectedFont);
+        setFont(*unselectedFont);
     }
     QWidget::leaveEvent(event);
 }
 void ExLabel::enterEvent(QEvent *event){
     if (active){
-        setFont(activeFont);
+        setFont(*activeFont);
     }
     else{
-        setFont(selectedFont);
+        setFont(*selectedFont);
     }
     QWidget::enterEvent(event);
 }
 void ExLabel::SetSelectedFont(const QFont &font){
-    selectedFont=font;
+    *selectedFont= font;
 }
 void ExLabel::SetActiveFont(const QFont &font){
-    activeFont=font;
+    *activeFont= font;
 }
 void ExLabel::SetUnSelectedFont(const QFont &font){
-    unselectedFont=font;
+    *unselectedFont=font;
 }
 void ExLabel::mousePressEvent(QMouseEvent *pe){
-    if (active){
-        setFont(activeFont);
-    }
-    else{
-        setFont(selectedFont);
-    }
+    setFont(*activeFont);
 }
 void ExLabel::mouseReleaseEvent(QMouseEvent *pe){
     if (active){
-        setFont(activeFont);
+        setFont(*activeFont);
     }
     else{
-        setFont(selectedFont);
+        setFont(*selectedFont);
     }
-    clicked();
+    OnClick();
 }
 void ExLabel::setActive(bool status){
-    setFont(activeFont);
+    setFont(*activeFont);
     active=status;
 }
 bool ExLabel::isActive(){
     return active;
+}
+void ExLabel::OnClick(){
+    emit clicked();
 }
 

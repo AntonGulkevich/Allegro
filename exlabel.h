@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QFont>
+#include <QMouseEvent>
 
 class ExLabel : public QLabel
 {
@@ -15,21 +16,25 @@ public:
     void SetActiveFont(const QFont &font);
     bool isActive();
     void setActive(bool status);
+
 signals:
     void clicked();
 
 public slots:
+    void OnClick();
 
 protected:
     virtual void mousePressEvent(QMouseEvent* pe);
     virtual void mouseReleaseEvent(QMouseEvent* pe);
     virtual void leaveEvent(QEvent * event);
     virtual void enterEvent(QEvent *event);
+
 private:
-    QFont selectedFont;
-    QFont unselectedFont;
-    QFont activeFont;
+    QFont *selectedFont;
+    QFont *unselectedFont;
+    QFont *activeFont;
     bool active;
+    QPoint pos;
 };
 
 #endif // EXLABEL_H

@@ -14,7 +14,8 @@ class SubWindow : public QFrame
 {
     Q_OBJECT
 public:
-    explicit SubWindow(QWidget *parent = 0, const QString &firstLabel="", const QString &seclabel="", const QString &thrdlabel="");
+    explicit SubWindow(QWidget *parent = 0, const QString &firstLabel="", const QString &seclabel="", const QString &thrdlabel="",
+                       int w=100, int h=200);
     ~SubWindow();
     void Close();
     void AddMidLayout(QLayout* lay);
@@ -23,11 +24,13 @@ public:
     void SetActiveFirstLabel(bool state);
     void SetActiveSecLabel(bool state);
     void SetActiveThirdLabel(bool state);
+    void setGrayZone(int width, int heigth, int top, int left);
 
 signals:
     void OnCreateLabelClicked();
     void OnOpenDomainLabelClicked();
     void OnManageDomainsLabelClicked();
+    void OnClose();
 
 public slots:
     void CreaLabelClick();
@@ -42,10 +45,14 @@ private:
     QBoxLayout* toplay;
     QBoxLayout* midlay;
     QBoxLayout* botlay;
-protected:
-    virtual void leaveEvent(QEvent * event);
-    virtual void enterEvent(QEvent *event);
 
+    QWidget * grayZone;
+protected:
+    //virtual void leaveEvent(QEvent * event);
+   // virtual void enterEvent(QEvent *event);
+    //void QWidget::focusOutEvent ( QFocusEvent * event )   [virtual protected]
+    void focusOutEvent(QFocusEvent * event);
+    void closeEvent(QCloseEvent * event);
 };
 
 #endif // SUBWINDOW_H
