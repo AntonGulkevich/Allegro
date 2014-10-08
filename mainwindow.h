@@ -51,6 +51,9 @@ private Q_SLOTS:
     void OnFullBaseClose();
     void OnGoodBaseClose();
     void OnSearchBaseClose();
+    void OnOpenDataFileCLB();
+    void OnCloseDataFileCLB();
+    void OnCheckDataFileCLB();
 
     void OnDomainButtonClicked();
     void OnProxyButtonClicked();
@@ -97,6 +100,7 @@ private:
 
    /*LOGIC*/
    QVector <Domain> vectorDomains;
+
 
  };
 

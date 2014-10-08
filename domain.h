@@ -9,19 +9,19 @@ private:
     QString name;
     QString pop3TslHost;
     QString pop3SslHost;
-    int pop3SslPort;
-    int pop3TslPort;
-
-
     QString imapTslHost;
     QString imapSslHost;
     int imapTslPort;
     int imapSslPort;
+    int pop3SslPort;
+    int pop3TslPort;
 
     bool selected;
 
 public:
     ~Domain();
+    Domain();
+    Domain(const Domain &_domain);
     Domain(QString _name,
 
            QString _pop3SSLhost,

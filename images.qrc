@@ -21,5 +21,7 @@
         <file>data/clef.png</file>
         <file>data/minimize_def.png</file>
         <file>data/minimize_sel.png</file>
+        <file>data/check_def.png</file>
+        <file>data/check_sel.png</file>
     </qresource>
 </RCC>

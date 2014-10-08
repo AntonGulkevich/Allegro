@@ -22,6 +22,20 @@ Domain::Domain(QString _name,
     selected= false;
 }
 
+Domain::Domain(const Domain &_domain){
+    pop3TslHost=_domain.pop3TslHost;
+    pop3TslPort=_domain.pop3TslPort;
+    pop3SslHost=_domain.pop3SslHost;
+    pop3SslPort=_domain.pop3SslPort;
+
+    imapSslHost=_domain.imapSslHost;
+    imapSslPort=_domain.imapSslPort;
+    imapTslHost=_domain.imapTslHost;
+    imapTslPort=_domain.imapTslPort;
+
+    name=_domain.name;
+}
+
 Domain::~Domain(){
 
 }

@@ -46,7 +46,7 @@ private:
     QBoxLayout* midlay;
     QBoxLayout* botlay;
 
-    QWidget * grayZone;
+    QFrame * grayZone;
 protected:
     //virtual void leaveEvent(QEvent * event);
    // virtual void enterEvent(QEvent *event);

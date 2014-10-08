@@ -92,9 +92,10 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     biglay->addLayout(midlay, 5);
     biglay->addLayout(botlay, 1);
 
-    grayZone= new QWidget(this);
+    grayZone= new QFrame(this);
     QPalette botGrayPal;
     botGrayPal.setColor(grayZone->backgroundRole(), QColor(238, 233, 233));
+    grayZone->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
     grayZone->setPalette(botGrayPal);
     grayZone->setAutoFillBackground(true);
     grayZone->setVisible(false);

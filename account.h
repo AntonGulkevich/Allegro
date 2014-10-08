@@ -11,7 +11,7 @@ class Account
     Domain *domain;
     QString domain_name;
 public:
-    Account (const QString &_email,const QString &_password);
+    Account (const QString &_email,const QString &_password, const Domain &_domain);
     ~Account();
 
 };

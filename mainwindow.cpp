@@ -22,19 +22,29 @@ MainWindow::MainWindow(QWidget *parent):
 
     /*setup status bar*/
     QProgressBar * progressBar = new QProgressBar;
-
-
     MainBar = new QLabel;
-    SB.setColor(backgroundRole(), Qt::darkGray);
+    QFrame* statusBarFrame= new QFrame;
+    statusBarFrame->setAutoFillBackground(true);
+    SB.setColor(backgroundRole(), Qt::gray);
     SB.setColor(foregroundRole(), Qt::black);
-    statusBar()->setAutoFillBackground(true);
-    statusBar()->addWidget(MainBar);
-    statusBar()->addWidget(progressBar, 1);
+    statusBarFrame->setPalette(SB);
+    QBoxLayout* statusBarLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+    statusBarLayout->setSpacing(10);
+    statusBarLayout->setMargin(0);
+    MainBar->setMaximumWidth(250);
+    MainBar->setMinimumWidth(250);
+
+    statusBarLayout->addWidget(MainBar, 1);
+    statusBarLayout->addWidget(progressBar,2);
+    statusBar()->setContentsMargins(0, 0, 0, 0);
     statusBar()->setPalette(SB);
-    progressBar->setAutoFillBackground(true);
+    statusBar()->setAutoFillBackground(true);
+    statusBarFrame->setLayout(statusBarLayout);
     progressBar->setPalette(SB);
     progressBar->setMaximum(100);
-    progressBar->setValue(50);
+    progressBar->setValue(38);
+
+    statusBar()->addWidget(statusBarFrame, 1);
 
     progressBar->setStyleSheet("QProgressBar {"
                                "border: 2px solid grey;"
@@ -46,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent):
                                "}"  );
     MainBar->setAutoFillBackground(true);
     MainBar->setPalette(SB);
+    MainBar->setText("Setup domains, proxy and open the base...");
     /*end of setup status bar*/
 
 
@@ -163,7 +174,7 @@ MainWindow::MainWindow(QWidget *parent):
     smainlay->setSpacing(0);
     smainlay->setMargin(0);
     cblay->setSpacing(0);
-    cblay->setMargin(0);     
+    cblay->setMargin(0);
     buttonsLeftLay->setSpacing(10);
     buttonsLeftLay->setMargin(20);
     tablelay->setSpacing(10);
@@ -350,9 +361,6 @@ void MainWindow::OpenDomainLabelClicked(){
     domainFileName->setAlignment(Qt::AlignLeft);
     domainLabel->setAlignment(Qt::AlignRight);
 
-    QFrame *hor_line2 = new QFrame(window_options);
-    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
-    hor_line2->setLineWidth(1);
 
     AGButton* openDomainCLB= new AGButton(window_options);
     openDomainCLB->setText("Open file with domains");
@@ -373,7 +381,6 @@ void MainWindow::OpenDomainLabelClicked(){
 
     window_options->setGrayZone(window_options->width()-2, openDomainCLB->height()+23, openDomainCLB->pos().x()+1, openDomainCLB->pos().y()+106);
 
-    botlay->addWidget(hor_line2);
     botlay->addWidget(openDomainCLB);
 
     window_options->AddMidLayout(midlay);
@@ -438,16 +445,13 @@ void MainWindow::ManageDomainsLabelClicked(){
     butlay->setSpacing(10);
     butlay->setMargin(0);
 
-    QFrame *hor_line2 = new QFrame(window_options);
-    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
-    hor_line2->setLineWidth(1);
-
     AGButton* addNewDomain= new AGButton(window_options);
     addNewDomain->setText("Add");
     addNewDomain->setEnabled(true);
     addNewDomain->setIconOnLeave(QIcon(":/data/plus_def.png"));
     addNewDomain->setIconOnEnter(QIcon(":/data/plus_sel.png"));
     addNewDomain->setIconSize(QSize(20, 20));
+    addNewDomain->setMaximumHeight(40);
 
     AGButton* delDomain= new AGButton(window_options);
     delDomain->setText("Delete");
@@ -455,6 +459,9 @@ void MainWindow::ManageDomainsLabelClicked(){
     delDomain->setIconOnLeave(QIcon(":/data/min_def.png"));
     delDomain->setIconOnEnter(QIcon(":/data/min_sel.png"));
     delDomain->setIconSize(QSize(20, 20));
+    delDomain->setMaximumHeight(40);
+    delDomain->setEnabled(false);
+
 
     AGButton* saveDomain= new AGButton(window_options);
     saveDomain->setText("Save");
@@ -462,6 +469,9 @@ void MainWindow::ManageDomainsLabelClicked(){
     saveDomain->setIconOnLeave(QIcon(":/data/save_def.png"));
     saveDomain->setIconOnEnter(QIcon(":/data/save_sel.png"));
     saveDomain->setIconSize(QSize(20, 20));
+    saveDomain->setMaximumHeight(40);
+    saveDomain->setEnabled(false);
+
 
     QPalette def;
     def.setColor(addNewDomain->backgroundRole(), QColor(238, 233, 233));
@@ -472,12 +482,11 @@ void MainWindow::ManageDomainsLabelClicked(){
     saveDomain->setDefaultPalette(def);
     saveDomain->setActivePalette(def);
 
-    window_options->setGrayZone(window_options->width()-2, addNewDomain->height()+30, addNewDomain->pos().x()+1, addNewDomain->pos().y()+339);
+    window_options->setGrayZone(window_options->width()-2, addNewDomain->height()+29, addNewDomain->pos().x()+1, addNewDomain->pos().y()+340);
 
     butlay->addWidget(addNewDomain);
     butlay->addWidget(delDomain,2);
     butlay->addWidget(saveDomain);
-    botlay->addWidget(hor_line2);
     botlay->addLayout(butlay);
 
     connect(addNewDomain, SIGNAL(clicked()), SLOT(CreateLabelClicked()));
@@ -672,24 +681,26 @@ void MainWindow::OnOpenProxyClicked(){
     proxyFileName->setAlignment(Qt::AlignLeft);
     proxyLabel->setAlignment(Qt::AlignRight);
 
-    QFrame *hor_line2 = new QFrame(window_options);
-    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
-    hor_line2->setLineWidth(1);
+    AGButton* openProxyCLB= new AGButton(window_options);
+    openProxyCLB->setText("Open file with proxy list");
+    openProxyCLB->setEnabled(true);
+    openProxyCLB->setIconOnLeave(QIcon(":/data/open_def.png"));
+    openProxyCLB->setIconOnEnter(QIcon(":/data/open_sel.png"));
+    openProxyCLB->setIconSize(QSize(20, 20));
 
-    AGButton* openDomainCLB= new AGButton(window_options);
-    openDomainCLB->setText("Open file with proxy list");
-    openDomainCLB->setEnabled(true);
-    openDomainCLB->setIconOnLeave(QIcon(":/data/open_def.png"));
-    openDomainCLB->setIconOnEnter(QIcon(":/data/open_sel.png"));
-    openDomainCLB->setIconSize(QSize(20, 20));
-
-    connect(openDomainCLB, SIGNAL(clicked()), SLOT(OnOpenProxyFile()));
+    connect(openProxyCLB, SIGNAL(clicked()), SLOT(OnOpenProxyFile()));
 
     midlay->addWidget(proxyLabel, 0, 0);
     midlay->addWidget(proxyFileName, 0, 1);
 
-    botlay->addWidget(hor_line2);
-    botlay->addWidget(openDomainCLB);
+    QPalette def;
+    def.setColor(openProxyCLB->backgroundRole(), QColor(238, 233, 233));
+    openProxyCLB->setDefaultPalette(def);
+    openProxyCLB->setActivePalette(def);
+
+    window_options->setGrayZone(window_options->width()-2, openProxyCLB->height()+26, openProxyCLB->pos().x()+1, openProxyCLB->pos().y()+103);
+
+    botlay->addWidget(openProxyCLB);
 
     window_options->AddMidLayout(midlay);
     window_options->AddBotLayout(botlay);
@@ -720,12 +731,103 @@ void MainWindow::FullBase(){
     MainBar->setText("Manage current base");
     window_options = new SubWindow(this, "Full", "Good", "Searched");
     window_options->move(proxyButton->pos().x(), baseButton->pos().y()+40);
-    window_options->resize(300, 200);
+    window_options->resize(300, 350);
     window_options->SetActiveFirstLabel(true);
 
     connect(window_options, SIGNAL(OnOpenDomainLabelClicked()), SLOT(GoodBase()));
     connect(window_options, SIGNAL(OnManageDomainsLabelClicked()), SLOT(SearchBase()));
     connect(window_options, SIGNAL(OnClose()), SLOT(OnFullBaseClose()));
+
+    /*mid lay*/
+    QGridLayout* midlay = new QGridLayout;
+    midlay->setSpacing(10);
+    midlay->setMargin(10);
+
+    QCheckBox* usePOP3TSL = new QCheckBox;
+    QCheckBox* usePOP3SSL = new QCheckBox;
+    QCheckBox* useIMAPTSL = new QCheckBox;
+    QCheckBox* useIMAPSSL = new QCheckBox;
+
+    QFont fnt1;
+    fnt1.setPixelSize(15);
+    fnt1.setItalic(false);
+
+    usePOP3TSL->setFont(fnt1);
+    usePOP3SSL->setFont(fnt1);
+    useIMAPTSL->setFont(fnt1);
+    useIMAPSSL->setFont(fnt1);
+
+    usePOP3TSL->setText("POP3 TSL");
+    usePOP3SSL->setText("POP3 SSL");
+    useIMAPTSL->setText("IMAP TSL");
+    useIMAPSSL->setText("IMAP SSL");
+
+    midlay->addWidget(usePOP3TSL, 0, 0, Qt::AlignTop);
+    midlay->addWidget(usePOP3SSL, 0, 1, Qt::AlignTop);
+    midlay->addWidget(useIMAPTSL, 1, 0, Qt::AlignTop);
+    midlay->addWidget(useIMAPSSL, 1, 1, Qt::AlignTop);
+
+
+    /*end mid lay*/
+
+    /*bot lay */
+    QBoxLayout* botlay= new QBoxLayout(QBoxLayout::LeftToRight);
+
+    AGButton* openDataFileCLB= new AGButton(window_options);
+    openDataFileCLB->setText("Open");
+    openDataFileCLB->setEnabled(true);
+    openDataFileCLB->setIconOnLeave(QIcon(":/data/open_def.png"));
+    openDataFileCLB->setIconOnEnter(QIcon(":/data/open_sel.png"));
+    openDataFileCLB->setIconSize(QSize(20, 20));
+    openDataFileCLB->setMaximumSize(100, 40);
+
+    AGButton* checkDataFileCLB= new AGButton(window_options);
+    checkDataFileCLB->setText("Check");
+    checkDataFileCLB->setEnabled(true);
+    checkDataFileCLB->setIconOnLeave(QIcon(":/data/check_def.png"));
+    checkDataFileCLB->setIconOnEnter(QIcon(":/data/check_sel.png"));
+    checkDataFileCLB->setIconSize(QSize(20, 20));
+    checkDataFileCLB->setMaximumSize(100, 40);
+    checkDataFileCLB->setEnabled(false);
+
+    AGButton* closeDataFileCLB= new AGButton(window_options);
+    closeDataFileCLB->setText("Close");
+    closeDataFileCLB->setEnabled(true);
+    closeDataFileCLB->setIconOnLeave(QIcon(":/data/close_def.png"));
+    closeDataFileCLB->setIconOnEnter(QIcon(":/data/close_sel.png"));
+    closeDataFileCLB->setIconSize(QSize(20, 20));
+    closeDataFileCLB->setMaximumSize(100, 40);
+    closeDataFileCLB->setEnabled(false);
+
+
+    connect(openDataFileCLB, SIGNAL(clicked()), SLOT(OnCloseDataFileCLB()));
+    connect(checkDataFileCLB, SIGNAL(clicked()), SLOT(OnCheckDataFileCLB()));
+    connect(closeDataFileCLB, SIGNAL(clicked()), SLOT(OnCloseDataFileCLB()));
+
+
+    /* Gray Zone */
+
+    QPalette def;
+    def.setColor(openDataFileCLB->backgroundRole(), QColor(238, 233, 233));
+    openDataFileCLB->setDefaultPalette(def);
+    openDataFileCLB->setActivePalette(def);
+    checkDataFileCLB->setDefaultPalette(def);
+    checkDataFileCLB->setActivePalette(def);
+    closeDataFileCLB->setDefaultPalette(def);
+    closeDataFileCLB->setActivePalette(def);
+
+    window_options->setGrayZone(window_options->width()-2, checkDataFileCLB->height()+26,
+                                checkDataFileCLB->pos().x()+1, checkDataFileCLB->pos().y()+293);
+
+    botlay->addWidget(openDataFileCLB, 0);
+    botlay->addWidget(checkDataFileCLB, 0);
+    botlay->addWidget(closeDataFileCLB, 0);
+
+    /*end bot lay*/
+    window_options->AddMidLayout(midlay);
+    window_options->AddBotLayout(botlay);
+
+
 }
 void MainWindow::GoodBase(){
     closeWindowIfOpened();
@@ -824,6 +926,15 @@ void MainWindow::closeWindowIfOpened(){
     }
 }
 void MainWindow::OnOpenProxyFile(){
+
+}
+void MainWindow::OnOpenDataFileCLB(){
+
+}
+void MainWindow::OnCloseDataFileCLB(){
+
+}
+void MainWindow::OnCheckDataFileCLB(){
 
 }
 
