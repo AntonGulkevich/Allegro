@@ -17,6 +17,7 @@
 #include <QVector>
 #include <QProgressBar>
 
+
 #include "agbutton.h"
 #include "exlabel.h"
 #include "subwindow.h"
@@ -51,7 +52,7 @@ private Q_SLOTS:
     void OnFullBaseClose();
     void OnGoodBaseClose();
     void OnSearchBaseClose();
-    void OnOpenDataFileCLB();
+    QString OnOpenDataFileCLB();
     void OnCloseDataFileCLB();
     void OnCheckDataFileCLB();
 
@@ -99,7 +100,10 @@ private:
    QPoint mpos;
 
    /*LOGIC*/
-   QVector <Domain> vectorDomains;
+   struct domainList{
+       QVector <Domain> *domainVect;
+       bool completed;
+   };
 
 
  };

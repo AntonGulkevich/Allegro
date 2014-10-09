@@ -800,7 +800,7 @@ void MainWindow::FullBase(){
     closeDataFileCLB->setEnabled(false);
 
 
-    connect(openDataFileCLB, SIGNAL(clicked()), SLOT(OnCloseDataFileCLB()));
+    connect(openDataFileCLB, SIGNAL(clicked()), SLOT(OnOpenDataFileCLB()));
     connect(checkDataFileCLB, SIGNAL(clicked()), SLOT(OnCheckDataFileCLB()));
     connect(closeDataFileCLB, SIGNAL(clicked()), SLOT(OnCloseDataFileCLB()));
 
@@ -928,7 +928,9 @@ void MainWindow::closeWindowIfOpened(){
 void MainWindow::OnOpenProxyFile(){
 
 }
-void MainWindow::OnOpenDataFileCLB(){
+QString MainWindow::OnOpenDataFileCLB(){
+    /*Open data base*/
+
 
 }
 void MainWindow::OnCloseDataFileCLB(){

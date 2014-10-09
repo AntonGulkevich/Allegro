@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     agbutton.cpp \
     mainwindow.cpp \
     exlabel.cpp \
-    subwindow.cpp
+    subwindow.cpp \
+    presto.cpp
 
 HEADERS  += \
     information.h \
@@ -30,7 +31,8 @@ HEADERS  += \
     agbutton.h \
     mainwindow.h \
     exlabel.h \
-    subwindow.h
+    subwindow.h \
+    presto.h
 
 RESOURCES += \
     Images.qrc
