@@ -55,8 +55,7 @@ MainWindow::MainWindow(QWidget *parent):
     statusBar()->setAutoFillBackground(true);
     statusBarFrame->setLayout(statusBarLayout);
     progressBar->setPalette(SB);
-    progressBar->setMaximum(100);
-    progressBar->setValue(38);
+    progressBar->reset();
 
     statusBar()->addWidget(statusBarFrame, 1);
 
@@ -795,7 +794,6 @@ void MainWindow::FullBase(){
     delLabel->setFont(fnt1);
     delLE->setFont(fnt1);
 
-
     usePOP3TSL->setText("POP3 TSL");
     usePOP3SSL->setText("POP3 SSL");
     useIMAPTSL->setText("IMAP TSL");
@@ -803,8 +801,6 @@ void MainWindow::FullBase(){
     delLE->setText(delimiter);
     delLE->setMaxLength(1);
     delLE->setMaximumSize(17, 20);
-
-
 
     QFrame *hor_line2 = new QFrame(window_options);
     hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);

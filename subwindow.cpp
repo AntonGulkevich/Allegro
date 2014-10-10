@@ -2,7 +2,7 @@
 #include <QDebug>
 
 SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString &seclabel, const QString &thrdlabel,
-                      int w, int h) :
+                     int w, int h) :
     QFrame(parent)
 {
     active=true;
@@ -106,6 +106,13 @@ void SubWindow::Close(){
     close();
 }
 SubWindow::~SubWindow(){
+    delete newDomainLabel;
+    delete openDomainLabel;
+    delete manageDomainsLabel;
+    delete toplay;
+    delete midlay;
+    delete botlay;
+    delete grayZone;
 
 }
 void SubWindow::CreaLabelClick(){

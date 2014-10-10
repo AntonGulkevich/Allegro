@@ -7,7 +7,7 @@ Presto::Presto(QObject *parent, QString * filename) :
     warnings=0;
 }
 Presto::~Presto(){
-
+    delete accoutVector;
 }
 bool Presto::openBase(){
     /*Open data base*/
