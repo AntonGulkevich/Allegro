@@ -16,12 +16,14 @@
 #include <QCheckBox>
 #include <QVector>
 #include <QProgressBar>
+#include <QFileDialog>
 
 
 #include "agbutton.h"
 #include "exlabel.h"
 #include "subwindow.h"
 #include "domain.h"
+#include "presto.h"
 
 class MainWindow : public QMainWindow
 {
@@ -96,15 +98,27 @@ private:
    AGButton* maximizeButton;
 
    QTableWidget* domainsAccount;
+   QProgressBar * progressBar;
 
    QPoint mpos;
 
-   /*LOGIC*/
-   struct domainList{
-       QVector <Domain> *domainVect;
-       bool completed;
-   };
+   QLineEdit* delLE;
+   /*END of GUI*/
 
+
+   /*LOGIC*/
+
+   QVector <Domain> *domainVect;
+
+   Presto * fullDataBase;
+   QString  delimiter;
+   /*END of LOGIC*/
+
+   /*TEST*/
+
+   QTextEdit* test1;
+
+   /*END of TEST*/
 
  };
 

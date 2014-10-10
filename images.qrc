@@ -23,5 +23,6 @@
         <file>data/minimize_sel.png</file>
         <file>data/check_def.png</file>
         <file>data/check_sel.png</file>
+        <file>data/black.png</file>
     </qresource>
 </RCC>

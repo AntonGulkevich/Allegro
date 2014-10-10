@@ -39,6 +39,9 @@ Domain::Domain(const Domain &_domain){
 Domain::~Domain(){
 
 }
+Domain::Domain(){
+
+}
 
 void Domain::setSelection(bool state){
     selected= state;

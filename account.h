@@ -17,8 +17,11 @@ private:
         error,
     };
 public:
-    Account (const QString &_email,const QString &_password, const Domain &_domain);
+    Account();
+    Account (const QString &_email,const QString &_password);
     ~Account();
+    QString getDomainName();
+    void setDomain(Domain* _domain);
 
 };
 

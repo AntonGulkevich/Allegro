@@ -1,26 +1,33 @@
-#ifndef PRESTO_H
-#define PRESTO_H
+#ifndef Presto_H
+#define Presto_H
 /* Class implementing pseudo data base*/
 /*Works as a container and manipulating with data*/
 
 #include <QObject>
 #include <QString>
 #include <QVector>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QStandardPaths>
+#include <QFile>
+#include <QProgressBar>
+#include <QStringList>
+#include <QRegExp>
 
 #include "domain.h"
 #include "account.h"
 
 
-class presto : public QObject
+class Presto : public QObject
 {
     Q_OBJECT
 public:
-    explicit presto(QObject *parent = 0, const QString & filename="");
-    bool openBase(QWidget * wdj);
-    ~presto();
+    explicit Presto(QObject *parent = 0, QString * filename=NULL);
+    bool openBase();
+    ~Presto();
+    bool validation();
+    void setProgressBar(QProgressBar * bar);
+    void setDelimiter(const QString &del);
+    void setDomains(QVector<Domain> * domainsVector);
+    QString  baseName();
+    int getWarnings();
 
 signals:
 
@@ -29,11 +36,21 @@ public slots:
 private:
     QString* fileName;
     QVector <Account> * accoutVector;
-    int goodCount;
-    int badCount;
-    int errorCount;
-    int totalCount;
+    QProgressBar * progressBar;
+    QString* delimiter;
+    QVector <Domain> * domains;
+
+
+    int good;
+    int bad;
+    int error;
+    int total;
+    int warnings;
+
+    void fillVector(const  QString& str);
+    Domain* findDomain(const QString& domainName);
+
 
 };
 
-#endif // PRESTO_H
+#endif // Presto_H

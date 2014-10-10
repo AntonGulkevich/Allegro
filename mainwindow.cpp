@@ -5,7 +5,21 @@ MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent)
 {
     QFrame *mainframe = new QFrame();
+    /*Default settings*/
     window_options=NULL;
+    fullDataBase=NULL;
+    delimiter= ":";
+    domainVect=NULL;
+
+    /*TEST*/
+    domainVect= new QVector<Domain>;
+    Domain *testDomain= new Domain("gmail", "popsslhost",995, "pop3tslhost", 555, "imaptslhost", 123, "imapsslhost", 125);
+    domainVect->push_back(*testDomain);
+
+    /*TEST*/
+
+    /*end of deault settings*/
+
     QPalette PW/*main*/,
             EB/*active*/ ,
             DP/*default*/,
@@ -21,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent):
     setMinimumSize(500, 550);
 
     /*setup status bar*/
-    QProgressBar * progressBar = new QProgressBar;
+    progressBar = new QProgressBar;
     MainBar = new QLabel;
     QFrame* statusBarFrame= new QFrame;
     statusBarFrame->setAutoFillBackground(true);
@@ -159,7 +173,7 @@ MainWindow::MainWindow(QWidget *parent):
     QWidget *container= new QWidget;
     QVBoxLayout *container_layout = new QVBoxLayout;
 
-    QTextEdit* test1= new QTextEdit;
+    test1= new QTextEdit;
     QTextEdit* test2= new QTextEdit;
 
 
@@ -741,31 +755,80 @@ void MainWindow::FullBase(){
     /*mid lay*/
     QGridLayout* midlay = new QGridLayout;
     midlay->setSpacing(10);
-    midlay->setMargin(10);
+    midlay->setMargin(0);
+
+    QBoxLayout * topMidlay= new QBoxLayout(QBoxLayout::LeftToRight);
+    topMidlay->setMargin(0);
+    topMidlay->setSpacing(10);
 
     QCheckBox* usePOP3TSL = new QCheckBox;
     QCheckBox* usePOP3SSL = new QCheckBox;
     QCheckBox* useIMAPTSL = new QCheckBox;
     QCheckBox* useIMAPSSL = new QCheckBox;
+    QLabel* delLabel= new QLabel("Delimiter:");
+    delLE=new QLineEdit;
+    QLabel* fullBaseLabel = new QLabel("Current base:");
+    QLabel* fullBaseFileName = new QLabel("none");
 
     QFont fnt1;
     fnt1.setPixelSize(15);
     fnt1.setItalic(false);
 
+    QFont fnt2;
+    fnt2.setPixelSize(15);
+    fnt2.setItalic(true);
+    fnt2.setUnderline(true);
+
+    fullBaseLabel->setFont(fnt1);
+    fullBaseFileName->setFont(fnt2);
+    fullBaseLabel->setAlignment(Qt::AlignRight);
+    fullBaseFileName->setAlignment(Qt::AlignLeft);
+
+    if (fullDataBase!=NULL){
+        fullBaseFileName->setText(fullDataBase->baseName());
+    }
+
     usePOP3TSL->setFont(fnt1);
     usePOP3SSL->setFont(fnt1);
     useIMAPTSL->setFont(fnt1);
     useIMAPSSL->setFont(fnt1);
+    delLabel->setFont(fnt1);
+    delLE->setFont(fnt1);
+
 
     usePOP3TSL->setText("POP3 TSL");
     usePOP3SSL->setText("POP3 SSL");
     useIMAPTSL->setText("IMAP TSL");
     useIMAPSSL->setText("IMAP SSL");
+    delLE->setText(delimiter);
+    delLE->setMaxLength(1);
+    delLE->setMaximumSize(17, 20);
 
-    midlay->addWidget(usePOP3TSL, 0, 0, Qt::AlignTop);
-    midlay->addWidget(usePOP3SSL, 0, 1, Qt::AlignTop);
-    midlay->addWidget(useIMAPTSL, 1, 0, Qt::AlignTop);
-    midlay->addWidget(useIMAPSSL, 1, 1, Qt::AlignTop);
+
+
+    QFrame *hor_line2 = new QFrame(window_options);
+    hor_line2->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line2->setLineWidth(1);
+    hor_line2->setMaximumHeight(5);
+
+    QFrame *hor_line3 = new QFrame(window_options);
+    hor_line3->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line3->setLineWidth(1);
+    hor_line3->setMaximumHeight(5);
+
+
+    topMidlay->addWidget(fullBaseLabel);
+    topMidlay->addWidget(fullBaseFileName);
+
+    midlay->addLayout(topMidlay,0, 0, 1, 2,Qt::AlignBottom );
+    midlay->addWidget(hor_line2, 1, 0, 1, 2,Qt::AlignVCenter );
+    midlay->addWidget(usePOP3TSL, 2, 0, Qt::AlignTop | Qt::AlignRight);
+    midlay->addWidget(usePOP3SSL, 2, 1, Qt::AlignTop | Qt::AlignLeft );
+    midlay->addWidget(useIMAPTSL, 3, 0, Qt::AlignTop | Qt::AlignRight);
+    midlay->addWidget(useIMAPSSL, 3, 1, Qt::AlignTop | Qt::AlignLeft);
+    midlay->addWidget(hor_line3, 4, 0, 1, 2,Qt::AlignVCenter );
+    midlay->addWidget(delLabel, 5, 0, Qt::AlignTop  |Qt::AlignRight );
+    midlay->addWidget(delLE, 5, 1, Qt::AlignTop| Qt::AlignLeft);
 
 
     /*end mid lay*/
@@ -826,7 +889,7 @@ void MainWindow::FullBase(){
     /*end bot lay*/
     window_options->AddMidLayout(midlay);
     window_options->AddBotLayout(botlay);
-
+    delimiter=delLE->text();
 
 }
 void MainWindow::GoodBase(){
@@ -845,8 +908,6 @@ void MainWindow::GoodBase(){
     /*midlay*/
 
     QBoxLayout* midlay= new QBoxLayout(QBoxLayout::RightToLeft);
-
-
 
 
 
@@ -876,6 +937,8 @@ void MainWindow::OnCloseOpenProxy(){
 }
 void MainWindow::OnFullBaseClose(){
     qDebug()<<"OnFullBaseClose";
+    delimiter=delLE->text();
+    delete delLE;
 }
 void MainWindow::OnGoodBaseClose(){
     qDebug()<<"OnGoodBaseClose";
@@ -929,11 +992,31 @@ void MainWindow::OnOpenProxyFile(){
 
 }
 QString MainWindow::OnOpenDataFileCLB(){
+    closeWindowIfOpened();
     /*Open data base*/
+    if (fullDataBase!=NULL){
+        delete fullDataBase;
+        fullDataBase=NULL;
+    }
 
+    QString DefaultPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);;
+    QString *fileName = new QString(QFileDialog::getOpenFileName(this, "Open Data Base", DefaultPath+"\\base","*.txt" ));
 
+    fullDataBase= new Presto(this, fileName);
+
+    fullDataBase->setProgressBar(progressBar);
+    fullDataBase->setDelimiter(delimiter);
+    fullDataBase->setDomains(domainVect);
+
+    if(!fullDataBase->openBase()){
+        delete fullDataBase;
+        fullDataBase=NULL;
+    }
+    MainBar->setText("Base opened, warnings: " +QString::number(fullDataBase->getWarnings()));
 }
 void MainWindow::OnCloseDataFileCLB(){
+
+
 
 }
 void MainWindow::OnCheckDataFileCLB(){
