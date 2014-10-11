@@ -63,6 +63,7 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     QFrame *hor_line = new QFrame(this);
     hor_line->setFrameStyle(QFrame::HLine| QFrame::Raised);
     hor_line->setLineWidth(1);
+    hor_line->setMaximumHeight(5);
 
     connect(newDomainLabel, SIGNAL(clicked()),SLOT(CreaLabelClick()));
     connect(openDomainLabel, SIGNAL(clicked()), SLOT(OpenLabelClick()));
@@ -84,13 +85,12 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     headerlay->addWidget(manageDomainsLabel,0);
 
     toplay->addLayout(headerlay, 0);
-
-    toplay->addWidget(hor_line, 1, Qt::AlignTop);
+    toplay->addWidget(hor_line, 0, Qt::AlignTop);
 
     QBoxLayout *biglay = new QBoxLayout(QBoxLayout::TopToBottom, this);
-    biglay->addLayout(toplay, 1);
-    biglay->addLayout(midlay, 5);
-    biglay->addLayout(botlay, 1);
+    biglay->addLayout(toplay, 0);
+    biglay->addLayout(midlay, 0);
+    biglay->addLayout(botlay, 0);
 
     grayZone= new QFrame(this);
     QPalette botGrayPal;
@@ -113,7 +113,6 @@ SubWindow::~SubWindow(){
     delete midlay;
     delete botlay;
     delete grayZone;
-
 }
 void SubWindow::CreaLabelClick(){
 
@@ -139,7 +138,7 @@ void SubWindow::AddBotLayout(QLayout *lay){
     botlay->addLayout(lay, 1);
 }
 void SubWindow::AddMidLayout(QLayout *lay){
-    midlay->addLayout(lay, 1);
+    midlay->addLayout(lay, 5);
 
 }
 bool SubWindow::IsActive(){

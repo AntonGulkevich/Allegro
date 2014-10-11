@@ -24,7 +24,7 @@ public:
     ~Presto();
     bool validation();
     void setProgressBar(QProgressBar * bar);
-    void setDelimiter(const QString &del);
+    void setDelimiter(QString* del);
     void setDomains(QVector<Domain> * domainsVector);
     QString  baseName();
     int getWarnings();

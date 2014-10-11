@@ -54,7 +54,7 @@ private Q_SLOTS:
     void OnFullBaseClose();
     void OnGoodBaseClose();
     void OnSearchBaseClose();
-    QString OnOpenDataFileCLB();
+    void OnOpenDataFileCLB();
     void OnCloseDataFileCLB();
     void OnCheckDataFileCLB();
 
@@ -112,6 +112,17 @@ private:
 
    Presto * fullDataBase;
    QString  delimiter;
+
+   bool pop3TSL;
+   bool pop3SSL;
+   bool imapTSL;
+   bool imapSSL;
+
+   QCheckBox* usePOP3TSL;
+   QCheckBox* usePOP3SSL;
+   QCheckBox* useIMAPTSL;
+   QCheckBox* useIMAPSSL;
+
    /*END of LOGIC*/
 
    /*TEST*/

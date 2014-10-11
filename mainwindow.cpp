@@ -10,6 +10,10 @@ MainWindow::MainWindow(QWidget *parent):
     fullDataBase=NULL;
     delimiter= ":";
     domainVect=NULL;
+    pop3TSL=false;
+    pop3SSL=false;
+    imapTSL=false;
+    imapSSL=false;
 
     /*TEST*/
     domainVect= new QVector<Domain>;
@@ -237,7 +241,7 @@ void MainWindow::On_Domain_Cursor_up(){
 void MainWindow::CreateLabelClicked(){
     closeWindowIfOpened();
 
-    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE", 300, 400);
+    window_options = new SubWindow(this, "CREATE", "OPEN", "MANAGE", 300, 350);
     window_options->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
     window_options->SetActiveFirstLabel(true);
 
@@ -253,7 +257,7 @@ void MainWindow::CreateLabelClicked(){
     botlay->setSpacing(5);
     botlay->setMargin(0);
 
-    midlay->setSpacing(7);
+    midlay->setSpacing(5);
     midlay->setMargin(10);
 
 
@@ -326,11 +330,9 @@ void MainWindow::CreateLabelClicked(){
     def.setColor(add_domain_CLB->backgroundRole(), QColor(238, 233, 233));
     add_domain_CLB->setDefaultPalette(def);
     add_domain_CLB->setActivePalette(def);
-    botlay->addStretch(1);
     botlay->addWidget(add_domain_CLB);
-    botlay->addStretch(1);
 
-    window_options->setGrayZone(window_options->width()-2, add_domain_CLB->height()+29, add_domain_CLB->pos().x()+1, add_domain_CLB->pos().y()+340);
+    window_options->setGrayZone(window_options->width()-2, add_domain_CLB->height()+29, add_domain_CLB->pos().x()+1, add_domain_CLB->pos().y()+290);
 
     window_options->AddMidLayout(midlay);
     window_options->AddBotLayout(botlay);
@@ -350,7 +352,7 @@ void MainWindow::OpenDomainLabelClicked(){
     connect(window_options, SIGNAL(OnClose()), SLOT(OnOpenDomainFileClose()));
     /*bim and bot lay*/
     QGridLayout *midlay = new QGridLayout();
-    QVBoxLayout *botlay= new QVBoxLayout();
+    QBoxLayout *botlay= new QBoxLayout(QBoxLayout::LeftToRight);
 
     botlay->setSpacing(5);
     botlay->setMargin(0);
@@ -381,6 +383,7 @@ void MainWindow::OpenDomainLabelClicked(){
     openDomainCLB->setIconOnLeave(QIcon(":/data/open_def.png"));
     openDomainCLB->setIconOnEnter(QIcon(":/data/open_sel.png"));
     openDomainCLB->setIconSize(QSize(20, 20));
+    openDomainCLB->setMaximumSize(200, 40);
 
     connect(openDomainCLB, SIGNAL(clicked()), SLOT(OnOpenDomainFile()));
 
@@ -394,7 +397,7 @@ void MainWindow::OpenDomainLabelClicked(){
 
     window_options->setGrayZone(window_options->width()-2, openDomainCLB->height()+23, openDomainCLB->pos().x()+1, openDomainCLB->pos().y()+106);
 
-    botlay->addWidget(openDomainCLB);
+    botlay->addWidget(openDomainCLB,0);
 
     window_options->AddMidLayout(midlay);
     window_options->AddBotLayout(botlay);
@@ -760,10 +763,10 @@ void MainWindow::FullBase(){
     topMidlay->setMargin(0);
     topMidlay->setSpacing(10);
 
-    QCheckBox* usePOP3TSL = new QCheckBox;
-    QCheckBox* usePOP3SSL = new QCheckBox;
-    QCheckBox* useIMAPTSL = new QCheckBox;
-    QCheckBox* useIMAPSSL = new QCheckBox;
+    usePOP3TSL = new QCheckBox;
+    usePOP3SSL = new QCheckBox;
+    useIMAPTSL = new QCheckBox;
+    useIMAPSSL = new QCheckBox;
     QLabel* delLabel= new QLabel("Delimiter:");
     delLE=new QLineEdit;
     QLabel* fullBaseLabel = new QLabel("Current base:");
@@ -783,10 +786,6 @@ void MainWindow::FullBase(){
     fullBaseLabel->setAlignment(Qt::AlignRight);
     fullBaseFileName->setAlignment(Qt::AlignLeft);
 
-    if (fullDataBase!=NULL){
-        fullBaseFileName->setText(fullDataBase->baseName());
-    }
-
     usePOP3TSL->setFont(fnt1);
     usePOP3SSL->setFont(fnt1);
     useIMAPTSL->setFont(fnt1);
@@ -798,6 +797,12 @@ void MainWindow::FullBase(){
     usePOP3SSL->setText("POP3 SSL");
     useIMAPTSL->setText("IMAP TSL");
     useIMAPSSL->setText("IMAP SSL");
+
+    usePOP3SSL->setChecked(pop3SSL);
+    usePOP3TSL->setChecked(pop3TSL);
+    useIMAPTSL->setChecked(imapTSL);
+    useIMAPSSL->setChecked(imapSSL);
+
     delLE->setText(delimiter);
     delLE->setMaxLength(1);
     delLE->setMaximumSize(17, 20);
@@ -887,6 +892,12 @@ void MainWindow::FullBase(){
     window_options->AddBotLayout(botlay);
     delimiter=delLE->text();
 
+    /*setup*/
+    if (fullDataBase!=NULL){
+        fullBaseFileName->setText(fullDataBase->baseName());
+        closeDataFileCLB->setEnabled(true);
+    }
+
 }
 void MainWindow::GoodBase(){
     closeWindowIfOpened();
@@ -924,32 +935,51 @@ void MainWindow::SearchBase(){
 }
 void MainWindow::OnCloseUrl(){
     qDebug()<<"OnCloseUrlSetup";
+    delete window_options;
 }
 void MainWindow::OnCloseManageProxy(){
     qDebug()<<"OnCloseManageProxy";
+    delete window_options;
 }
 void MainWindow::OnCloseOpenProxy(){
     qDebug()<<"OnCloseOpenProxy";
+    delete window_options;
 }
 void MainWindow::OnFullBaseClose(){
     qDebug()<<"OnFullBaseClose";
     delimiter=delLE->text();
+
+    pop3SSL=usePOP3SSL->checkState();
+    pop3TSL=usePOP3TSL->checkState();
+    imapSSL=useIMAPSSL->checkState();
+    imapTSL=useIMAPTSL->checkState();
+
     delete delLE;
+    delete usePOP3SSL;
+    delete usePOP3TSL;
+    delete useIMAPSSL;
+    delete useIMAPTSL;
+    delete window_options;
 }
 void MainWindow::OnGoodBaseClose(){
     qDebug()<<"OnGoodBaseClose";
+    delete window_options;
 }
 void MainWindow::OnSearchBaseClose(){
     qDebug()<<"OnSearchBaseClose";
+    delete window_options;
 }
 void MainWindow::OnOpenDomainFileClose(){
     qDebug()<<"OnOpenDomainFileClose";
+    delete window_options;
 }
 void MainWindow::OnManageDomainClose(){
     qDebug()<<"OnManageDomainClose";
+    delete window_options;
 }
 void MainWindow::OnCreateDomainClose(){
     qDebug()<<"OnCreateDomainClose";
+    delete window_options;
 }
 void MainWindow::OnDomainButtonClicked(){
     if(window_options){
@@ -987,7 +1017,7 @@ void MainWindow::closeWindowIfOpened(){
 void MainWindow::OnOpenProxyFile(){
 
 }
-QString MainWindow::OnOpenDataFileCLB(){
+void MainWindow::OnOpenDataFileCLB(){
     closeWindowIfOpened();
     /*Open data base*/
     if (fullDataBase!=NULL){
@@ -998,20 +1028,27 @@ QString MainWindow::OnOpenDataFileCLB(){
     QString DefaultPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);;
     QString *fileName = new QString(QFileDialog::getOpenFileName(this, "Open Data Base", DefaultPath+"\\base","*.txt" ));
 
+    if(*fileName==""){
+        delete fullDataBase;
+        fullDataBase=NULL;
+        return;
+    }
+
     fullDataBase= new Presto(this, fileName);
 
     fullDataBase->setProgressBar(progressBar);
-    fullDataBase->setDelimiter(delimiter);
+    fullDataBase->setDelimiter(&delimiter);
     fullDataBase->setDomains(domainVect);
+    fullDataBase->openBase();
 
-    if(!fullDataBase->openBase()){
-        delete fullDataBase;
-        fullDataBase=NULL;
-    }
     MainBar->setText("Base opened, warnings: " +QString::number(fullDataBase->getWarnings()));
 }
 void MainWindow::OnCloseDataFileCLB(){
-
+    window_options->Close();
+    window_options=NULL;
+    MainBar->setText(fullDataBase->baseName()+" closed.");
+    delete fullDataBase;
+    fullDataBase=NULL;
 
 
 }

@@ -58,10 +58,10 @@ void Presto::fillVector(const QString &str){
     }
     progressBar->reset();
 }
-void Presto::setDelimiter(const QString &del){
-    delimiter= new QString(del);
+void Presto::setDelimiter(QString* del){
+    delimiter= del;
 }
-void Presto::setDomains(QVector<Domain> * domainsVector){
+void Presto::setDomains(QVector <Domain>* domainsVector){
     domains=domainsVector;
 }
 Domain* Presto::findDomain(const QString & domainName){
