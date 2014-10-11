@@ -123,7 +123,7 @@ private:
    AGButton* maximizeButton;
 
    QTableWidget* domainsAccount;
-   QProgressBar * progressBar;
+   QProgressBar* progressBar;
 
    QPoint mpos;
 
@@ -133,13 +133,13 @@ private:
 
    /*LOGIC*/
 
-   QVector <Domain> *domainVect;
-   QTableWidget * DomainTable;
+   QVector <Domain>* domainVect;
+   QTableWidget* DomainTable;
    QLabel* fullBaseFileName;
    AGButton* checkDataFileCLB;
    AGButton* closeDataFileCLB;
 
-   Presto * fullDataBase;
+   Presto* fullDataBase;
    QString  delimiter;
 
    bool pop3TSL;
