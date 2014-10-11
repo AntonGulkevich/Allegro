@@ -3,7 +3,6 @@
 ExLabel::ExLabel(const QString &text, QWidget *parent) :
     QLabel(text, parent)
 {
-
     selectedFont= new QFont();
     unselectedFont = new QFont();
     activeFont= new QFont();
@@ -11,6 +10,9 @@ ExLabel::ExLabel(const QString &text, QWidget *parent) :
     active=false;
 }
 ExLabel::~ExLabel(){
+    delete selectedFont;
+    delete unselectedFont;
+    delete activeFont;
 
 }
 void ExLabel::leaveEvent(QEvent *event){

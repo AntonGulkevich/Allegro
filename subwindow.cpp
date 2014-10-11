@@ -5,6 +5,7 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
                      int w, int h) :
     QFrame(parent)
 {
+
     active=true;
     QPalette PW;
     PW.setColor(backgroundRole(), Qt::white);
@@ -13,7 +14,6 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     setLineWidth(3);
     resize(w,h);
     setAutoFillBackground(true);
-    setVisible(true);
     setPalette(PW);
 
     newDomainLabel = new ExLabel(firstLabel, this);
@@ -80,9 +80,9 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     headerlay->setMargin(10);
 
 
-    headerlay->addWidget(newDomainLabel, 0);
-    headerlay->addWidget(openDomainLabel, 0);
-    headerlay->addWidget(manageDomainsLabel,0);
+    headerlay->addWidget(newDomainLabel, 1);
+    headerlay->addWidget(openDomainLabel, 1);
+    headerlay->addWidget(manageDomainsLabel,1);
 
     toplay->addLayout(headerlay, 0);
     toplay->addWidget(hor_line, 0, Qt::AlignTop);
@@ -99,6 +99,8 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     grayZone->setPalette(botGrayPal);
     grayZone->setAutoFillBackground(true);
     grayZone->setVisible(false);
+
+    hide();
 
 }
 void SubWindow::Close(){
@@ -154,7 +156,6 @@ void SubWindow::SetActiveThirdLabel(bool state){
     manageDomainsLabel->setActive(state);
 }
 void SubWindow::focusOutEvent(QFocusEvent *event){
-    close();
     qDebug()<<"focus out";
     QWidget::focusOutEvent(event);
 }
@@ -168,4 +169,17 @@ void SubWindow::setGrayZone(int w, int h, int top, int left){
     grayZone->move(top, left);
     grayZone->setVisible(true);
 
+}
+void SubWindow::mousePressEvent(QMouseEvent *event){
+    if (event->button()&&Qt::LeftButton){
+        int leftX, leftY, botX, botY;
+        leftX=pos().x();
+        leftY=pos().y();
+        botX=leftX+width();
+        botY=leftY+height();
+        if(event->pos().x()>botX||event->pos().x()<leftX||event->pos().y()>botY||event->pos().y()<leftY){
+           hide();
+        }
+
+    }
 }

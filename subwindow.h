@@ -7,6 +7,7 @@
 #include <QBoxLayout>
 #include <QGridLayout>
 #include <QLayout>
+#include <QMouseEvent>
 
 #include "exlabel.h"
 
@@ -53,6 +54,7 @@ protected:
     //void QWidget::focusOutEvent ( QFocusEvent * event )   [virtual protected]
     void focusOutEvent(QFocusEvent * event);
     void closeEvent(QCloseEvent * event);
+    void mousePressEvent(QMouseEvent * event);
 };
 
 #endif // SUBWINDOW_H

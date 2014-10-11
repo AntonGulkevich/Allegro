@@ -75,6 +75,18 @@ public:
     void setupVectorDomains();
     void closeWindowIfOpened();
 
+    void setupWindowDomainManage(QWidget *prnt);
+    void setupWindowDomainOpen (QWidget *prnt);
+    void setupWindowDomainCreate (QWidget *prnt);
+
+    void setupWindowProxyUrl (QWidget *prnt);
+    void setupWindowProxyFile (QWidget *prnt);
+    void setupWindowProxyManage (QWidget *prnt);
+
+    void setupWindowBaseFull(QWidget *prnt);
+    void setupWindowBaseGood (QWidget *prnt);
+    void setupWindowBaseSearch (QWidget *prnt);
+
 signals:
 
 public slots:
@@ -87,7 +99,20 @@ protected:
 private:
    /*GUI*/
    QLabel *MainBar;
-   SubWindow* window_options;
+
+   SubWindow* activeWindow;
+
+   SubWindow* windowDomainManage;
+   SubWindow* windowDomainOpen;
+   SubWindow* windowDomainCreate;
+
+   SubWindow* windowProxyUrl;
+   SubWindow* windowProxyFile;
+   SubWindow* windowProxyManage;
+
+   SubWindow* windowBaseFull;
+   SubWindow* windowBaseGood;
+   SubWindow* windowBaseSearch;
 
    AGButton* addNewDomain;
    AGButton* baseButton;
@@ -109,6 +134,10 @@ private:
    /*LOGIC*/
 
    QVector <Domain> *domainVect;
+   QTableWidget * DomainTable;
+   QLabel* fullBaseFileName;
+   AGButton* checkDataFileCLB;
+   AGButton* closeDataFileCLB;
 
    Presto * fullDataBase;
    QString  delimiter;
@@ -118,10 +147,16 @@ private:
    bool imapTSL;
    bool imapSSL;
 
+   bool useURLproxy;
+   bool useFILEproxy;
+
    QCheckBox* usePOP3TSL;
    QCheckBox* usePOP3SSL;
    QCheckBox* useIMAPTSL;
    QCheckBox* useIMAPSSL;
+
+   QCheckBox* useUrlCB;
+   QCheckBox* useFileCB;
 
    /*END of LOGIC*/
 
