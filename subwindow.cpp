@@ -16,17 +16,17 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     setAutoFillBackground(true);
     setPalette(PW);
 
-    newDomainLabel = new ExLabel(firstLabel, this);
-    newDomainLabel->setAlignment(Qt::AlignCenter);
+    first_label = new ExLabel(firstLabel, this);
+    first_label->setAlignment(Qt::AlignCenter);
 
-    openDomainLabel = new ExLabel(seclabel,this);
-    openDomainLabel->setAlignment(Qt::AlignCenter);
+    second_label = new ExLabel(seclabel,this);
+    second_label->setAlignment(Qt::AlignCenter);
 
-    manageDomainsLabel = new ExLabel(thrdlabel,this);
-    manageDomainsLabel->setAlignment(Qt::AlignCenter);
+    third_label = new ExLabel(thrdlabel,this);
+    third_label->setAlignment(Qt::AlignCenter);
 
     QPalette pal;
-    pal.setColor(newDomainLabel->foregroundRole(), QColor(0, 90, 255));
+    pal.setColor(first_label->foregroundRole(), QColor(0, 90, 255));
 
 
     QFont unsel;
@@ -44,30 +44,30 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     act.setBold(true);
     act.setUnderline(true);
 
-    newDomainLabel->setPalette(pal);
-    newDomainLabel->SetSelectedFont(sel);
-    newDomainLabel->SetUnSelectedFont(unsel);
-    newDomainLabel->SetActiveFont(act);
+    first_label->setPalette(pal);
+    first_label->SetSelectedFont(sel);
+    first_label->SetUnSelectedFont(unsel);
+    first_label->SetActiveFont(act);
 
 
-    openDomainLabel->setPalette(pal);
-    openDomainLabel->SetSelectedFont(sel);
-    openDomainLabel->SetUnSelectedFont(unsel);
-    openDomainLabel->SetActiveFont(act);
+    second_label->setPalette(pal);
+    second_label->SetSelectedFont(sel);
+    second_label->SetUnSelectedFont(unsel);
+    second_label->SetActiveFont(act);
 
-    manageDomainsLabel->setPalette(pal);
-    manageDomainsLabel->SetSelectedFont(sel);
-    manageDomainsLabel->SetUnSelectedFont(unsel);
-    manageDomainsLabel->SetActiveFont(act);
+    third_label->setPalette(pal);
+    third_label->SetSelectedFont(sel);
+    third_label->SetUnSelectedFont(unsel);
+    third_label->SetActiveFont(act);
 
     QFrame *hor_line = new QFrame(this);
     hor_line->setFrameStyle(QFrame::HLine| QFrame::Raised);
     hor_line->setLineWidth(1);
     hor_line->setMaximumHeight(5);
 
-    connect(newDomainLabel, SIGNAL(clicked()),SLOT(CreaLabelClick()));
-    connect(openDomainLabel, SIGNAL(clicked()), SLOT(OpenLabelClick()));
-    connect(manageDomainsLabel, SIGNAL(clicked()), SLOT(ManageLabelClick()));
+    connect(first_label, SIGNAL(clicked()),SLOT(firstLabelClick()));
+    connect(second_label, SIGNAL(clicked()), SLOT(secondLabelClick()));
+    connect(third_label, SIGNAL(clicked()), SLOT(thirdLabelClick()));
 
     toplay = new QBoxLayout(QBoxLayout::TopToBottom);
     midlay = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -80,9 +80,9 @@ SubWindow::SubWindow(QWidget *parent , const QString &firstLabel, const QString 
     headerlay->setMargin(10);
 
 
-    headerlay->addWidget(newDomainLabel, 1);
-    headerlay->addWidget(openDomainLabel, 1);
-    headerlay->addWidget(manageDomainsLabel,1);
+    headerlay->addWidget(first_label, 1);
+    headerlay->addWidget(second_label, 1);
+    headerlay->addWidget(third_label,1);
 
     toplay->addLayout(headerlay, 0);
     toplay->addWidget(hor_line, 0, Qt::AlignTop);
@@ -108,25 +108,25 @@ void SubWindow::Close(){
     close();
 }
 SubWindow::~SubWindow(){
-    delete newDomainLabel;
-    delete openDomainLabel;
-    delete manageDomainsLabel;
+    delete first_label;
+    delete second_label;
+    delete third_label;
     delete toplay;
     delete midlay;
     delete botlay;
     delete grayZone;
 }
-void SubWindow::CreaLabelClick(){
+void SubWindow::firstLabelClick(){
 
-    emit OnCreateLabelClicked();
+    emit OnFirstLabelClicked();
 }
-void SubWindow::OpenLabelClick(){
+void SubWindow::secondLabelClick(){
 
-    emit OnOpenDomainLabelClicked();
+    emit OnSecondLabelClicked();
 }
-void SubWindow::ManageLabelClick(){
+void SubWindow::thirdLabelClick(){
 
-    emit OnManageDomainsLabelClicked();
+    emit OnThirdLabelClicked();
 }
 /*
 void SubWindow::leaveEvent(QEvent *event){
@@ -147,13 +147,13 @@ bool SubWindow::IsActive(){
     return active;
 }
 void SubWindow::SetActiveFirstLabel(bool state){
-    newDomainLabel->setActive(state);
+    first_label->setActive(state);
 }
 void SubWindow::SetActiveSecLabel(bool state){
-    openDomainLabel->setActive(state);
+    second_label->setActive(state);
 }
 void SubWindow::SetActiveThirdLabel(bool state){
-    manageDomainsLabel->setActive(state);
+    third_label->setActive(state);
 }
 void SubWindow::focusOutEvent(QFocusEvent *event){
     qDebug()<<"focus out";
@@ -169,17 +169,7 @@ void SubWindow::setGrayZone(int w, int h, int top, int left){
     grayZone->move(top, left);
     grayZone->setVisible(true);
 
-}
+}/*
 void SubWindow::mousePressEvent(QMouseEvent *event){
-    if (event->button()&&Qt::LeftButton){
-        int leftX, leftY, botX, botY;
-        leftX=pos().x();
-        leftY=pos().y();
-        botX=leftX+width();
-        botY=leftY+height();
-        if(event->pos().x()>botX||event->pos().x()<leftX||event->pos().y()>botY||event->pos().y()<leftY){
-           hide();
-        }
 
-    }
-}
+}*/

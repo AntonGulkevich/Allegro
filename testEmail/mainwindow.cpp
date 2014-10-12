@@ -35,11 +35,6 @@ void MainWindow::on_pushButton_clicked()
     socket->setProxy(proxy);
 
 
-
-
-
-
-
     socket->connectToHostEncrypted("pop.yandex.com",995);
     socket->waitForConnected();
 

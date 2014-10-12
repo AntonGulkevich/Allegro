@@ -10,17 +10,17 @@ MainWindow::MainWindow(QWidget *parent):
     delimiter= ":";
     domainVect=NULL;
 
-    pop3TSL=false;
-    pop3SSL=false;
-    imapTSL=false;
-    imapSSL=false;
+    imap=false;
+    pop3=false;
+    TSLSSL=false;
+    encrNone=false;
 
     useURLproxy=false;
     useFILEproxy=false;
 
     /*TEST*/
     domainVect= new QVector<Domain>;
-    Domain *testDomain= new Domain("gmail", "popsslhost",995, "pop3tslhost", 555, "imaptslhost", 123, "imapsslhost", 125);
+    Domain *testDomain= new Domain("gmail", "pop3host",995,"imaphost", 123);
     domainVect->push_back(*testDomain);
 
     /*TEST*/
@@ -249,12 +249,6 @@ MainWindow::MainWindow(QWidget *parent):
     windowBaseGood= NULL;
     windowBaseSearch= NULL;
 
-
-    /*
-    setupWindowDomainManage(this);
-    setupWindowDomainOpen(this);
-    setupWindowDomainCreate(this);
-*/
     /*end of setup subwindows*/
 
 
@@ -310,18 +304,24 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         this->move(newpos);
     }
 }
-void MainWindow::mouseReleaseEvent(QMouseEvent *)
+void MainWindow::mouseReleaseEvent(QMouseEvent * )
 {
+    qDebug()<<mpos.x();
+    qDebug()<<mpos.y();
+
 
     if(activeWindow){
         int leftX, leftY, botX, botY;
+
         leftX=activeWindow->pos().x();
         leftY=activeWindow->pos().y();
         botX=leftX+activeWindow->width();
         botY=leftY+activeWindow->height();
+
         if(mpos.x()>botX||mpos.x()<leftX||mpos.y()>botY||mpos.y()<leftY){
             closeWindowIfOpened();
         }
+
     }
     mpos = QPoint(-1, -1);
 }
@@ -403,10 +403,10 @@ void MainWindow::OnFullBaseClose(){
     qDebug()<<"OnFullBaseClose";
     delimiter=delLE->text();
 
-    pop3SSL=usePOP3SSL->checkState();
-    pop3TSL=usePOP3TSL->checkState();
-    imapSSL=useIMAPSSL->checkState();
-    imapTSL=useIMAPTSL->checkState();
+    pop3=usePOP3->checkState();
+    imap=useIMAP->checkState();
+    encrNone=useNone->checkState();
+    TSLSSL=useTSLSSL->checkState();
 }
 void MainWindow::OnGoodBaseClose(){
     qDebug()<<"OnGoodBaseClose";
@@ -526,8 +526,8 @@ void MainWindow::setupWindowDomainCreate(QWidget *prnt){
     windowDomainCreate->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
     windowDomainCreate->SetActiveFirstLabel(true);
 
-    connect(windowDomainCreate, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OpenDomainLabelClicked()));
-    connect(windowDomainCreate, SIGNAL(OnManageDomainsLabelClicked()), SLOT(ManageDomainsLabelClicked()));
+    connect(windowDomainCreate, SIGNAL(OnSecondLabelClicked()), SLOT(OpenDomainLabelClicked()));
+    connect(windowDomainCreate, SIGNAL(OnThirdLabelClicked()), SLOT(ManageDomainsLabelClicked()));
     connect(windowDomainCreate, SIGNAL(OnClose()), SLOT(OnCreateDomainClose()));
 
     QGridLayout *midlay = new QGridLayout();
@@ -623,8 +623,8 @@ void MainWindow::setupWindowDomainOpen (QWidget *prnt){
     windowDomainOpen->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
     windowDomainOpen->SetActiveSecLabel(true);
 
-    connect(windowDomainOpen, SIGNAL(OnCreateLabelClicked()), SLOT(CreateLabelClicked()));
-    connect(windowDomainOpen, SIGNAL(OnManageDomainsLabelClicked()), SLOT(ManageDomainsLabelClicked()));
+    connect(windowDomainOpen, SIGNAL(OnFirstLabelClicked()), SLOT(CreateLabelClicked()));
+    connect(windowDomainOpen, SIGNAL(OnThirdLabelClicked()), SLOT(ManageDomainsLabelClicked()));
     connect(windowDomainOpen, SIGNAL(OnClose()), SLOT(OnOpenDomainFileClose()));
     /*bim and bot lay*/
     QGridLayout *midlay = new QGridLayout();
@@ -687,8 +687,8 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
 
     windowDomainManage->SetActiveThirdLabel(true);
 
-    connect(windowDomainManage, SIGNAL(OnCreateLabelClicked()), SLOT(CreateLabelClicked()));
-    connect(windowDomainManage, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OpenDomainLabelClicked()));
+    connect(windowDomainManage, SIGNAL(OnFirstLabelClicked()), SLOT(CreateLabelClicked()));
+    connect(windowDomainManage, SIGNAL(OnSecondLabelClicked()), SLOT(OpenDomainLabelClicked()));
     connect(windowDomainManage, SIGNAL(OnClose()), SLOT(OnManageDomainClose()));
 
     QBoxLayout *midlay = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -803,8 +803,8 @@ void MainWindow::setupWindowProxyUrl (QWidget *prnt){
     windowProxyUrl->resize(300, 200);
     windowProxyUrl->SetActiveSecLabel(true);
 
-    connect(windowProxyUrl, SIGNAL(OnCreateLabelClicked()), SLOT(OnManageProxyClicked()));
-    connect(windowProxyUrl, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnOpenProxyClicked()));
+    connect(windowProxyUrl, SIGNAL(OnFirstLabelClicked()), SLOT(OnManageProxyClicked()));
+    connect(windowProxyUrl, SIGNAL(OnThirdLabelClicked()), SLOT(OnOpenProxyClicked()));
     connect(windowProxyUrl, SIGNAL(OnClose()), SLOT(OnCloseUrl()));
 
 }
@@ -815,8 +815,8 @@ void MainWindow::setupWindowProxyFile (QWidget *prnt){
     windowProxyFile->move(proxyButton->pos().x(), proxyButton->pos().y()+40);
     windowProxyFile->SetActiveThirdLabel(true);
 
-    connect(windowProxyFile, SIGNAL(OnCreateLabelClicked()), SLOT(OnManageProxyClicked()));
-    connect(windowProxyFile, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnUrlProxyClicked()));
+    connect(windowProxyFile, SIGNAL(OnFirstLabelClicked()), SLOT(OnManageProxyClicked()));
+    connect(windowProxyFile, SIGNAL(OnSecondLabelClicked()), SLOT(OnUrlProxyClicked()));
     connect(windowProxyFile, SIGNAL(OnClose()), SLOT(OnCloseOpenProxy()));
 
     QGridLayout *midlay = new QGridLayout();
@@ -876,8 +876,8 @@ void MainWindow::setupWindowProxyManage (QWidget *prnt){
     windowProxyManage->resize(300, 230);
     windowProxyManage->SetActiveFirstLabel(true);
 
-    connect(windowProxyManage, SIGNAL(OnOpenDomainLabelClicked()), SLOT(OnUrlProxyClicked()));
-    connect(windowProxyManage, SIGNAL(OnManageDomainsLabelClicked()), SLOT(OnOpenProxyClicked()));
+    connect(windowProxyManage, SIGNAL(OnSecondLabelClicked()), SLOT(OnUrlProxyClicked()));
+    connect(windowProxyManage, SIGNAL(OnThirdLabelClicked()), SLOT(OnOpenProxyClicked()));
     connect(windowProxyManage, SIGNAL(OnClose()), SLOT(OnCloseManageProxy()));
 
     /*midlay*/
@@ -970,8 +970,8 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
     windowBaseFull->resize(300, 350);
     windowBaseFull->SetActiveFirstLabel(true);
 
-    connect(windowBaseFull, SIGNAL(OnOpenDomainLabelClicked()), SLOT(GoodBase()));
-    connect(windowBaseFull, SIGNAL(OnManageDomainsLabelClicked()), SLOT(SearchBase()));
+    connect(windowBaseFull, SIGNAL(OnSecondLabelClicked()), SLOT(GoodBase()));
+    connect(windowBaseFull, SIGNAL(OnThirdLabelClicked()), SLOT(SearchBase()));
     connect(windowBaseFull, SIGNAL(OnClose()), SLOT(OnFullBaseClose()));
 
     /*mid lay*/
@@ -983,10 +983,10 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
     topMidlay->setMargin(0);
     topMidlay->setSpacing(10);
 
-    usePOP3TSL = new QCheckBox;
-    usePOP3SSL = new QCheckBox;
-    useIMAPTSL = new QCheckBox;
-    useIMAPSSL = new QCheckBox;
+    useIMAP = new QCheckBox;
+    usePOP3 = new QCheckBox;
+    useTSLSSL = new QCheckBox;
+    useNone = new QCheckBox;
     QLabel* delLabel= new QLabel("Delimiter:");
     delLE=new QLineEdit;
     QLabel* fullBaseLabel = new QLabel("Current base:");
@@ -1006,22 +1006,25 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
     fullBaseLabel->setAlignment(Qt::AlignRight);
     fullBaseFileName->setAlignment(Qt::AlignLeft);
 
-    usePOP3TSL->setFont(fnt1);
-    usePOP3SSL->setFont(fnt1);
-    useIMAPTSL->setFont(fnt1);
-    useIMAPSSL->setFont(fnt1);
+    useIMAP->setFont(fnt1);
+    usePOP3->setFont(fnt1);
+    useTSLSSL->setFont(fnt1);
+    useNone->setFont(fnt1);
+
     delLabel->setFont(fnt1);
     delLE->setFont(fnt1);
 
-    usePOP3TSL->setText("POP3 TSL");
-    usePOP3SSL->setText("POP3 SSL");
-    useIMAPTSL->setText("IMAP TSL");
-    useIMAPSSL->setText("IMAP SSL");
+    useIMAP->setText("IMAP");
+    usePOP3->setText("POP3");
+    useTSLSSL->setText("SSL/TLS");
+    useNone->setText  ("No encryption");
+    useTSLSSL->setMinimumWidth(120);
+    useNone->setMinimumWidth(120);
 
-    usePOP3SSL->setChecked(pop3SSL);
-    usePOP3TSL->setChecked(pop3TSL);
-    useIMAPTSL->setChecked(imapTSL);
-    useIMAPSSL->setChecked(imapSSL);
+    usePOP3->setChecked(pop3);
+    useIMAP->setChecked(imap);
+    useTSLSSL->setChecked(TSLSSL);
+    useNone->setChecked(encrNone);
 
     delLE->setText(delimiter);
     delLE->setMaxLength(1);
@@ -1037,19 +1040,26 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
     hor_line3->setLineWidth(1);
     hor_line3->setMaximumHeight(5);
 
+    QFrame *vLine = new QFrame(windowBaseFull);
+    vLine->setFrameStyle(QFrame::VLine| QFrame::Raised);
+    vLine->setLineWidth(1);
+    vLine->setMaximumHeight(90);
+
 
     topMidlay->addWidget(fullBaseLabel);
     topMidlay->addWidget(fullBaseFileName);
+    midlay->addLayout(topMidlay,0, 0, 1, 3, Qt::AlignBottom );
+    midlay->addWidget(hor_line2,1, 0, 1, 3, Qt::AlignVCenter );
+    midlay->addWidget(usePOP3,  2, 0,       Qt::AlignTop | Qt::AlignHCenter);
+    midlay->addWidget(useTSLSSL,  2, 2,       Qt::AlignTop | Qt::AlignHCenter );
+    midlay->addWidget(useIMAP,3, 0,       Qt::AlignTop | Qt::AlignHCenter);
+    midlay->addWidget(useNone,  3, 2,       Qt::AlignTop | Qt::AlignHCenter);
+    midlay->addWidget(hor_line3,4, 0, 1, 3, Qt::AlignVCenter );
+    midlay->addWidget(delLabel, 5, 0,       Qt::AlignTop  |Qt::AlignRight );
+    midlay->addWidget(delLE,    5, 1,       Qt::AlignTop| Qt::AlignLeft);
+    midlay->addWidget(vLine,1, 1, 4, 1 );
 
-    midlay->addLayout(topMidlay,0, 0, 1, 2,Qt::AlignBottom );
-    midlay->addWidget(hor_line2, 1, 0, 1, 2,Qt::AlignVCenter );
-    midlay->addWidget(usePOP3TSL, 2, 0, Qt::AlignTop | Qt::AlignRight);
-    midlay->addWidget(usePOP3SSL, 2, 1, Qt::AlignTop | Qt::AlignLeft );
-    midlay->addWidget(useIMAPTSL, 3, 0, Qt::AlignTop | Qt::AlignRight);
-    midlay->addWidget(useIMAPSSL, 3, 1, Qt::AlignTop | Qt::AlignLeft);
-    midlay->addWidget(hor_line3, 4, 0, 1, 2,Qt::AlignVCenter );
-    midlay->addWidget(delLabel, 5, 0, Qt::AlignTop  |Qt::AlignRight );
-    midlay->addWidget(delLE, 5, 1, Qt::AlignTop| Qt::AlignLeft);
+
 
 
     /*end mid lay*/
@@ -1120,8 +1130,8 @@ void MainWindow::setupWindowBaseGood (QWidget *prnt){
     windowBaseGood->resize(300, 200);
     windowBaseGood->SetActiveSecLabel(true);
 
-    connect(windowBaseGood, SIGNAL(OnCreateLabelClicked()), SLOT(FullBase()));
-    connect(windowBaseGood, SIGNAL(OnManageDomainsLabelClicked()), SLOT(SearchBase()));
+    connect(windowBaseGood, SIGNAL(OnFirstLabelClicked()), SLOT(FullBase()));
+    connect(windowBaseGood, SIGNAL(OnThirdLabelClicked()), SLOT(SearchBase()));
     connect(windowBaseGood, SIGNAL(OnClose()), SLOT(OnGoodBaseClose()));
 
     /*midlay*/
@@ -1136,8 +1146,8 @@ void MainWindow::setupWindowBaseSearch (QWidget *prnt){
     windowBaseSearch->resize(300, 200);
     windowBaseSearch->SetActiveThirdLabel(true);
 
-    connect(windowBaseSearch, SIGNAL(OnCreateLabelClicked()), SLOT(FullBase()));
-    connect(windowBaseSearch, SIGNAL(OnOpenDomainLabelClicked()), SLOT(GoodBase()));
+    connect(windowBaseSearch, SIGNAL(OnFirstLabelClicked()), SLOT(FullBase()));
+    connect(windowBaseSearch, SIGNAL(OnSecondLabelClicked()), SLOT(GoodBase()));
     connect(windowBaseSearch, SIGNAL(OnClose()), SLOT(OnSearchBaseClose()));
 
 }

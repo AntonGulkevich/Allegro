@@ -10,7 +10,7 @@ void loadModules(QSplashScreen* psplash)
     time.start();
 
     for (int i = 0; i < 100; ) {
-        if (time.elapsed() > 40) {
+        if (time.elapsed() > 10) {
             time.start();
             ++i;
         }

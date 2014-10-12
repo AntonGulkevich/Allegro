@@ -28,21 +28,21 @@ public:
     void setGrayZone(int width, int heigth, int top, int left);
 
 signals:
-    void OnCreateLabelClicked();
-    void OnOpenDomainLabelClicked();
-    void OnManageDomainsLabelClicked();
+    void OnFirstLabelClicked();
+    void OnSecondLabelClicked();
+    void OnThirdLabelClicked();
     void OnClose();
 
 public slots:
-    void CreaLabelClick();
-    void OpenLabelClick();
-    void ManageLabelClick();
+    void firstLabelClick();
+    void secondLabelClick();
+    void thirdLabelClick();
 
 private:
     bool active;
-    ExLabel* newDomainLabel;
-    ExLabel* openDomainLabel;
-    ExLabel* manageDomainsLabel;
+    ExLabel* first_label;
+    ExLabel* second_label;
+    ExLabel* third_label;
     QBoxLayout* toplay;
     QBoxLayout* midlay;
     QBoxLayout* botlay;
@@ -54,7 +54,7 @@ protected:
     //void QWidget::focusOutEvent ( QFocusEvent * event )   [virtual protected]
     void focusOutEvent(QFocusEvent * event);
     void closeEvent(QCloseEvent * event);
-    void mousePressEvent(QMouseEvent * event);
+   // void mousePressEvent(QMouseEvent * event);
 };
 
 #endif // SUBWINDOW_H

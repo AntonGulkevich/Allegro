@@ -66,7 +66,6 @@ void Presto::setDomains(QVector <Domain>* domainsVector){
 }
 Domain* Presto::findDomain(const QString & domainName){
     return &(domains->last());
-
 }
 QString Presto::baseName(){
     return fileName->right(fileName->length()-fileName->lastIndexOf("/")-1);

@@ -7,14 +7,12 @@ class Domain
 {
 private:
     QString name;
-    QString pop3TslHost;
-    QString pop3SslHost;
-    QString imapTslHost;
-    QString imapSslHost;
-    int imapTslPort;
-    int imapSslPort;
-    int pop3SslPort;
-    int pop3TslPort;
+
+    QString pop3Host;
+    int pop3Port;
+
+    QString imapHost;
+    int imapPort;
 
     bool selected;
 
@@ -22,19 +20,7 @@ public:
     ~Domain();
     Domain();
     Domain(const Domain &_domain);
-    Domain(QString _name,
-
-           QString _pop3SSLhost,
-           int _pop3SSLport,
-
-           QString _pop3TSLhost,
-           int _pop3TSLport,
-
-           QString _imapTSLhost,
-           int _imapTSLport,
-
-           QString _imapSSLHost,
-           int _imapSSLport);
+    Domain(QString _name, QString _pop3host, int _pop3port, QString _imaphost, int _imapport);
     void setSelection(bool state);
     bool isSelected();
 };

@@ -142,18 +142,18 @@ private:
    Presto* fullDataBase;
    QString  delimiter;
 
-   bool pop3TSL;
-   bool pop3SSL;
-   bool imapTSL;
-   bool imapSSL;
+   bool pop3;
+   bool imap;
+   bool TSLSSL;
+   bool encrNone;
 
    bool useURLproxy;
    bool useFILEproxy;
 
-   QCheckBox* usePOP3TSL;
-   QCheckBox* usePOP3SSL;
-   QCheckBox* useIMAPTSL;
-   QCheckBox* useIMAPSSL;
+   QCheckBox* useIMAP;
+   QCheckBox* usePOP3;
+   QCheckBox* useTSLSSL;
+   QCheckBox* useNone;
 
    QCheckBox* useUrlCB;
    QCheckBox* useFileCB;
