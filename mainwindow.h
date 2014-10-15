@@ -17,6 +17,7 @@
 #include <QVector>
 #include <QProgressBar>
 #include <QFileDialog>
+#include <QErrorMessage>
 
 
 #include "agbutton.h"
@@ -39,6 +40,7 @@ private Q_SLOTS:
     void OnOpenDomainFileClose();
     void OnCreateDomainClose();
     void OnManageDomainClose();
+    void OnAddDomainClicked();
 
     void OnManageProxyClicked();    
     void OnUrlProxyClicked();    
@@ -74,6 +76,9 @@ public:
     ~MainWindow();
     void setupVectorDomains();
     void closeWindowIfOpened();
+    void updateDomainTable();
+    void updateDomainVector(int pos, bool state);
+    bool checkLineEdit(QLineEdit* lineEdit);
 
     void setupWindowDomainManage(QWidget *prnt);
     void setupWindowDomainOpen (QWidget *prnt);
@@ -138,6 +143,15 @@ private:
    QLabel* fullBaseFileName;
    AGButton* checkDataFileCLB;
    AGButton* closeDataFileCLB;
+
+   QLineEdit* d_name_le;
+   QLineEdit *d_pop3_host_le;
+   QLineEdit *d_pop3_port_le;
+   QLineEdit *d_imap_host_le;
+   QLineEdit *d_imap_port_le;
+   QLineEdit *d_noEncr_pop3_port_le;
+   QLineEdit *d_noEncr_imap_port_le;
+
 
    Presto* fullDataBase;
    QString  delimiter;

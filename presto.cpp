@@ -19,8 +19,9 @@ bool Presto::openBase(){
         return 0;
     QString ResultString;
     ResultString=QString::fromUtf8(DBFile.readAll());
-    fillVector(ResultString);
     DBFile.close();
+
+    fillVector(ResultString);    
     return 1;
 }
 bool Presto::validation(){

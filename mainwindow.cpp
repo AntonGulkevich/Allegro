@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent):
     fullDataBase=NULL;
     delimiter= ":";
     domainVect=NULL;
+    domainVect= new QVector<Domain>;
 
     imap=false;
     pop3=false;
@@ -19,9 +20,7 @@ MainWindow::MainWindow(QWidget *parent):
     useFILEproxy=false;
 
     /*TEST*/
-    domainVect= new QVector<Domain>;
-    Domain *testDomain= new Domain("gmail", "pop3host",995,"imaphost", 123);
-    domainVect->push_back(*testDomain);
+
 
     /*TEST*/
 
@@ -277,6 +276,7 @@ void MainWindow::OpenDomainLabelClicked(){
 }
 void MainWindow::ManageDomainsLabelClicked(){
     closeWindowIfOpened();
+    updateDomainTable();
     MainBar->setText("Manage your domains");
     activeWindow=windowDomainManage;
     windowDomainManage->show();
@@ -375,10 +375,10 @@ void MainWindow::FullBase(){
 
 }
 void MainWindow::GoodBase(){
-   closeWindowIfOpened();
-   MainBar->setText("Manage base with doog account");
-   activeWindow=windowBaseGood;
-   windowBaseGood->show();
+    closeWindowIfOpened();
+    MainBar->setText("Manage base with doog account");
+    activeWindow=windowBaseGood;
+    windowBaseGood->show();
 }
 void MainWindow::SearchBase(){
     closeWindowIfOpened();
@@ -522,7 +522,7 @@ void MainWindow::OnCheckDataFileCLB(){
 }
 void MainWindow::setupWindowDomainCreate(QWidget *prnt){
 
-    windowDomainCreate = new SubWindow(prnt, "CREATE", "OPEN", "MANAGE", 300, 350);
+    windowDomainCreate = new SubWindow(prnt, "CREATE", "OPEN", "MANAGE", 300, 300);
     windowDomainCreate->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
     windowDomainCreate->SetActiveFirstLabel(true);
 
@@ -542,60 +542,58 @@ void MainWindow::setupWindowDomainCreate(QWidget *prnt){
 
     QLabel *d_name_l = new QLabel("Domain name:",windowDomainCreate);
 
-    QLabel *d_pop3_tsl_host_l =new QLabel("POP3 TSL host:", windowDomainCreate);
-    QLabel *d_pop3_ssl_host_l =new QLabel ("POP3 SSL host:", windowDomainCreate);
+    QLabel *d_pop3_host_l =new QLabel("POP3 host:", windowDomainCreate);
+    QLabel *d_pop3_port_l =new QLabel ("POP3 port encr:", windowDomainCreate);
+    QLabel *d_noEncr_pop3_port_l =new QLabel ("POP3 port no enrc:", windowDomainCreate);
 
-    QLabel *d_imap_tsl_host_l =new QLabel ("IMAP TSL host:", windowDomainCreate);
-    QLabel *d_imap_ssl_host_l =new QLabel ("IMAP SSL host:", windowDomainCreate);
+    QLabel *d_imap_host_l =new QLabel("IMAP host:", windowDomainCreate);
+    QLabel *d_imap_port_l =new QLabel ("IMAP port enrc:", windowDomainCreate);
+    QLabel *d_noEncr_imap_port_l =new QLabel ("IMAP port no enrc:", windowDomainCreate);
 
-    QLabel *d_pop3_tsl_port_l =new QLabel ("POP3 TSL port:", windowDomainCreate);
-    QLabel *d_pop3_ssl_port_l =new QLabel ("POP3 SSL port:", windowDomainCreate);
 
-    QLabel *d_imap_tsl_port_l =new QLabel ("IMAP TSL port:", windowDomainCreate);
-    QLabel *d_imap_ssl_port_l =new QLabel ("IMAP SSL port:", windowDomainCreate);
 
-    QLineEdit* d_name_le=new QLineEdit(windowDomainCreate);
+
+
+    d_name_le=new QLineEdit(windowDomainCreate);
     d_name_le->setPlaceholderText("ex: gmail.com");
-    QLineEdit *d_pop3_tsl_host_le =new QLineEdit(windowDomainCreate);
-    d_pop3_tsl_host_le->setPlaceholderText("ex: pop3.domainTSL.com");
-    QLineEdit *d_pop3_ssl_host_le =new QLineEdit (windowDomainCreate);
-    d_pop3_ssl_host_le->setPlaceholderText("ex: pop3.domainSSL.com");
-    QLineEdit *d_imap_tsl_host_le =new QLineEdit (windowDomainCreate);
-    d_imap_tsl_host_le->setPlaceholderText("ex: imap.domainTSL.com");
-    QLineEdit *d_imap_ssl_host_le =new QLineEdit (windowDomainCreate);
-    d_imap_ssl_host_le->setPlaceholderText("ex: imap.domainSSL.com");
-    QLineEdit *d_pop3_tsl_port_le =new QLineEdit (windowDomainCreate);
-    d_pop3_tsl_port_le->setInputMask("999");
-    d_pop3_tsl_port_le->setPlaceholderText("000");
-    QLineEdit *d_pop3_ssl_port_le =new QLineEdit (windowDomainCreate);
-    d_pop3_ssl_port_le->setInputMask("999");
-    d_pop3_ssl_port_le->setPlaceholderText("000");
-    QLineEdit *d_imap_tsl_port_le =new QLineEdit (windowDomainCreate);
-    d_imap_tsl_port_le->setInputMask("999");
-    d_imap_tsl_port_le->setPlaceholderText("000");
-    QLineEdit *d_imap_ssl_port_le =new QLineEdit (windowDomainCreate);
-    d_imap_ssl_port_le->setInputMask("999");
-    d_imap_ssl_port_le->setPlaceholderText("000");
+
+    d_pop3_host_le =new QLineEdit(windowDomainCreate);
+    d_pop3_host_le->setPlaceholderText("ex: pop.domain.com");
+    d_pop3_port_le =new QLineEdit (windowDomainCreate);
+    d_pop3_port_le->setInputMask("999");
+    d_pop3_port_le->setPlaceholderText("000");
+    d_noEncr_pop3_port_le =new QLineEdit (windowDomainCreate);
+    d_noEncr_pop3_port_le->setInputMask("999");
+    d_noEncr_pop3_port_le->setPlaceholderText("000");
+
+    d_imap_host_le =new QLineEdit(windowDomainCreate);
+    d_imap_host_le->setPlaceholderText("ex: imap.domain.com");
+    d_imap_port_le =new QLineEdit (windowDomainCreate);
+    d_imap_port_le->setInputMask("999");
+    d_imap_port_le->setPlaceholderText("000");
+    d_noEncr_imap_port_le =new QLineEdit (windowDomainCreate);
+    d_noEncr_imap_port_le->setInputMask("999");
+    d_noEncr_imap_port_le->setPlaceholderText("000");
+
 
 
     midlay->addWidget(d_name_l, 0, 0);
+
     midlay->addWidget(d_name_le, 0, 1);
-    midlay->addWidget(d_pop3_tsl_host_l,1 ,0 );
-    midlay->addWidget(d_pop3_tsl_host_le,1 ,1 );
-    midlay->addWidget(d_pop3_ssl_host_l,2 ,0 );
-    midlay->addWidget(d_pop3_ssl_host_le,2 ,1 );
-    midlay->addWidget(d_imap_tsl_host_l,3 ,0 );
-    midlay->addWidget(d_imap_tsl_host_le,3 ,1 );
-    midlay->addWidget(d_imap_ssl_host_l,4 ,0 );
-    midlay->addWidget(d_imap_ssl_host_le,4 ,1 );
-    midlay->addWidget(d_pop3_tsl_port_l,5 ,0 );
-    midlay->addWidget(d_pop3_tsl_port_le,5 ,1 );
-    midlay->addWidget(d_pop3_ssl_port_l,6 ,0 );
-    midlay->addWidget(d_pop3_ssl_port_le,6 ,1 );
-    midlay->addWidget(d_imap_tsl_port_l,7 ,0 );
-    midlay->addWidget(d_imap_tsl_port_le,7 ,1 );
-    midlay->addWidget(d_imap_ssl_port_l,8 ,0 );
-    midlay->addWidget(d_imap_ssl_port_le,8 ,1 );
+    midlay->addWidget(d_pop3_host_l,1 ,0 );
+    midlay->addWidget(d_pop3_host_le,1 ,1 );
+    midlay->addWidget(d_pop3_port_l,2 ,0 );
+    midlay->addWidget(d_pop3_port_le,2 ,1 );
+    midlay->addWidget(d_noEncr_pop3_port_l,3 ,0 );
+    midlay->addWidget(d_noEncr_pop3_port_le,3 ,1 );
+
+    midlay->addWidget(d_imap_host_l,4 ,0 );
+    midlay->addWidget(d_imap_host_le,4 ,1 );
+    midlay->addWidget(d_imap_port_l,5 ,0 );
+    midlay->addWidget(d_imap_port_le,5 ,1 );
+    midlay->addWidget(d_noEncr_imap_port_l,6 ,0 );
+    midlay->addWidget(d_noEncr_imap_port_le,6 ,1 );
+
 
 
     AGButton* add_domain_CLB= new AGButton(windowDomainCreate);
@@ -611,10 +609,12 @@ void MainWindow::setupWindowDomainCreate(QWidget *prnt){
     add_domain_CLB->setActivePalette(def);
     botlay->addWidget(add_domain_CLB);
 
-    windowDomainCreate->setGrayZone(windowDomainCreate->width()-2, add_domain_CLB->height()+29, add_domain_CLB->pos().x()+1, add_domain_CLB->pos().y()+290);
+    windowDomainCreate->setGrayZone(windowDomainCreate->width()-2, add_domain_CLB->height()+29, add_domain_CLB->pos().x()+1, add_domain_CLB->pos().y()+240);
 
     windowDomainCreate->AddMidLayout(midlay);
     windowDomainCreate->AddBotLayout(botlay);
+
+    connect(add_domain_CLB, SIGNAL(clicked()), SLOT(OnAddDomainClicked()));
 }
 void MainWindow::setupWindowDomainOpen (QWidget *prnt){
 
@@ -717,22 +717,7 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
     DomainTable->setSelectionMode(QAbstractItemView::SingleSelection);
     DomainTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-    /*
-    QWidget* t = new QWidget;
-    QBoxLayout *box = new QBoxLayout(QBoxLayout::LeftToRight);
-    box->setSpacing(0);
-    box->setMargin(0);
-    QCheckBox * Cbox= new QCheckBox(t);
-    Cbox->setText("");
-    Cbox->setChecked(false);
-    box->addWidget(Cbox,1, Qt::AlignCenter);
-    t->setLayout(box);
-    DomainTable->setCellWidget(0, 1, t);
-    DomainTable->setItem(0, 0, new QTableWidgetItem("gmail.com"));
-    */
     midlay->addWidget(DomainTable, 1);
-
-
     /*end midlay*/
 
     /*botlay*/
@@ -1151,6 +1136,67 @@ void MainWindow::setupWindowBaseSearch (QWidget *prnt){
     connect(windowBaseSearch, SIGNAL(OnClose()), SLOT(OnSearchBaseClose()));
 
 }
+void MainWindow::OnAddDomainClicked(){
+    bool fieldsComplete=true;
+    if (checkLineEdit(d_name_le))
+        fieldsComplete = false;
+    if (checkLineEdit(d_pop3_host_le))
+        fieldsComplete = false;
+    if (checkLineEdit(d_pop3_port_le))
+        fieldsComplete = false;
+    if (checkLineEdit(d_imap_host_le))
+        fieldsComplete = false;
+    if (checkLineEdit(d_imap_port_le))
+        fieldsComplete = false;
+    if (checkLineEdit(d_noEncr_pop3_port_le))
+        fieldsComplete = false;
+    if (checkLineEdit(d_noEncr_imap_port_le))
+        fieldsComplete = false;
+
+    if (fieldsComplete){
+        Domain tmpDomain(d_name_le->text(),
+                         d_pop3_host_le->text(),
+                         d_pop3_port_le->text().toInt(),
+                         d_noEncr_pop3_port_le->text().toInt(),
+                         d_imap_host_le->text(),
+                         d_imap_port_le->text().toInt(),
+                         d_noEncr_imap_port_le->text().toInt());
+        tmpDomain.setSelected(true);
+        domainVect->push_back(tmpDomain);
+        ManageDomainsLabelClicked();
+    }
+
+}
+void MainWindow::updateDomainTable(){
+    int row=0;
+    for(QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
+        /*
+        QWidget* t = new QWidget;
+        QBoxLayout *box = new QBoxLayout(QBoxLayout::LeftToRight);
+        box->setSpacing(0);
+        box->setMargin(0);
+        QCheckBox * Cbox= new QCheckBox(t);
+        Cbox->setText("");
+        Cbox->setChecked(it->isSelected());
+        box->addWidget(Cbox,1, Qt::AlignCenter);
+        t->setLayout(box);
+        */
+        DomainTable->setItem(row, 0, new QTableWidgetItem(it->getName()));
+        DomainTable->setCellWidget(row, 1, it->getWidgetPtr());
+    }
+}
+
+bool MainWindow::checkLineEdit(QLineEdit *lineEdit){
+    if (lineEdit->text().isEmpty()){
+        lineEdit->setStyleSheet("QLineEdit { border: 1px solid red}");
+        return 1;
+    }
+    else{
+        lineEdit->setStyleSheet("");
+        return 0;
+    }
+}
+
 
 
 

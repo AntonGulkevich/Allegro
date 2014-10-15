@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network webkit webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,10 +18,10 @@ SOURCES += main.cpp\
     domain.cpp \
     globalsettings.cpp \
     agbutton.cpp \
-    mainwindow.cpp \
     exlabel.cpp \
     subwindow.cpp \
-    presto.cpp
+    presto.cpp \
+    mainwindow.cpp
 
 HEADERS  += \
     information.h \
