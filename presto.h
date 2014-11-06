@@ -1,6 +1,6 @@
 #ifndef Presto_H
 #define Presto_H
-/* Class implementing pseudo data base*/
+/* Class implementing data base*/
 /*Works as a container and manipulating with data*/
 
 #include <QObject>

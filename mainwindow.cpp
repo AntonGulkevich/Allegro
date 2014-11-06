@@ -156,8 +156,6 @@ MainWindow::MainWindow(QWidget *parent):
     domainsAccount->setVisible(true);
     */
 
-
-
     QFrame *v_line = new QFrame();
     v_line->setFrameStyle(QFrame::VLine| QFrame::Raised);
     v_line->setLineWidth(1);
