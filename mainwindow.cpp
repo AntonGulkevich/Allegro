@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent):
     baseButton->resize(110, 40);
     baseButton->setIconOnEnter(QIcon(":/data/down_sel.png"));
     baseButton->setIconOnLeave(QIcon(":/data/down_def.png"));
-    baseButton->setText("Data Base");
+    baseButton->setText("Accounts");
     baseButton->setIconSize(QSize(20, 20));
     baseButton->setMaximumSize(110, 40);
     baseButton->setHint("Manage bases: open, close, save and etc...");
@@ -948,7 +948,7 @@ void MainWindow::setupWindowProxyManage (QWidget *prnt){
 }
 
 void MainWindow::setupWindowBaseFull(QWidget *prnt){
-    windowBaseFull = new SubWindow(prnt, "Full", "Good", "Searched");
+    windowBaseFull = new SubWindow(prnt, "All", "Only good", "Search");
     windowBaseFull->move(proxyButton->pos().x(), baseButton->pos().y()+40);
     windowBaseFull->resize(300, 350);
     windowBaseFull->SetActiveFirstLabel(true);
@@ -1108,7 +1108,7 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
 
 void MainWindow::setupWindowBaseGood (QWidget *prnt){
 
-    windowBaseGood = new SubWindow(prnt, "Full", "Good", "Searched");
+    windowBaseGood = new SubWindow(prnt, "All", "Only good", "Search");
     windowBaseGood->move(proxyButton->pos().x(), baseButton->pos().y()+40);
     windowBaseGood->resize(300, 200);
     windowBaseGood->SetActiveSecLabel(true);
