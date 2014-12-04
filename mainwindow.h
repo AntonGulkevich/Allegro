@@ -133,6 +133,8 @@ private:
    QPoint mpos;
 
    QLineEdit* delLE;
+
+   AGButton* saveDomain;
    /*END of GUI*/
 
 

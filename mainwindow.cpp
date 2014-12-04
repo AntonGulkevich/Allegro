@@ -275,6 +275,12 @@ void MainWindow::OpenDomainLabelClicked(){
 void MainWindow::ManageDomainsLabelClicked(){
     closeWindowIfOpened();
     updateDomainTable();
+
+    if (domainVect->isEmpty()){
+        saveDomain->setEnabled(false);
+    }
+    else
+        saveDomain->setEnabled(true);
     MainBar->setText("Manage your domains");
     activeWindow=windowDomainManage;
     windowDomainManage->show();
@@ -287,6 +293,25 @@ void MainWindow::OnDelDomain(){
     MainBar->setText("Domain deleted");
 }
 void MainWindow::OnSaveDomain(){
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    tr("Save domains"), "",
+                                                    tr("Domains (*.mdf);;All Files (*)"));
+    if (fileName.isEmpty())
+        return;
+    else {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly)) {
+            MainBar->setText("Unable to open file");
+            file.close();
+            return;
+        }
+        QDataStream out(&file);
+
+        for (QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
+            out<<it;
+        }
+
+    }
     MainBar->setText("Domains saved to file");
 }
 void MainWindow::mousePressEvent(QMouseEvent *event){
@@ -742,7 +767,7 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
     delDomain->setEnabled(false);
 
 
-    AGButton* saveDomain= new AGButton(windowDomainManage);
+    saveDomain= new AGButton(windowDomainManage);
     saveDomain->setText("Save");
     saveDomain->setEnabled(true);
     saveDomain->setIconOnLeave(QIcon(":/data/save_def.png"));
@@ -1167,6 +1192,7 @@ void MainWindow::OnAddDomainClicked(){
 }
 void MainWindow::updateDomainTable(){
     int row=0;
+    DomainTable->clearContents();
     for(QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
         /*
         QWidget* t = new QWidget;
@@ -1180,7 +1206,7 @@ void MainWindow::updateDomainTable(){
         t->setLayout(box);
         */
         DomainTable->setItem(row, 0, new QTableWidgetItem(it->getName()));
-        DomainTable->setCellWidget(row, 1, it->getWidgetPtr());
+        DomainTable->setCellWidget(row++, 1, it->getWidgetPtr());
     }
 }
 

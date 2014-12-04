@@ -21,7 +21,10 @@ SOURCES += main.cpp\
     exlabel.cpp \
     subwindow.cpp \
     presto.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    message.cpp \
+    pop3.cpp \
+    quotedprintable.cpp
 
 HEADERS  += \
     information.h \
@@ -32,7 +35,10 @@ HEADERS  += \
     mainwindow.h \
     exlabel.h \
     subwindow.h \
-    presto.h
+    presto.h \
+    message.h \
+    pop3.h \
+    quotedprintable.h
 
 RESOURCES += \
     Images.qrc

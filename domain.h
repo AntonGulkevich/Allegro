@@ -6,6 +6,8 @@
 #include <QWidget>
 #include <QBoxLayout>
 
+#include <QDataStream>
+
 class Domain
 {
 private:
@@ -22,8 +24,8 @@ private:
     bool selected;
 
     QCheckBox * checkBox;
-    QBoxLayout *box;
-    QWidget* t;
+    QBoxLayout * box;
+    QWidget * t;
 
 public:
     explicit Domain(QString _name="", QString _pop3host="", int _pop3PortEncr=0, int _pop3PortNoEncr=0,
@@ -38,6 +40,8 @@ public:
     QCheckBox *getChechBoxPtr();
     QBoxLayout *getLayPtr();
     QWidget* getWidgetPtr();
+
+    friend QDataStream & operator <<(QDataStream & os, const Domain& domain_);
 
 };
 

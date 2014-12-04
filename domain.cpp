@@ -37,7 +37,7 @@ Domain::Domain(const Domain &_domain)
     box->setSpacing(0);
     box->setMargin(0);
     checkBox= new QCheckBox;
-    checkBox->setChecked(false);
+    checkBox->setChecked(selected);
     checkBox->setText("");
     box->addWidget(checkBox,1, Qt::AlignCenter);
     t->setLayout(box);
@@ -49,6 +49,7 @@ Domain::~Domain(){
 }
 void Domain::setSelected(bool state){
     selected= state;
+    checkBox->setChecked(state);
 }
 bool Domain::isSelected(){
     return selected;
@@ -67,4 +68,13 @@ QBoxLayout * Domain::getLayPtr(){
 }
 QWidget* Domain::getWidgetPtr(){
     return t;
+}
+QDataStream & operator<<(QDataStream & os, const Domain& domain_)
+{
+    os <<domain_.name;
+      /*
+      <<"/n"<<domain_.imapHost<<"/n"<<domain_.imapPortEncr<<"/n"<<domain_.imapPortNoEncr<<"/n"<<
+         domain_.pop3Host<<"/n"<<domain_.pop3PortEncr<<"/n"<<domain_.pop3PortNoEncr<<"/n";
+              */
+    return os;
 }
