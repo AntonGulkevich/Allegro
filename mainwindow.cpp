@@ -169,8 +169,51 @@ MainWindow::MainWindow(QWidget *parent):
     QBoxLayout* buttonsLeftLay= new QBoxLayout(QBoxLayout::TopToBottom);
     QBoxLayout* smainlay = new QBoxLayout(QBoxLayout::LeftToRight);
     QBoxLayout* tablelay = new QBoxLayout(QBoxLayout::LeftToRight);
+    QBoxLayout* contrButtonsLay = new QBoxLayout(QBoxLayout::LeftToRight);
+
+    /*setup controll buttons for mail*/
+
+    AGButton *backToList = new AGButton(centralWidget());
+    backToList->setIconOnEnter(QIcon(":/data/home_sel.png"));
+    backToList->setIconOnLeave(QIcon(":/data/home_def.png"));
+    backToList->setText("");
+    backToList->setIconSize(QSize(20, 20));
+    backToList->setMaximumSize(40, 40);
+    backToList->setHint("Back to e-mails list");
+
+    AGButton *searchInEmail = new AGButton(centralWidget());
+    searchInEmail->setIconOnEnter(QIcon(":/data/search_sel.png"));
+    searchInEmail->setIconOnLeave(QIcon(":/data/search_def.png"));
+    searchInEmail->setText("");
+    searchInEmail->setIconSize(QSize(20, 20));
+    searchInEmail->setMaximumSize(40, 40);
+    searchInEmail->setHint("Search in e-mails");
+
+    AGButton *previousMessage = new AGButton(centralWidget());
+    previousMessage->setIconOnEnter(QIcon(":/data/right_sel.png"));
+    previousMessage->setIconOnLeave(QIcon(":/data/right_def.png"));
+    previousMessage->setText("");
+    previousMessage->setIconSize(QSize(20, 20));
+    previousMessage->setMaximumSize(40, 40);
+    previousMessage->setHint("Previous message");
+
+    AGButton *nextMessage = new AGButton(centralWidget());
+    nextMessage->setIconOnEnter(QIcon(":/data/left_sel.png"));
+    nextMessage->setIconOnLeave(QIcon(":/data/left_def.png"));
+    nextMessage->setText("");
+    nextMessage->setIconSize(QSize(20, 20));
+    nextMessage->setMaximumSize(40, 40);
+    nextMessage->setHint("Next message");
+
+    contrButtonsLay->addWidget(previousMessage, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsLay->addWidget(nextMessage, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsLay->addWidget(searchInEmail, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsLay->addWidget(backToList, 0,Qt::AlignLeft |Qt::AlignTop);
+
+    contrButtonsLay->addStretch(1);
 
 
+    /*end of setup controll buttons for mail*/
     /*test*/
     /*
     QSplitter *tablespl= new QSplitter (Qt::Horizontal);
@@ -197,10 +240,47 @@ MainWindow::MainWindow(QWidget *parent):
     /*setup of qwebwie*/
 
     QWidget * mainContainer = new QWidget;
+    QBoxLayout * frameLay = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    tabsForWork = new QTabWidget(centralWidget());
+
 
     QWebView* ViewFrame =new QWebView(centralWidget());
-    ViewFrame->show();
+    ViewFrame->load(QUrl("http://www.example.com"));
 
+    /*setup email table*/
+    QBoxLayout * emailTableLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    emailsTable= new QTableWidget();
+    emailsTable->setColumnCount(2);
+    emailsTable->setRowCount(10);
+    //emailsTable->setColumnWidth(0, 112);
+    //emailsTable->setColumnWidth(1, 60);
+    emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("Domain") );
+    emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("Count") );
+    emailsTable->setFrameStyle(0);
+    //emailsTable->setMaximumSize(190, 200);
+    emailsTable->verticalHeader()->hide();
+    emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    emailsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    emailsTable->setSelectionMode(QAbstractItemView::NoSelection);
+    emailsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    emailsTable->horizontalHeader()->setStretchLastSection(true);
+    emailsTable->setVisible(true);
+
+    emailTableLay->addWidget(emailsTable, 1);
+    mainContainer->setLayout(emailTableLay);
+
+    /*end of setup email table*/
+    tabsForWork->addTab(ViewFrame,"Email"); //tab for email view
+    tabsForWork->addTab(mainContainer, "Test"); // tab for list of emails
+    //tabsForWork->addTab()   //need tab for search results
+    tabsForWork->tabBar()->setVisible(false);
+
+    tabsForWork->tabBar()->setCurrentIndex(0);
+
+    frameLay->addLayout(contrButtonsLay, 0);
+    frameLay->addWidget(tabsForWork,1 );
 
     /*end of setup of qwebwie*/
 
@@ -223,10 +303,10 @@ MainWindow::MainWindow(QWidget *parent):
     buttonsLeftLay->addWidget(addNewDomain, 0,Qt::AlignLeft |Qt::AlignTop);
     buttonsLeftLay->addWidget(proxyButton,  0,Qt::AlignLeft |Qt::AlignTop);
     buttonsLeftLay->addWidget(baseButton, 0,Qt::AlignLeft |Qt::AlignTop);
-    buttonsLeftLay->addStretch(4);
+    buttonsLeftLay->addStretch(1);
 
     tablelay->addWidget(v_line);
-    tablelay->addWidget(ViewFrame);
+    tablelay->addLayout(frameLay);
 
     smainlay->addLayout(buttonsLeftLay, 0);
     smainlay->addLayout(tablelay, 1);
@@ -242,12 +322,21 @@ MainWindow::MainWindow(QWidget *parent):
     connect(proxyButton, SIGNAL(clicked()), SLOT(OnProxyButtonClicked()));
     connect(baseButton, SIGNAL(clicked()), SLOT(OnBaseButtonClicked()));
 
+    connect(backToList, SIGNAL(clicked()), SLOT(OnHomeButtonClicked()));
+    connect(searchInEmail, SIGNAL(clicked()), SLOT(OnSearchButtonClicked()));
+    connect(previousMessage, SIGNAL(clicked()), SLOT(OnPreviousButtonClicked()));
+    connect(nextMessage, SIGNAL(clicked()), SLOT(OnNextButtonClicked()));
+
     connect(addNewDomain, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(proxyButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(baseButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(closeButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(minimizeButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(maximizeButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(backToList, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(searchInEmail, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(previousMessage, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(nextMessage, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
 
     /*Setup subwindows*/
     activeWindow=NULL;
@@ -1300,6 +1389,18 @@ bool MainWindow::checkLineEdit(QLineEdit *lineEdit){
         lineEdit->setStyleSheet("");
         return 0;
     }
+}
+void MainWindow::OnNextButtonClicked(){
+
+}
+void MainWindow::OnPreviousButtonClicked(){
+
+}
+void MainWindow::OnSearchButtonClicked(){
+
+}
+void MainWindow::OnHomeButtonClicked(){
+    tabsForWork->tabBar()->setCurrentIndex(1);
 }
 
 

@@ -19,6 +19,7 @@
 #include <QFileDialog>
 #include <QErrorMessage>
 #include <QWebView>
+#include <QTabWidget>
 
 #include "agbutton.h"
 #include "exlabel.h"
@@ -71,8 +72,10 @@ private Q_SLOTS:
 
     void UpdateSelection();
 
-
-
+    void OnHomeButtonClicked();
+    void OnNextButtonClicked();
+    void OnPreviousButtonClicked();
+    void OnSearchButtonClicked();
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -146,9 +149,11 @@ private:
 
    QVector <Domain>* domainVect;
    QTableWidget* DomainTable;
+   QTableWidget* emailsTable;
    QLabel* fullBaseFileName;
    AGButton* checkDataFileCLB;
    AGButton* closeDataFileCLB;
+   QTabWidget * tabsForWork; //tab widget for email list and view
 
    QLineEdit* d_name_le;
    QLineEdit *d_pop3_host_le;

@@ -24,5 +24,11 @@
         <file>data/check_def.png</file>
         <file>data/check_sel.png</file>
         <file>data/black.png</file>
+        <file>data/search_def.png</file>
+        <file>data/search_sel.png</file>
+        <file>data/right_def.png</file>
+        <file>data/right_sel.png</file>
+        <file>data/home_def.png</file>
+        <file>data/home_sel.png</file>
     </qresource>
 </RCC>
