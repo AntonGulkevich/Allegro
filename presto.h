@@ -22,7 +22,6 @@ public:
     explicit Presto(QObject *parent = 0, QString * filename=NULL);
     bool openBase();
     ~Presto();
-    bool validation();
     void setProgressBar(QProgressBar * bar);
     void setDelimiter(QString* del);
     void setDomains(QVector<Domain> * domainsVector);

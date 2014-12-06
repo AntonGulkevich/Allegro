@@ -24,9 +24,6 @@ bool Presto::openBase(){
     fillVector(ResultString);    
     return 1;
 }
-bool Presto::validation(){
-
-}
 void Presto::setProgressBar(QProgressBar * bar){
     progressBar= bar;
 }

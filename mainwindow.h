@@ -18,7 +18,7 @@
 #include <QProgressBar>
 #include <QFileDialog>
 #include <QErrorMessage>
-
+#include <QWebView>
 
 #include "agbutton.h"
 #include "exlabel.h"
@@ -41,6 +41,7 @@ private Q_SLOTS:
     void OnCreateDomainClose();
     void OnManageDomainClose();
     void OnAddDomainClicked();
+    void OnCellClicked(int a, int b);
 
     void OnManageProxyClicked();    
     void OnUrlProxyClicked();    
@@ -67,6 +68,8 @@ private Q_SLOTS:
     void Mininize();
     void Maximize();
     void Normal();
+
+    void UpdateSelection();
 
 
 
@@ -135,6 +138,7 @@ private:
    QLineEdit* delLE;
 
    AGButton* saveDomain;
+   AGButton* delDomain;
    /*END of GUI*/
 
 
@@ -174,11 +178,12 @@ private:
    QCheckBox* useUrlCB;
    QCheckBox* useFileCB;
 
+   int selectedRow;//returns selected row from "Domain Table"
+   QLabel* domainFileName;
+
    /*END of LOGIC*/
 
    /*TEST*/
-
-   QTextEdit* test1;
 
    /*END of TEST*/
 

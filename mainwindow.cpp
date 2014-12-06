@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent):
     MainBar->setText("Setup domains, proxy and open the base...");
     /*end of setup status bar*/
 
-
+    /*setup left buttons*/
     addNewDomain= new AGButton(centralWidget());
     addNewDomain->setIconOnEnter(QIcon(":/data/down_sel.png"));
     addNewDomain->setIconOnLeave(QIcon(":/data/down_def.png"));
@@ -103,6 +103,8 @@ MainWindow::MainWindow(QWidget *parent):
     baseButton->setIconSize(QSize(20, 20));
     baseButton->setMaximumSize(110, 40);
     baseButton->setHint("Manage bases: open, close, save and etc...");
+
+    /*setup control top buttons*/
 
     closeButton= new AGButton(centralWidget());
     closeButton->setIconOnEnter(QIcon(":/data/close_sel.png"));
@@ -168,6 +170,9 @@ MainWindow::MainWindow(QWidget *parent):
     QBoxLayout* smainlay = new QBoxLayout(QBoxLayout::LeftToRight);
     QBoxLayout* tablelay = new QBoxLayout(QBoxLayout::LeftToRight);
 
+
+    /*test*/
+    /*
     QSplitter *tablespl= new QSplitter (Qt::Horizontal);
     tablespl->setHandleWidth(3);
     tablespl->setStyleSheet("QSplitter::handle{background:gray;}");
@@ -185,6 +190,19 @@ MainWindow::MainWindow(QWidget *parent):
 
     container_layout->addWidget(tablespl);
     container->setLayout(container_layout);
+    */
+
+    /*end of test*/
+
+    /*setup of qwebwie*/
+
+    QWidget * mainContainer = new QWidget;
+
+    QWebView* ViewFrame =new QWebView(centralWidget());
+    ViewFrame->show();
+
+
+    /*end of setup of qwebwie*/
 
     mainlay->setSpacing(10);
     mainlay->setMargin(0);
@@ -208,7 +226,7 @@ MainWindow::MainWindow(QWidget *parent):
     buttonsLeftLay->addStretch(4);
 
     tablelay->addWidget(v_line);
-    tablelay->addWidget(container);
+    tablelay->addWidget(ViewFrame);
 
     smainlay->addLayout(buttonsLeftLay, 0);
     smainlay->addLayout(tablelay, 1);
@@ -288,13 +306,47 @@ void MainWindow::ManageDomainsLabelClicked(){
 }
 void MainWindow::OnOpenDomainFile(){
     MainBar->setText("Choose file with domains list");
+
+    QString fileName =QFileDialog::getOpenFileName(this,
+                                                   tr("Open domains"), "domains.mdf",
+                                                   tr("Domains (*.mdf);;All Files (*)"));
+    if (fileName.isEmpty())
+        return;
+    else {
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly)) {
+            MainBar->setText("Unable to open file");
+            file.close();
+            return;
+        }
+        QDataStream in(&file);
+
+        int count;
+        in>>count;
+
+        domainVect->clear();
+
+        while (count--){
+            Domain temp;
+            in>>temp;
+            domainVect->push_back(temp);
+        }
+
+
+        file.close();
+    }
+    domainFileName->setText(fileName.right(fileName.length()-fileName.lastIndexOf("/")-1));
+
 }
-void MainWindow::OnDelDomain(){
+void MainWindow::OnDelDomain(){    
+    domainVect->remove(selectedRow);
+    updateDomainTable();
+    delDomain->setEnabled(false);
     MainBar->setText("Domain deleted");
 }
 void MainWindow::OnSaveDomain(){
     QString fileName = QFileDialog::getSaveFileName(this,
-                                                    tr("Save domains"), "",
+                                                    tr("Save domains"), "domains.mdf",
                                                     tr("Domains (*.mdf);;All Files (*)"));
     if (fileName.isEmpty())
         return;
@@ -306,10 +358,12 @@ void MainWindow::OnSaveDomain(){
             return;
         }
         QDataStream out(&file);
-
+        out<<int(domainVect->count());
         for (QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
-            out<<it;
+            out<<*it;
         }
+
+        file.close();
 
     }
     MainBar->setText("Domains saved to file");
@@ -660,7 +714,7 @@ void MainWindow::setupWindowDomainOpen (QWidget *prnt){
     midlay->setMargin(10);
 
     QLabel* domainLabel = new QLabel("Domain list file:", windowDomainOpen);
-    QLabel* domainFileName = new QLabel("none", windowDomainOpen);
+    domainFileName = new QLabel("none", windowDomainOpen);
 
     QFont fnt1;
     fnt1.setPixelSize(15);
@@ -740,6 +794,8 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
     DomainTable->setSelectionMode(QAbstractItemView::SingleSelection);
     DomainTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
+    connect(DomainTable, SIGNAL(cellClicked(int,int)), SLOT(OnCellClicked(int,int)));
+
     midlay->addWidget(DomainTable, 1);
     /*end midlay*/
 
@@ -757,7 +813,7 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
     addNewDomain->setIconSize(QSize(20, 20));
     addNewDomain->setMaximumHeight(40);
 
-    AGButton* delDomain= new AGButton(windowDomainManage);
+    delDomain= new AGButton(windowDomainManage);
     delDomain->setText("Delete");
     delDomain->setEnabled(true);
     delDomain->setIconOnLeave(QIcon(":/data/min_def.png"));
@@ -801,6 +857,19 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
 
     windowDomainManage->AddMidLayout(midlay);
     windowDomainManage->AddBotLayout(botlay);
+
+}
+
+void MainWindow::OnCellClicked(int a/*row*/, int b/*col*/){
+    MainBar->setText(QString::number(a)+" "+ QString::number(b));
+    int count=domainVect->count();
+    selectedRow=a;//counts from zero (0)
+    if (a<=--count){
+        delDomain->setEnabled(true);
+    }
+    else{
+        delDomain->setEnabled(false);
+    }
 
 }
 
@@ -1194,19 +1263,31 @@ void MainWindow::updateDomainTable(){
     int row=0;
     DomainTable->clearContents();
     for(QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
-        /*
+
         QWidget* t = new QWidget;
         QBoxLayout *box = new QBoxLayout(QBoxLayout::LeftToRight);
         box->setSpacing(0);
         box->setMargin(0);
-        QCheckBox * Cbox= new QCheckBox(t);
-        Cbox->setText("");
-        Cbox->setChecked(it->isSelected());
-        box->addWidget(Cbox,1, Qt::AlignCenter);
+
+        box->addWidget(it->getChechBoxPtr(),1, Qt::AlignCenter);
         t->setLayout(box);
-        */
+        connect (it->getChechBoxPtr(), SIGNAL(stateChanged(int)), SLOT(UpdateSelection()));
         DomainTable->setItem(row, 0, new QTableWidgetItem(it->getName()));
-        DomainTable->setCellWidget(row++, 1, it->getWidgetPtr());
+        DomainTable->setCellWidget(row++, 1, t);
+    }
+}
+void MainWindow::UpdateSelection(){
+    /*
+Qt::Unchecked	0	The item is unchecked.
+Qt::PartiallyChecked	1	The item is partially checked.
+Items in hierarchical models may be partially checked if some, but not all, of their children are checked.
+Qt::Checked	2	The item is checked.
+    */
+
+    /*Sory for crutch :) */
+    int count=0;
+    for(QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
+        it->UpdateSelection();
     }
 }
 

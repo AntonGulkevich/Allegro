@@ -6,16 +6,9 @@ Domain::Domain(QString _name, QString _pop3host, int _pop3PortEncr, int _pop3Por
     pop3Host(_pop3host),pop3PortEncr(_pop3PortEncr), pop3PortNoEncr(_pop3PortNoEncr),
     imapHost(_imaphost), imapPortEncr(_imapPortEncr), imapPortNoEncr(_imapPortNoEncr), selected(false)
 {
-
-    t = new QWidget;
-    box = new QBoxLayout(QBoxLayout::LeftToRight);
-    box->setSpacing(0);
-    box->setMargin(0);
     checkBox= new QCheckBox;
     checkBox->setChecked(false);
     checkBox->setText("");
-    box->addWidget(checkBox,1, Qt::AlignCenter);
-    t->setLayout(box);
 
 }
 Domain::Domain(const Domain &_domain)
@@ -32,24 +25,17 @@ Domain::Domain(const Domain &_domain)
 
     selected=_domain.selected;
 
-    t = new QWidget;
-    box = new QBoxLayout(QBoxLayout::LeftToRight);
-    box->setSpacing(0);
-    box->setMargin(0);
     checkBox= new QCheckBox;
     checkBox->setChecked(selected);
     checkBox->setText("");
-    box->addWidget(checkBox,1, Qt::AlignCenter);
-    t->setLayout(box);
+
 }
 Domain::~Domain(){
-    delete box;
     delete checkBox;
-    delete t;
+
 }
 void Domain::setSelected(bool state){
     selected= state;
-    checkBox->setChecked(state);
 }
 bool Domain::isSelected(){
     return selected;
@@ -57,24 +43,29 @@ bool Domain::isSelected(){
 QString Domain::getName(){
     return name;
 }
-void Domain::setCheckBox(QCheckBox *box){
-    checkBox= box;
-}
 QCheckBox * Domain::getChechBoxPtr(){
+    setSelected(isSelected());
     return checkBox;
 }
-QBoxLayout * Domain::getLayPtr(){
-    return box;
-}
-QWidget* Domain::getWidgetPtr(){
-    return t;
-}
-QDataStream & operator<<(QDataStream & os, const Domain& domain_)
+QDataStream & operator<<(QDataStream & out, const Domain& domain_)
 {
-    os <<domain_.name;
-      /*
-      <<"/n"<<domain_.imapHost<<"/n"<<domain_.imapPortEncr<<"/n"<<domain_.imapPortNoEncr<<"/n"<<
-         domain_.pop3Host<<"/n"<<domain_.pop3PortEncr<<"/n"<<domain_.pop3PortNoEncr<<"/n";
-              */
-    return os;
+    out <<domain_.name<<domain_.imapHost<<domain_.imapPortEncr<<domain_.imapPortNoEncr<<
+         domain_.pop3Host<<domain_.pop3PortEncr<<domain_.pop3PortNoEncr<<domain_.selected;
+
+    return out;
+}
+QDataStream & operator >>(QDataStream & in, Domain& domain_ ){
+    in >>domain_.name>>domain_.imapHost>>domain_.imapPortEncr>>domain_.imapPortNoEncr>>
+         domain_.pop3Host>>domain_.pop3PortEncr>>domain_.pop3PortNoEncr>>domain_.selected;
+
+    return in;
+
+
+}
+void Domain::UpdateSelection(){
+    if (checkBox->isChecked()){
+        setSelected(true);
+    }
+    else
+        setSelected(false);
 }

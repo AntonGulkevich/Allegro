@@ -24,8 +24,6 @@ private:
     bool selected;
 
     QCheckBox * checkBox;
-    QBoxLayout * box;
-    QWidget * t;
 
 public:
     explicit Domain(QString _name="", QString _pop3host="", int _pop3PortEncr=0, int _pop3PortNoEncr=0,
@@ -36,13 +34,11 @@ public:
     QString getName();
     void setSelected(bool state);
 
-    void setCheckBox(QCheckBox * box);
     QCheckBox *getChechBoxPtr();
-    QBoxLayout *getLayPtr();
-    QWidget* getWidgetPtr();
+    void UpdateSelection();
 
-    friend QDataStream & operator <<(QDataStream & os, const Domain& domain_);
-
+    friend QDataStream & operator <<(QDataStream & out, const Domain& domain_);
+    friend QDataStream & operator >>(QDataStream & in, Domain& domain_ );
 };
 
 #endif // DOMAIN_H
