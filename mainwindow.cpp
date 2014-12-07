@@ -200,8 +200,6 @@ MainWindow::MainWindow(QWidget *parent):
     tabsForWork = new QTabWidget(centralWidget());
 
     QBoxLayout * tabsLay = new QBoxLayout(QBoxLayout::TopToBottom);
-    QWidget * emailTab = new QWidget;
-    QWidget * listTab = new QWidget;
 
     QBoxLayout * tabEmailLay = new QBoxLayout(QBoxLayout::TopToBottom);
     QBoxLayout * tabListLay = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -209,14 +207,17 @@ MainWindow::MainWindow(QWidget *parent):
     QBoxLayout * emailLay = new QBoxLayout(QBoxLayout::TopToBottom);
     QBoxLayout * listLay = new QBoxLayout(QBoxLayout::TopToBottom);
 
+    QWidget * emailTab = new QWidget;
+    QWidget * listTab = new QWidget;
+
     /*setup email table*/
     emailsTable= new QTableWidget();
     emailsTable->setColumnCount(4);
     emailsTable->setRowCount(10);
     emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("From") );
     emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("Header") );
-    emailsTable->setHorizontalHeaderItem(2,new QTableWidgetItem("Text") );
-    emailsTable->setHorizontalHeaderItem(3,new QTableWidgetItem("Date") );
+    emailsTable->setHorizontalHeaderItem(2,new QTableWidgetItem("Date") );
+    emailsTable->setHorizontalHeaderItem(3,new QTableWidgetItem("Text") );
     emailsTable->setFrameStyle(0);
     emailsTable->verticalHeader()->hide();
     emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -227,22 +228,24 @@ MainWindow::MainWindow(QWidget *parent):
     emailsTable->horizontalHeader()->setStretchLastSection(true);
     emailsTable->setVisible(true);
 
+    connect(emailsTable, SIGNAL(cellDoubleClicked(int,int)), SLOT(OnEmailCliked(int,int)));
+
     /*end of setup email table*/
 
     ViewFrame =new QWebView(centralWidget());
     ViewFrame->load(QUrl("http://www.example.com"));
 
     /*setup tab layout*/
-    tabsLay->addWidget(tabsForWork, 1);
+
 
     tabEmailLay->addLayout(contrButtonsLay, 0);
     tabEmailLay->addLayout(emailLay, 1);
     emailLay->addWidget(ViewFrame, 1);
     emailTab->setLayout(tabEmailLay);
 
-    tabListLay->addLayout(contrButtonsLay, 0);
-    tabListLay->addLayout(tabListLay, 1);
-    tabListLay->addWidget(emailsTable, 1);
+    //tabListLay->addLayout(contrButtonsLay, 0);
+    tabListLay->addLayout(listLay, 1);
+    listLay->addWidget(emailsTable, 1);
     listTab->setLayout(tabListLay);
 
     tabsForWork->addTab(emailTab,"Email"); //tab for email view
@@ -253,6 +256,8 @@ MainWindow::MainWindow(QWidget *parent):
     tabsForWork->tabBar()->setCurrentIndex(0);
     //frameLay->addWidget(tabsForWork,1 );
 
+
+    tabsLay->addWidget(tabsForWork, 1);
     /*end of setup of qwebwie*/
 
     mainlay->setSpacing(10);
@@ -918,6 +923,9 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
     windowDomainManage->AddMidLayout(midlay);
     windowDomainManage->AddBotLayout(botlay);
 
+}
+void MainWindow::OnEmailCliked(int row, int col){
+    tabsForWork->tabBar()->setCurrentIndex(0);
 }
 
 void MainWindow::OnCellClicked(int a/*row*/, int b/*col*/){

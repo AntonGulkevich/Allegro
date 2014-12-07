@@ -76,6 +76,7 @@ private Q_SLOTS:
     void OnNextButtonClicked();
     void OnPreviousButtonClicked();
     void OnSearchButtonClicked();
+    void OnEmailCliked(int row, int col);
 
 public:
     MainWindow(QWidget *parent = 0);
