@@ -30,5 +30,15 @@
         <file>data/right_sel.png</file>
         <file>data/home_def.png</file>
         <file>data/home_sel.png</file>
+        <file>data/next_def.png</file>
+        <file>data/next_sel.png</file>
+        <file>data/write_def.png</file>
+        <file>data/write_sel.png</file>
+        <file>data/refresh_def.png</file>
+        <file>data/refresh_sel.png</file>
+        <file>data/send_def.png</file>
+        <file>data/send_sel.png</file>
+        <file>data/attachment_sel.png</file>
+        <file>data/attachment_def.png</file>
     </qresource>
 </RCC>

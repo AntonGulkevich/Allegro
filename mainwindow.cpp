@@ -19,10 +19,6 @@ MainWindow::MainWindow(QWidget *parent):
     useURLproxy=false;
     useFILEproxy=false;
 
-    /*TEST*/
-
-
-    /*TEST*/
 
     /*end of deault settings*/
 
@@ -83,7 +79,7 @@ MainWindow::MainWindow(QWidget *parent):
     addNewDomain->setIconOnEnter(QIcon(":/data/down_sel.png"));
     addNewDomain->setIconOnLeave(QIcon(":/data/down_def.png"));
     addNewDomain->setText("Domains");
-    addNewDomain->setIconSize(QSize(20, 20));
+    addNewDomain->setIconSize(QSize(25, 25));
     addNewDomain->setMaximumSize(110, 40);
     addNewDomain->setHint("Manage list of domains...");
 
@@ -91,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent):
     proxyButton->setIconOnEnter(QIcon(":/data/down_sel.png"));
     proxyButton->setIconOnLeave(QIcon(":/data/down_def.png"));
     proxyButton->setText("Proxy");
-    proxyButton->setIconSize(QSize(20, 20));
+    proxyButton->setIconSize(QSize(25, 25));
     proxyButton->setMaximumSize(110, 40);
     proxyButton->setHint("Manage list of proxy...");
 
@@ -100,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent):
     baseButton->setIconOnEnter(QIcon(":/data/down_sel.png"));
     baseButton->setIconOnLeave(QIcon(":/data/down_def.png"));
     baseButton->setText("Accounts");
-    baseButton->setIconSize(QSize(20, 20));
+    baseButton->setIconSize(QSize(25, 25));
     baseButton->setMaximumSize(110, 40);
     baseButton->setHint("Manage bases: open, close, save and etc...");
 
@@ -150,6 +146,8 @@ MainWindow::MainWindow(QWidget *parent):
     QBoxLayout* smainlay = new QBoxLayout(QBoxLayout::LeftToRight);
     QBoxLayout* tablelay = new QBoxLayout(QBoxLayout::LeftToRight);
     QBoxLayout* contrButtonsLay = new QBoxLayout(QBoxLayout::LeftToRight);
+    QBoxLayout* contrButtonsListLay = new QBoxLayout(QBoxLayout::LeftToRight);
+    QBoxLayout* contrButtonsMessageLay = new QBoxLayout(QBoxLayout::LeftToRight);
 
     /*setup controll buttons for mail*/
 
@@ -157,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent):
     backToList->setIconOnEnter(QIcon(":/data/home_sel.png"));
     backToList->setIconOnLeave(QIcon(":/data/home_def.png"));
     backToList->setText("");
-    backToList->setIconSize(QSize(20, 20));
+    backToList->setIconSize(QSize(25, 25));
     backToList->setMaximumSize(40, 40);
     backToList->setHint("Back to e-mails list");
 
@@ -165,7 +163,7 @@ MainWindow::MainWindow(QWidget *parent):
     searchInEmail->setIconOnEnter(QIcon(":/data/search_sel.png"));
     searchInEmail->setIconOnLeave(QIcon(":/data/search_def.png"));
     searchInEmail->setText("");
-    searchInEmail->setIconSize(QSize(20, 20));
+    searchInEmail->setIconSize(QSize(25, 25));
     searchInEmail->setMaximumSize(40, 40);
     searchInEmail->setHint("Search in e-mails");
 
@@ -173,7 +171,7 @@ MainWindow::MainWindow(QWidget *parent):
     previousMessage->setIconOnEnter(QIcon(":/data/right_sel.png"));
     previousMessage->setIconOnLeave(QIcon(":/data/right_def.png"));
     previousMessage->setText("");
-    previousMessage->setIconSize(QSize(20, 20));
+    previousMessage->setIconSize(QSize(25, 25));
     previousMessage->setMaximumSize(40, 40);
     previousMessage->setHint("Previous message");
 
@@ -181,7 +179,7 @@ MainWindow::MainWindow(QWidget *parent):
     nextMessage->setIconOnEnter(QIcon(":/data/left_sel.png"));
     nextMessage->setIconOnLeave(QIcon(":/data/left_def.png"));
     nextMessage->setText("");
-    nextMessage->setIconSize(QSize(20, 20));
+    nextMessage->setIconSize(QSize(25, 25));
     nextMessage->setMaximumSize(40, 40);
     nextMessage->setHint("Next message");
 
@@ -194,6 +192,86 @@ MainWindow::MainWindow(QWidget *parent):
 
 
     /*end of setup controll buttons for mail*/
+
+    /*setup controll buttons for list of emails*/
+
+    AGButton *writeEmail = new AGButton(centralWidget());
+    writeEmail->setIconOnEnter(QIcon(":/data/write_sel.png"));
+    writeEmail->setIconOnLeave(QIcon(":/data/write_def.png"));
+    writeEmail->setText("");
+    writeEmail->setIconSize(QSize(25, 25));
+    writeEmail->setMaximumSize(40, 40);
+    writeEmail->setHint("Write an e-mail");
+
+    AGButton *refresh = new AGButton(centralWidget());
+    refresh->setIconOnEnter(QIcon(":/data/refresh_sel.png"));
+    refresh->setIconOnLeave(QIcon(":/data/refresh_def.png"));
+    refresh->setText("");
+    refresh->setIconSize(QSize(25, 25));
+    refresh->setMaximumSize(40, 40);
+    refresh->setHint("Refresh list of email from the beggining");
+
+    AGButton *searchInList = new AGButton(centralWidget());
+    searchInList->setIconOnEnter(QIcon(":/data/search_sel.png"));
+    searchInList->setIconOnLeave(QIcon(":/data/search_def.png"));
+    searchInList->setText("");
+    searchInList->setIconSize(QSize(25, 25));
+    searchInList->setMaximumSize(40, 40);
+    searchInList->setHint("Search in list");
+
+    AGButton *loadNextMessages = new AGButton(centralWidget());
+    loadNextMessages->setIconOnEnter(QIcon(":/data/next_sel.png"));
+    loadNextMessages->setIconOnLeave(QIcon(":/data/next_def.png"));
+    loadNextMessages->setText("");
+    loadNextMessages->setIconSize(QSize(25, 25));
+    loadNextMessages->setMaximumSize(40, 40);
+    loadNextMessages->setHint("Load next messages");
+
+    contrButtonsListLay->addWidget(writeEmail, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsListLay->addWidget(refresh, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsListLay->addWidget(searchInList, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsListLay->addWidget(loadNextMessages, 0,Qt::AlignLeft |Qt::AlignTop);
+
+    contrButtonsListLay->addStretch(1);
+
+
+    /*end of setup controll buttons for list of emails*/
+
+    /*setup controll buttons for new message*/
+
+    AGButton *sendEmail = new AGButton(centralWidget());
+    sendEmail->setIconOnEnter(QIcon(":/data/send_sel.png"));
+    sendEmail->setIconOnLeave(QIcon(":/data/send_def.png"));
+    sendEmail->setText("");
+    sendEmail->setIconSize(QSize(25, 25));
+    sendEmail->setMaximumSize(40, 40);
+    sendEmail->setHint("Send an e-mail");
+
+    AGButton *attachment = new AGButton(centralWidget());
+    attachment->setIconOnEnter(QIcon(":/data/attachment_sel.png"));
+    attachment->setIconOnLeave(QIcon(":/data/attachment_def.png"));
+    attachment->setText("");
+    attachment->setIconSize(QSize(25, 25));
+    attachment->setMaximumSize(40, 40);
+    attachment->setHint("Add an attachment");
+
+    AGButton *backToList2 = new AGButton(centralWidget());
+    backToList2->setIconOnEnter(QIcon(":/data/home_sel.png"));
+    backToList2->setIconOnLeave(QIcon(":/data/home_def.png"));
+    backToList2->setText("");
+    backToList2->setIconSize(QSize(25, 25));
+    backToList2->setMaximumSize(40, 40);
+    backToList2->setHint("Back to e-mails list");
+
+
+    contrButtonsMessageLay->addWidget(sendEmail, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsMessageLay->addWidget(attachment, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsMessageLay->addWidget(backToList2, 0,Qt::AlignLeft |Qt::AlignTop);
+
+    contrButtonsMessageLay->addStretch(1);
+
+
+    /*end of setup controll buttons for new message*/
 
     /*setup of qwebwie*/
 
@@ -209,11 +287,10 @@ MainWindow::MainWindow(QWidget *parent):
 
     QWidget * emailTab = new QWidget;
     QWidget * listTab = new QWidget;
-
     /*setup email table*/
     emailsTable= new QTableWidget();
     emailsTable->setColumnCount(4);
-    emailsTable->setRowCount(10);
+    emailsTable->setRowCount(20);
     emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("From") );
     emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("Header") );
     emailsTable->setHorizontalHeaderItem(2,new QTableWidgetItem("Date") );
@@ -221,7 +298,7 @@ MainWindow::MainWindow(QWidget *parent):
     emailsTable->setFrameStyle(0);
     emailsTable->verticalHeader()->hide();
     emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     emailsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     emailsTable->setSelectionMode(QAbstractItemView::NoSelection);
     emailsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -235,7 +312,7 @@ MainWindow::MainWindow(QWidget *parent):
     ViewFrame =new QWebView(centralWidget());
     ViewFrame->load(QUrl("http://www.example.com"));
 
-    /*setup tab layout*/
+    /*setup tabs layouts*/
 
 
     tabEmailLay->addLayout(contrButtonsLay, 0);
@@ -243,17 +320,76 @@ MainWindow::MainWindow(QWidget *parent):
     emailLay->addWidget(ViewFrame, 1);
     emailTab->setLayout(tabEmailLay);
 
-    //tabListLay->addLayout(contrButtonsLay, 0);
+    tabListLay->addLayout(contrButtonsListLay, 0);
     tabListLay->addLayout(listLay, 1);
     listLay->addWidget(emailsTable, 1);
     listTab->setLayout(tabListLay);
 
+
+
+    QWidget *tabWrite = new QWidget;
+    QBoxLayout * tabWriteLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    QBoxLayout * writeLay = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    /*setup write widget*/
+
+    recipientsEdit = new QLineEdit;
+    recipientsEdit->setPlaceholderText("Recipients");
+    recipientsEdit->setStyleSheet("QLineEdit { border: none }");
+    themeEdit = new QLineEdit;
+    themeEdit->setPlaceholderText("Theme");
+    themeEdit->setStyleSheet("QLineEdit { border: none }");
+    textEdit = new QTextEdit;
+    textEdit->setStyleSheet("QTextEdit { border: none}");
+    attachmentsLabel = new QLabel("Attachments: ");
+
+    QFrame *hor_line4 = new QFrame;
+    hor_line4->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line4->setLineWidth(1);
+    hor_line4->setMaximumHeight(5);
+
+    QFrame *hor_line5 = new QFrame;
+    hor_line5->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line5->setLineWidth(1);
+    hor_line5->setMaximumHeight(5);
+
+    QFrame *hor_line6 = new QFrame;
+    hor_line6->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line6->setLineWidth(1);
+    hor_line6->setMaximumHeight(5);
+
+
+    writeLay->addWidget(recipientsEdit, 0);
+    writeLay->addWidget(hor_line4, 0);
+    writeLay->addWidget(themeEdit, 0);
+    writeLay->addWidget(hor_line5, 0);
+    writeLay->addWidget(textEdit, 1);
+    writeLay->addWidget(hor_line6, 0);
+    writeLay->addWidget(attachmentsLabel, 0);
+
+
+    /*end of setup write widget*/
+
+
+    tabWriteLay->addLayout(contrButtonsMessageLay, 0);
+    tabWriteLay->addLayout(writeLay, 1);
+    tabWrite->setLayout(tabWriteLay);
+
+
     tabsForWork->addTab(emailTab,"Email"); //tab for email view
     tabsForWork->addTab(listTab, "Test"); // tab for list of emails
     //tabsForWork->addTab()   //need tab for search results
+    tabsForWork->addTab(tabWrite, "New Message"); // tab for new message
     tabsForWork->tabBar()->setVisible(false);
+    tabsForWork->setStyleSheet("QTabWidget { border: none }");
 
-    tabsForWork->tabBar()->setCurrentIndex(0);
+    tabsForWork->tabBar()->setCurrentIndex(1);
+    /*
+    list of indexes
+    0-email
+    1-list of email
+    2-send email
+    */
     //frameLay->addWidget(tabsForWork,1 );
 
 
@@ -299,9 +435,13 @@ MainWindow::MainWindow(QWidget *parent):
     connect(baseButton, SIGNAL(clicked()), SLOT(OnBaseButtonClicked()));
 
     connect(backToList, SIGNAL(clicked()), SLOT(OnHomeButtonClicked()));
+    connect(backToList2, SIGNAL(clicked()), SLOT(OnHomeButtonClicked()));
     connect(searchInEmail, SIGNAL(clicked()), SLOT(OnSearchButtonClicked()));
     connect(previousMessage, SIGNAL(clicked()), SLOT(OnPreviousButtonClicked()));
     connect(nextMessage, SIGNAL(clicked()), SLOT(OnNextButtonClicked()));
+    connect(writeEmail, SIGNAL(clicked()), SLOT(OnWriteButtonClicked()));
+    connect(sendEmail, SIGNAL(clicked()), SLOT(OnSendMessageClicked()));
+    connect(attachment, SIGNAL(clicked()), SLOT(OnAddAttachmentsClicked()));
 
     connect(addNewDomain, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(proxyButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
@@ -313,6 +453,15 @@ MainWindow::MainWindow(QWidget *parent):
     connect(searchInEmail, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(previousMessage, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(nextMessage, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+
+    connect(writeEmail, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(refresh, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(searchInList, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(loadNextMessages, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+
+    connect(sendEmail, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(attachment, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(backToList2, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
 
     /*Setup subwindows*/
     activeWindow=NULL;
@@ -341,6 +490,37 @@ void MainWindow::On_Domain_Cursor_up(){
 
 
 }
+
+void MainWindow::OnSendMessageClicked(){
+    Smtp* smtp = new Smtp("email login", "email pass", "smtp.gmail.com", 465);
+    connect(smtp, SIGNAL(status(QString)), this, SLOT(mailSent(QString)));
+
+    if( !files.isEmpty() )
+        smtp->sendMail("from email", recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText(), files );
+    else
+        smtp->sendMail("from email", recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText());
+
+}
+void MainWindow::mailSent(QString text){
+
+}
+
+void MainWindow::OnAddAttachmentsClicked(){
+    files.clear();
+    QFileDialog dialog(this);
+    dialog.setDirectory(QDir::homePath());
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+
+    if (dialog.exec())
+        files = dialog.selectedFiles();
+
+    QString fileListString;
+    foreach(QString file, files)
+        fileListString.append( "\"" + QFileInfo(file).fileName() + "\" " );
+
+    attachmentsLabel->setText( fileListString );
+}
+
 void MainWindow::CreateLabelClicked(){
     closeWindowIfOpened();
     MainBar->setText("Create a new domain");
@@ -1380,6 +1560,9 @@ void MainWindow::OnSearchButtonClicked(){
 }
 void MainWindow::OnHomeButtonClicked(){
     tabsForWork->tabBar()->setCurrentIndex(1);
+}
+void MainWindow::OnWriteButtonClicked(){
+    tabsForWork->tabBar()->setCurrentIndex(2);
 }
 
 

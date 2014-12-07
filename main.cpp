@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     psplash->move(400, 100);
     psplash->show();
 
-    //loadModules(psplash);
+    loadModules(psplash);
     /*set splash screen*/
 
     MainWindow w;

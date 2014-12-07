@@ -21,6 +21,7 @@
 #include <QWebView>
 #include <QTabWidget>
 
+#include "smtp.h"
 #include "agbutton.h"
 #include "exlabel.h"
 #include "subwindow.h"
@@ -77,6 +78,10 @@ private Q_SLOTS:
     void OnPreviousButtonClicked();
     void OnSearchButtonClicked();
     void OnEmailCliked(int row, int col);
+    void OnWriteButtonClicked();
+    void OnSendMessageClicked();
+    void OnAddAttachmentsClicked();
+    void mailSent(QString text);
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -143,6 +148,11 @@ private:
 
    AGButton* saveDomain;
    AGButton* delDomain;
+
+   QLabel * attachmentsLabel;
+   QLineEdit * recipientsEdit;
+   QLineEdit * themeEdit;
+   QTextEdit * textEdit;
    /*END of GUI*/
 
 
@@ -187,6 +197,9 @@ private:
    int selectedRow;//returns selected row from "Domain Table"
    QLabel* domainFileName;
    QWebView* ViewFrame;//viewer of emails
+
+   QStringList files;
+
 
    /*END of LOGIC*/
 

@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     message.cpp \
     pop3.cpp \
-    quotedprintable.cpp
+    quotedprintable.cpp \
+    smtp.cpp
 
 HEADERS  += \
     information.h \
@@ -38,7 +39,8 @@ HEADERS  += \
     presto.h \
     message.h \
     pop3.h \
-    quotedprintable.h
+    quotedprintable.h \
+    smtp.h
 
 RESOURCES += \
     Images.qrc
