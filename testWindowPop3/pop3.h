@@ -7,12 +7,15 @@
 #include <QDebug>
 #include <QByteArray>
 #include <QString>
-#include "message.h"
 #include <QStringList>
 #include <QFile>
 #include <QDataStream>
 #include <QRegExp>
 #include <qtextcodec.h>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+
+#include "message.h"
 
 class pop3 : public QObject
 {
@@ -30,9 +33,10 @@ public slots:
     bool sendPass();
     bool sendQuit();
     bool connectToHost();
-    bool sendList();
+    bool sendList(QTableWidget *table, int start);
     bool sendRetr(int number);
-
+    bool sendTop(int number, QTableWidget *table);
+    void sendNoop();
 private slots:
     void stateChanged(QAbstractSocket::SocketState socketState);
     void errorReceived(QAbstractSocket::SocketError socketError);
@@ -47,6 +51,7 @@ private:
     QString host;
     int port;
     int timeout;
+    int countMessage;
     QSslSocket * socket;
 };
 

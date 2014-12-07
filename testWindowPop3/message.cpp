@@ -53,14 +53,14 @@ int Message::getNumber(){
     return number;
 }
 
-void Message::print(QWebView *web,QTextEdit *from,QTextEdit *to){
+void Message::print(QWebView *web){
 //    qDebug() << "from - " << from;
 //    qDebug() << "to - " << to;
 //    qDebug() << "uidl - " << uidl;
 //    qDebug() << "number - " << QString::number(number);
 //    QString full;
-    from->setText(this->from);
-    to->setText(this->to);
+//    from->setText(this->from);
+//    to->setText(this->to);
     while(!messagePartList.isEmpty()){
 
         QString charset = textEncodingPartList.takeFirst();
@@ -74,15 +74,25 @@ void Message::print(QWebView *web,QTextEdit *from,QTextEdit *to){
         QByteArray message = messagePartList.takeFirst();
         if((transferEncoding=="quoted-printable")||(transferEncoding=="Quoted-Printable")) message =  QuotedPrintable::decode(message);
         if(transferEncoding=="base64") message =  QByteArray::fromBase64(message);
+        QString tempType = contentTypePartList.takeFirst();
+        QString tempSubType = contentSubtypePartList.takeFirst();
 
         QString msg;
-        if((!charset.isEmpty())&&(charset!="utf-8")&&(charset!="UTF-8")) msg = QTextCodec::codecForName(charset.toUtf8())->toUnicode(message);
+        if((!charset.isEmpty())&&(charset!="utf-8")&&(charset!="UTF-8")&&(tempType=="text")) msg = QTextCodec::codecForName(charset.toUtf8())->toUnicode(message);
         else msg = QString::fromUtf8(message);
-        qDebug() << msg;
+//        qDebug() << msg;
 //        full.append(msg);
-        if(contentSubtypePartList.takeFirst()=="html")
-        web->setHtml(msg);
-        else web->setHtml(QString());
+        //if(contentTypePartList.takeFirst()=="text")
+        if((tempType=="text")){
+            if(tempSubType == "html")
+            web->setHtml(msg);
+            else{
+                msg = "<html><body>"+msg+"</body></html>";
+                qDebug() << msg;
+                web->setHtml(msg);
+            }
+        }
+//        else web->setHtml(QString());
         /*
         QFile file;
         file.setFileName("C:\\Users\\Сергей\\Desktop\\test\\"+QString::number(number)+".html");

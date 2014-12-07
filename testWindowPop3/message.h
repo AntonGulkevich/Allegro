@@ -25,7 +25,7 @@ public:
     void appendPart(QByteArray message_,QString transferEncoding_,QString textEncoding_,QString contentTypePartList_,QString contentSubtypePartList_);
     void setNumber(int number_);
     int getNumber();
-    void print(QWebView *web,QTextEdit *from,QTextEdit *to);
+    void print(QWebView *web);
 private:
     QString from;
     QString to;
