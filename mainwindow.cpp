@@ -138,26 +138,6 @@ MainWindow::MainWindow(QWidget *parent):
     maximizeButton->setMinimumSize(35, 35);
     maximizeButton->setHint("Maximize the application.");
 
-    /*
-    domainsAccount= new QTableWidget;
-    domainsAccount->setColumnCount(2);
-    domainsAccount->setRowCount(0);
-    domainsAccount->setColumnWidth(0, 112);
-    domainsAccount->setColumnWidth(1, 60);
-    domainsAccount->setHorizontalHeaderItem(0,new QTableWidgetItem("Domain") );
-    domainsAccount->setHorizontalHeaderItem(1,new QTableWidgetItem("Count") );
-    domainsAccount->setFrameStyle(0);
-    domainsAccount->setMaximumSize(190, 200);
-    domainsAccount->verticalHeader()->hide();
-    domainsAccount->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    domainsAccount->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    domainsAccount->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    domainsAccount->setSelectionMode(QAbstractItemView::NoSelection);
-    domainsAccount->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-
-    domainsAccount->setVisible(true);
-    */
-
     QFrame *v_line = new QFrame();
     v_line->setFrameStyle(QFrame::VLine| QFrame::Raised);
     v_line->setLineWidth(1);
@@ -214,51 +194,30 @@ MainWindow::MainWindow(QWidget *parent):
 
 
     /*end of setup controll buttons for mail*/
-    /*test*/
-    /*
-    QSplitter *tablespl= new QSplitter (Qt::Horizontal);
-    tablespl->setHandleWidth(3);
-    tablespl->setStyleSheet("QSplitter::handle{background:gray;}");
-    tablespl->setContentsMargins(10, 10, 10, 10);
-
-    QWidget *container= new QWidget;
-    QVBoxLayout *container_layout = new QVBoxLayout;
-
-    test1= new QTextEdit;
-    QTextEdit* test2= new QTextEdit;
-
-
-    tablespl->addWidget(test1);
-    tablespl->addWidget(test2);
-
-    container_layout->addWidget(tablespl);
-    container->setLayout(container_layout);
-    */
-
-    /*end of test*/
 
     /*setup of qwebwie*/
 
-    QWidget * mainContainer = new QWidget;
-    QBoxLayout * frameLay = new QBoxLayout(QBoxLayout::TopToBottom);
-
     tabsForWork = new QTabWidget(centralWidget());
 
+    QBoxLayout * tabsLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    QWidget * emailTab = new QWidget;
+    QWidget * listTab = new QWidget;
 
-    QWebView* ViewFrame =new QWebView(centralWidget());
-    ViewFrame->load(QUrl("http://www.example.com"));
+    QBoxLayout * tabEmailLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    QBoxLayout * tabListLay = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    QBoxLayout * emailLay = new QBoxLayout(QBoxLayout::TopToBottom);
+    QBoxLayout * listLay = new QBoxLayout(QBoxLayout::TopToBottom);
 
     /*setup email table*/
-    QBoxLayout * emailTableLay = new QBoxLayout(QBoxLayout::TopToBottom);
     emailsTable= new QTableWidget();
-    emailsTable->setColumnCount(2);
+    emailsTable->setColumnCount(4);
     emailsTable->setRowCount(10);
-    //emailsTable->setColumnWidth(0, 112);
-    //emailsTable->setColumnWidth(1, 60);
-    emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("Domain") );
-    emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("Count") );
+    emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("From") );
+    emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("Header") );
+    emailsTable->setHorizontalHeaderItem(2,new QTableWidgetItem("Text") );
+    emailsTable->setHorizontalHeaderItem(3,new QTableWidgetItem("Date") );
     emailsTable->setFrameStyle(0);
-    //emailsTable->setMaximumSize(190, 200);
     emailsTable->verticalHeader()->hide();
     emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -268,19 +227,31 @@ MainWindow::MainWindow(QWidget *parent):
     emailsTable->horizontalHeader()->setStretchLastSection(true);
     emailsTable->setVisible(true);
 
-    emailTableLay->addWidget(emailsTable, 1);
-    mainContainer->setLayout(emailTableLay);
-
     /*end of setup email table*/
-    tabsForWork->addTab(ViewFrame,"Email"); //tab for email view
-    tabsForWork->addTab(mainContainer, "Test"); // tab for list of emails
+
+    ViewFrame =new QWebView(centralWidget());
+    ViewFrame->load(QUrl("http://www.example.com"));
+
+    /*setup tab layout*/
+    tabsLay->addWidget(tabsForWork, 1);
+
+    tabEmailLay->addLayout(contrButtonsLay, 0);
+    tabEmailLay->addLayout(emailLay, 1);
+    emailLay->addWidget(ViewFrame, 1);
+    emailTab->setLayout(tabEmailLay);
+
+    tabListLay->addLayout(contrButtonsLay, 0);
+    tabListLay->addLayout(tabListLay, 1);
+    tabListLay->addWidget(emailsTable, 1);
+    listTab->setLayout(tabListLay);
+
+    tabsForWork->addTab(emailTab,"Email"); //tab for email view
+    tabsForWork->addTab(listTab, "Test"); // tab for list of emails
     //tabsForWork->addTab()   //need tab for search results
     tabsForWork->tabBar()->setVisible(false);
 
     tabsForWork->tabBar()->setCurrentIndex(0);
-
-    frameLay->addLayout(contrButtonsLay, 0);
-    frameLay->addWidget(tabsForWork,1 );
+    //frameLay->addWidget(tabsForWork,1 );
 
     /*end of setup of qwebwie*/
 
@@ -306,7 +277,7 @@ MainWindow::MainWindow(QWidget *parent):
     buttonsLeftLay->addStretch(1);
 
     tablelay->addWidget(v_line);
-    tablelay->addLayout(frameLay);
+    tablelay->addLayout(tabsLay);
 
     smainlay->addLayout(buttonsLeftLay, 0);
     smainlay->addLayout(tablelay, 1);

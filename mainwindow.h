@@ -185,6 +185,7 @@ private:
 
    int selectedRow;//returns selected row from "Domain Table"
    QLabel* domainFileName;
+   QWebView* ViewFrame;//viewer of emails
 
    /*END of LOGIC*/
 
