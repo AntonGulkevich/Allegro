@@ -492,13 +492,13 @@ void MainWindow::On_Domain_Cursor_up(){
 }
 
 void MainWindow::OnSendMessageClicked(){
-    Smtp* smtp = new Smtp("email login", "email pass", "smtp.gmail.com", 465);
+    Smtp* smtp = new Smtp("ivanovsergey764@yandex.ru", "qwerty123", "smtp.yandex.ru", 465);
     connect(smtp, SIGNAL(status(QString)), this, SLOT(mailSent(QString)));
 
     if( !files.isEmpty() )
-        smtp->sendMail("from email", recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText(), files );
+        smtp->sendMail("ivanovsergey764@yandex.ru", recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText(), files );
     else
-        smtp->sendMail("from email", recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText());
+        smtp->sendMail("ivanovsergey764@yandex.ru", recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText());
 
 }
 void MainWindow::mailSent(QString text){
