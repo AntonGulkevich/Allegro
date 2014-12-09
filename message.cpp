@@ -61,6 +61,7 @@ void Message::print(QWebView *web){
 //    QString full;
 //    from->setText(this->from);
 //    to->setText(this->to);
+//    qDebug() << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
     while(!messagePartList.isEmpty()){
 
         QString charset = textEncodingPartList.takeFirst();
@@ -88,14 +89,14 @@ void Message::print(QWebView *web){
             web->setHtml(msg);
             else{
                 msg = "<html><body>"+msg+"</body></html>";
-                qDebug() << msg;
+//                qDebug() << msg<<"\n\n\n\n\n\n\n\n";
                 web->setHtml(msg);
             }
-        }
-//        else web->setHtml(QString());
+        } else web->setHtml(QString("<html><body></body></html>"));
+
         /*
         QFile file;
-        file.setFileName("C:\\Users\\Сергей\\Desktop\\test\\"+QString::number(number)+".html");
+        file.setFileName("C:\\Users\\РЎРµСЂРіРµР№\\Desktop\\test\\"+QString::number(number)+".html");
         file.open(QFile::Append);
         if((transferEncoding=="quoted-printable")||(transferEncoding=="base64"))
 //        if((charset=="utf-8")||(charset=="UTF-8"))
@@ -106,4 +107,18 @@ void Message::print(QWebView *web){
         file.close();
         */
     }
+}
+
+void Message::clear()
+{
+    from.clear();
+    to.clear();
+    messagePartList.clear();
+    transferEncodingPartList.clear();
+    textEncodingPartList.clear();
+    contentTypePartList.clear();
+    contentSubtypePartList.clear();
+    uidl.clear();
+    number=0;
+
 }

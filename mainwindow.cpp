@@ -489,7 +489,6 @@ MainWindow::MainWindow(QWidget *parent):
 
 
 
-
     protocol = new pop3("ivanovsergey764","qwerty123","pop.yandex.ru",995,30000);
     protocol->connectToHost();
     protocol->sendUser();
@@ -534,7 +533,7 @@ MainWindow::MainWindow(QWidget *parent):
 }
 MainWindow::~MainWindow()
 {
-
+    protocol->sendQuit();
 }
 void MainWindow::On_Domain_Cursor_up(){
 

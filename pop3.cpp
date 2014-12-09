@@ -68,7 +68,7 @@ QByteArray pop3::processingRequest(QString request){
     do {
         QByteArray all(socket->readAll());
         response.append(all);
-        if(!socket->waitForReadyRead(80)) break;
+        if(!socket->waitForReadyRead(500)) break;
         bytesAvailable = socket->bytesAvailable();
     } while (bytesAvailable!=0);
 //    qDebug() << response;
@@ -111,7 +111,6 @@ bool pop3::sendList(QTableWidget *table, int start){
     if(!response.startsWith("+OK")) return false;
     QStringList list = response.split("\r\n");
     countMessage = list.takeFirst().split(" ").at(1).toInt();
-    qDebug() << "hhhuuuiii" << start << countMessage;
     if(start>countMessage) return false;
     QRegExp strList("([0-9]*) (.*)");
     strList.setMinimal(false);
@@ -129,7 +128,6 @@ bool pop3::sendList(QTableWidget *table, int start){
         sendTop(strList.cap(1).toInt(),table);
         qDebug() << i;
     }
-
     return true;
 }
 
@@ -326,9 +324,11 @@ bool pop3::sendTop(int number, QTableWidget *table){
 }
 
 bool pop3::sendRetr(int number){
+    msg.clear();
+    qDebug() << number << "fcdsgdfgdf";
     QByteArray response = processingRequest("TOP "+QString::number(number)+"\r\n");
     QFile file;
-    file.setFileName("C:\\Users\\Сергей\\Desktop\\test\\"+QString::number(number)+".txt");
+    file.setFileName("C:\\Users\\РЎРµСЂРіРµР№\\Desktop\\test\\"+QString::number(number)+".txt");
     if(file.open(QFile::WriteOnly)){
         QDataStream data(&file);
         data << response;
@@ -383,13 +383,17 @@ void pop3::parsingMessage(QByteArray message, int number){
         QString contentTransferEncoding = contentTransferEncodingReg.cap(1);
   //     qDebug() << QString::number(message.indexOf("\r\n\r\n"));
         message=message.right(message.count()-message.indexOf("\r\n\r\n"));
-        qDebug() << message << contentTransferEncoding << charset << contentType << contentSubtype;
+//        qDebug() << message << contentTransferEncoding << charset << contentType << contentSubtype;
         msg.appendPart(message,contentTransferEncoding,charset,contentType,contentSubtype);
         msg.setNumber(number);
 }
 
 void pop3::parsingPart(QByteArray response, int number){
-    QRegExp multipartReg("Content-Type: .*multipart.*boundary=\"(.*)\".*[\\r]");
+
+
+
+
+    QRegExp multipartReg("Content-[Tt]ype: .*multipart.*boundary=\"(.*)\".*[\\r]");
     multipartReg.setMinimal(true);
     multipartReg.indexIn(response,0);
     QString boundary = multipartReg.cap(1);
@@ -440,7 +444,7 @@ void pop3::parsingPart(QByteArray response, int number){
                 }
             }
         //}
-        file.setFileName("C:\\Users\\Сергей\\Desktop\\"+QString::number(number)+".html");
+        file.setFileName("C:\\Users\\РЎРµСЂРіРµР№\\Desktop\\"+QString::number(number)+".html");
         if((file.open(QFile::WriteOnly))&&(!temp.isEmpty())){
             if((!charset.isEmpty())&&(charset!="utf-8")) file.write(QTextCodec::codecForName(charset.toUtf8())->fromUnicode(msg));
             else file.write(msg.toLocal8Bit());

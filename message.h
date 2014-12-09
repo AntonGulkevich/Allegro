@@ -26,6 +26,7 @@ public:
     void setNumber(int number_);
     int getNumber();
     void print(QWebView *web);
+    void clear();
 private:
     QString from;
     QString to;
