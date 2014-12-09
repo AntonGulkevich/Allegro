@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include <QTimer>
+
 
 
 MainWindow::MainWindow(QWidget *parent):
@@ -12,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent):
     domainVect= new QVector<Domain>;
 
     imap=false;
-    pop3=false;
+//    pop3=false;
     TSLSSL=false;
     encrNone=false;
 
@@ -289,7 +291,7 @@ MainWindow::MainWindow(QWidget *parent):
     QWidget * listTab = new QWidget;
     /*setup email table*/
     emailsTable= new QTableWidget();
-    emailsTable->setColumnCount(4);
+/*    emailsTable->setColumnCount(4);
     emailsTable->setRowCount(20);
     emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("From") );
     emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("Header") );
@@ -304,7 +306,7 @@ MainWindow::MainWindow(QWidget *parent):
     emailsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     emailsTable->horizontalHeader()->setStretchLastSection(true);
     emailsTable->setVisible(true);
-
+*/
     connect(emailsTable, SIGNAL(cellDoubleClicked(int,int)), SLOT(OnEmailCliked(int,int)));
 
     /*end of setup email table*/
@@ -479,6 +481,54 @@ MainWindow::MainWindow(QWidget *parent):
     windowBaseSearch= NULL;
 
     /*end of setup subwindows*/
+
+
+
+
+
+
+
+
+
+    protocol = new pop3("ivanovsergey764","qwerty123","pop.yandex.ru",995,30000);
+    protocol->connectToHost();
+    protocol->sendUser();
+    protocol->sendPass();
+    timer = new QTimer();
+    countReal = 0;
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateTCP()));
+    timer->start(10000);
+    emailsTable->setColumnCount(6);
+    QTableWidgetItem *fromName = new QTableWidgetItem("From(Name)");
+    QTableWidgetItem *fromAdr = new QTableWidgetItem("From(Adr)");
+    QTableWidgetItem *to = new QTableWidgetItem("To");
+    QTableWidgetItem *head = new QTableWidgetItem("Head");
+    QTableWidgetItem *uidl = new QTableWidgetItem("Uidl");
+    QTableWidgetItem *data = new QTableWidgetItem("Data");
+    emailsTable->setHorizontalHeaderItem(0,fromName);
+    emailsTable->setHorizontalHeaderItem(1,fromAdr);
+    emailsTable->setHorizontalHeaderItem(2,to);
+    emailsTable->setHorizontalHeaderItem(3,head);
+    emailsTable->setHorizontalHeaderItem(4,uidl);
+    emailsTable->setHorizontalHeaderItem(5,data);
+//    for(int j=0;j<10;j++){
+//            protocol->sendRetr(j);
+//
+//    }
+//    protocol->sendRetr(2);
+//    protocol->msg.print(ui->webView);
+    connect(ViewFrame,SIGNAL(linkClicked(QUrl)),this,SLOT(newWindow(QUrl)));
+    ViewFrame->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    protocol->sendList(emailsTable,countReal);
+
+
+
+
+
+
+
+
+
 
 
 }
@@ -725,7 +775,7 @@ void MainWindow::OnFullBaseClose(){
     qDebug()<<"OnFullBaseClose";
     delimiter=delLE->text();
 
-    pop3=usePOP3->checkState();
+//    pop3=usePOP3->checkState();
     imap=useIMAP->checkState();
     encrNone=useNone->checkState();
     TSLSSL=useTSLSSL->checkState();
@@ -1105,6 +1155,8 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
 
 }
 void MainWindow::OnEmailCliked(int row, int col){
+    protocol->sendRetr(row+1+countReal);
+    protocol->msg.print(ViewFrame);
     tabsForWork->tabBar()->setCurrentIndex(0);
 }
 
@@ -1346,7 +1398,7 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
     useTSLSSL->setMinimumWidth(120);
     useNone->setMinimumWidth(120);
 
-    usePOP3->setChecked(pop3);
+//    usePOP3->setChecked(pop3);
     useIMAP->setChecked(imap);
     useTSLSSL->setChecked(TSLSSL);
     useNone->setChecked(encrNone);
@@ -1566,5 +1618,13 @@ void MainWindow::OnWriteButtonClicked(){
 }
 
 
+void MainWindow::updateTCP(){
+    protocol->sendNoop();
+    timer->start(10000);
+}
+
+void MainWindow::newWindow(QUrl url){
+    QDesktopServices::openUrl(url);
+}
 
 
