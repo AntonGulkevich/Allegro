@@ -1619,7 +1619,7 @@ void MainWindow::OnWriteButtonClicked(){
 
 void MainWindow::updateTCP(){
     protocol->sendNoop();
-    timer->start(10000);
+    timer->start(20000);
 }
 
 void MainWindow::newWindow(QUrl url){

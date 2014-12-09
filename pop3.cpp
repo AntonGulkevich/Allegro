@@ -68,7 +68,7 @@ QByteArray pop3::processingRequest(QString request){
     do {
         QByteArray all(socket->readAll());
         response.append(all);
-        if(!socket->waitForReadyRead(500)) break;
+        if(!socket->waitForReadyRead(600)) break;
         bytesAvailable = socket->bytesAvailable();
     } while (bytesAvailable!=0);
 //    qDebug() << response;

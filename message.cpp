@@ -54,6 +54,7 @@ int Message::getNumber(){
 }
 
 void Message::print(QWebView *web){
+    web->setHtml(QString("<html><body></body></html>"));
 //    qDebug() << "from - " << from;
 //    qDebug() << "to - " << to;
 //    qDebug() << "uidl - " << uidl;
@@ -92,7 +93,7 @@ void Message::print(QWebView *web){
 //                qDebug() << msg<<"\n\n\n\n\n\n\n\n";
                 web->setHtml(msg);
             }
-        } else web->setHtml(QString("<html><body></body></html>"));
+        }
 
         /*
         QFile file;
