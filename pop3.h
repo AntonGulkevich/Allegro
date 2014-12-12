@@ -3,56 +3,32 @@
 
 #include <QObject>
 #include <QSslSocket>
-#include <QAbstractSocket>
-#include <QDebug>
-#include <QByteArray>
+#include <QSsl>
 #include <QString>
-#include <QStringList>
-#include <QFile>
-#include <QDataStream>
+#include <QByteArray>
 #include <QRegExp>
-#include <qtextcodec.h>
-#include <QTableWidget>
-#include <QTableWidgetItem>
 
-#include "message.h"
-
-class pop3 : public QObject
+class Pop3
 {
-    Q_OBJECT
-public:
-    pop3(QString login_,QString password_,QString host_,int port_,int timeout_);
-    pop3();
-    ~pop3();
-    Message msg;
-
-signals:
-
-public slots:
-    bool sendUser();
-    bool sendPass();
-    bool sendQuit();
-    bool connectToHost();
-    bool sendList(QTableWidget *table, int start);
-    bool sendRetr(int number);
-    bool sendTop(int number, QTableWidget *table);
-    void sendNoop();
-private slots:
-    void stateChanged(QAbstractSocket::SocketState socketState);
-    void errorReceived(QAbstractSocket::SocketError socketError);
-    void disconnected();
-    void connected();
-    QByteArray processingRequest(QString request);
-    void parsingMessage(QByteArray message,int number);
-    void parsingPart(QByteArray response, int number);
-private:
     QString login;
     QString password;
     QString host;
     int port;
-    int timeout;
-    int countMessage;
-    QSslSocket * socket;
+    QSslSocket* socket;
+    QSsl::SslProtocol sslProtolol;
+public:
+    Pop3(QString& login_,QString& password_,QString& host_,int port_,QSsl::SslProtocol sslProtolol_);
+    ~Pop3();
+    bool connectToHost();
+    bool sendUser();
+    bool sendPass();
+    void sendQuit();
+    bool sendDele(int number);
+    void sendNoop();
+    QByteArray sendList();
+    QByteArray sendRetr(int number);
+    QByteArray sendTop(int number);
+    QByteArray processingRequest(QString request);
 };
 
 #endif // POP3_H

@@ -22,10 +22,12 @@ SOURCES += main.cpp\
     subwindow.cpp \
     presto.cpp \
     mainwindow.cpp \
-    quotedprintable.cpp \
     smtp.cpp \
     message.cpp \
-    pop3.cpp
+    basepop3.cpp \
+    pop3.cpp \
+    quotedprintable.cpp \
+    threadpop3.cpp
 
 HEADERS  += \
     information.h \
@@ -40,7 +42,9 @@ HEADERS  += \
     quotedprintable.h \
     smtp.h \
     message.h \
-    pop3.h
+    pop3.h \
+    basepop3.h \
+    threadpop3.h
 
 RESOURCES += \
     Images.qrc

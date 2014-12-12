@@ -25,6 +25,7 @@ void loadModules(QSplashScreen* psplash)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    qRegisterMetaType<Message>("Message");
     app.setWindowIcon(QIcon(":/data/clef.png"));
     /*set splash screen*/
     QSplashScreen * psplash = new QSplashScreen (QPixmap(":/data/black.png"));

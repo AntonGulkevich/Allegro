@@ -2,34 +2,19 @@
 #define MESSAGE_H
 
 #include <QString>
-#include <QMap>
-#include <QDebug>
 #include <QList>
-#include <qtextcodec.h>
-#include <QFile>
-#include <quotedprintable.h>
-#include <QWebView>
-#include <QTextEdit>
-
-class Message
+#include <QVariant>
+struct Message
 {
 public:
     Message();
+    Message(const Message & original);
     ~Message();
-    void setFrom(QString from_);
-    QString getFrom();
-    void setTo(QString to_);
-    QString getTo();
-    void setUidl(QString uidl_);
-    QString getUidl();
-    void appendPart(QByteArray message_,QString transferEncoding_,QString textEncoding_,QString contentTypePartList_,QString contentSubtypePartList_);
-    void setNumber(int number_);
-    int getNumber();
-    void print(QWebView *web);
-    void clear();
-private:
     QString from;
+    QString fromMes;
     QString to;
+    QString head;
+    QString date;
     QList<QByteArray> messagePartList;
     QList<QString> transferEncodingPartList;
     QList<QString> textEncodingPartList;

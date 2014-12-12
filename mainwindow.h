@@ -19,7 +19,6 @@
 #include <QFileDialog>
 #include <QErrorMessage>
 #include <QWebView>
-//#include <QTabWidget>
 
 #include "smtp.h"
 #include "agbutton.h"
@@ -27,15 +26,13 @@
 #include "subwindow.h"
 #include "domain.h"
 #include "presto.h"
-#include "pop3.h"
+#include "threadpop3.h"
 #include <QTimer>
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    pop3 *protocol;
-    int countReal;
-    QTimer *timer;
+    ThreadPop3 *protocol;
 private Q_SLOTS:
     void On_Domain_Cursor_up();
     void CreateLabelClicked();
@@ -112,7 +109,6 @@ public:
 signals:
 
 public slots:
-    void updateTCP();
     void newWindow(QUrl url);
 protected:
     void mousePressEvent(QMouseEvent* event);

@@ -489,14 +489,7 @@ MainWindow::MainWindow(QWidget *parent):
 
 
 
-    protocol = new pop3("ivanovsergey764","qwerty123","pop.yandex.ru",995,30000);
-    protocol->connectToHost();
-    protocol->sendUser();
-    protocol->sendPass();
-    timer = new QTimer();
-    countReal = 0;
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateTCP()));
-    timer->start(10000);
+    protocol = new ThreadPop3(emailsTable,ViewFrame);
     emailsTable->setColumnCount(6);
     QTableWidgetItem *fromName = new QTableWidgetItem("From(Name)");
     QTableWidgetItem *fromAdr = new QTableWidgetItem("From(Adr)");
@@ -510,16 +503,9 @@ MainWindow::MainWindow(QWidget *parent):
     emailsTable->setHorizontalHeaderItem(3,head);
     emailsTable->setHorizontalHeaderItem(4,uidl);
     emailsTable->setHorizontalHeaderItem(5,data);
-//    for(int j=0;j<10;j++){
-//            protocol->sendRetr(j);
-//
-//    }
-//    protocol->sendRetr(2);
-//    protocol->msg.print(ui->webView);
     connect(ViewFrame,SIGNAL(linkClicked(QUrl)),this,SLOT(newWindow(QUrl)));
     ViewFrame->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    protocol->sendList(emailsTable,countReal);
-
+    emit protocol->get20MessageSignal();
 
 
 
@@ -533,7 +519,6 @@ MainWindow::MainWindow(QWidget *parent):
 }
 MainWindow::~MainWindow()
 {
-    protocol->sendQuit();
 }
 void MainWindow::On_Domain_Cursor_up(){
 
@@ -1154,8 +1139,7 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
 
 }
 void MainWindow::OnEmailCliked(int row, int col){
-    protocol->sendRetr(row+1+countReal);
-    protocol->msg.print(ViewFrame);
+    emit protocol->getMessageSignal(row+1);
     tabsForWork->tabBar()->setCurrentIndex(0);
 }
 
@@ -1601,6 +1585,7 @@ bool MainWindow::checkLineEdit(QLineEdit *lineEdit){
     }
 }
 void MainWindow::OnNextButtonClicked(){
+    emit protocol->get20MessageSignal();
 
 }
 void MainWindow::OnPreviousButtonClicked(){
@@ -1614,12 +1599,6 @@ void MainWindow::OnHomeButtonClicked(){
 }
 void MainWindow::OnWriteButtonClicked(){
     tabsForWork->tabBar()->setCurrentIndex(2);
-}
-
-
-void MainWindow::updateTCP(){
-    protocol->sendNoop();
-    timer->start(20000);
 }
 
 void MainWindow::newWindow(QUrl url){
