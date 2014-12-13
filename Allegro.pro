@@ -27,7 +27,10 @@ SOURCES += main.cpp\
     basepop3.cpp \
     pop3.cpp \
     quotedprintable.cpp \
-    threadpop3.cpp
+    threadpop3.cpp \
+    baseimap.cpp \
+    imap.cpp \
+    threadimap.cpp
 
 HEADERS  += \
     information.h \
@@ -44,7 +47,10 @@ HEADERS  += \
     message.h \
     pop3.h \
     basepop3.h \
-    threadpop3.h
+    threadpop3.h \
+    baseimap.h \
+    imap.h \
+    threadimap.h
 
 RESOURCES += \
     Images.qrc

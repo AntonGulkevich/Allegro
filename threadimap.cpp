@@ -1,6 +1,6 @@
-#include "threadpop3.h"
+#include "threadimap.h"
 
-ThreadPop3::ThreadPop3(QList<QByteArray> *filelist,QTableWidget *table, QWebView *view,QTextEdit * status,QTableWidget *fileTable,QString& login,QString& password,QString& host,int port,QSsl::SslProtocol ssl)
+ThreadImap::ThreadImap(QList<QByteArray> *filelist,QTableWidget *table, QWebView *view,QTextEdit * status,QTableWidget *fileTable,QString& login,QString& password,QString& host,int port,QSsl::SslProtocol ssl)
 {
     filelis = filelist;
     tabl=table;
@@ -8,7 +8,7 @@ ThreadPop3::ThreadPop3(QList<QByteArray> *filelist,QTableWidget *table, QWebView
     statu=status;
     filetabl=fileTable;
     thread = new QThread();
-    base = new BasePop3(login,password,host,port,ssl);
+    base = new BaseImap(login,password,host,port,ssl);
     connect(thread,SIGNAL(started()),base,SLOT(run()));
     connect(this,SIGNAL(get20MessageSignal()),base,SLOT(get20Message()));
     connect(base,SIGNAL(MessageTopOK(Message)),this,SLOT(getMessageTop(Message)));
@@ -21,7 +21,7 @@ ThreadPop3::ThreadPop3(QList<QByteArray> *filelist,QTableWidget *table, QWebView
     thread->start();
 }
 
-void ThreadPop3::getMessageTop(Message top){
+void ThreadImap::getMessageTop(Message top){
     tabl->setRowCount(tabl->rowCount()+1);
     tabl->setItem(tabl->rowCount()-1,0,new QTableWidgetItem(top.fromMes));
     tabl->setItem(tabl->rowCount()-1,1,new QTableWidgetItem(top.from));
@@ -30,7 +30,7 @@ void ThreadPop3::getMessageTop(Message top){
     tabl->setItem(tabl->rowCount()-1,4,new QTableWidgetItem(top.date));
 }
 
-void ThreadPop3::getMessage(Message msg){
+void ThreadImap::getMessage(Message msg){
     QString end("<html><body>Пусто</html></body>");
     filelis->clear();
     filetabl->clearContents();
@@ -62,7 +62,7 @@ void ThreadPop3::getMessage(Message msg){
     }
 }
 
-void ThreadPop3::getError(QString messsage)
+void ThreadImap::getError(QString messsage)
 {
     statu->append(messsage);
 }

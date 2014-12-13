@@ -484,38 +484,95 @@ MainWindow::MainWindow(QWidget *parent):
 
 
 
+    QString login="ivanovsergey764@yandex.ru";
+    QString password="qwerty123";
+    QString host="pop.yandex.ru";
+    QString hostsmtp="smtp.yandex.ru";
+    int port=995;
+    int portSmtp=465;
 
 
+    messageEdit = new QTextEdit();
+    fileTable = new QTableWidget();
+    fileTable->setColumnCount(1);
 
-
-
-    protocol = new ThreadPop3(emailsTable,ViewFrame);
-    emailsTable->setColumnCount(6);
+    protocol = new ThreadPop3(&fileList,emailsTable,ViewFrame,messageEdit,fileTable,login,password,host,port,QSsl::SslV3);
+    emailsTable->setColumnCount(5);
     QTableWidgetItem *fromName = new QTableWidgetItem("From(Name)");
     QTableWidgetItem *fromAdr = new QTableWidgetItem("From(Adr)");
     QTableWidgetItem *to = new QTableWidgetItem("To");
     QTableWidgetItem *head = new QTableWidgetItem("Head");
-    QTableWidgetItem *uidl = new QTableWidgetItem("Uidl");
     QTableWidgetItem *data = new QTableWidgetItem("Data");
     emailsTable->setHorizontalHeaderItem(0,fromName);
     emailsTable->setHorizontalHeaderItem(1,fromAdr);
     emailsTable->setHorizontalHeaderItem(2,to);
     emailsTable->setHorizontalHeaderItem(3,head);
-    emailsTable->setHorizontalHeaderItem(4,uidl);
     emailsTable->setHorizontalHeaderItem(5,data);
+    emailsTable->setFrameStyle(0);
+    emailsTable->verticalHeader()->hide();
+    emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    emailsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    emailsTable->setSelectionMode(QAbstractItemView::NoSelection);
+    emailsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    emailsTable->horizontalHeader()->setStretchLastSection(true);
+    emailsTable->setVisible(true);
+
     connect(ViewFrame,SIGNAL(linkClicked(QUrl)),this,SLOT(newWindow(QUrl)));
     ViewFrame->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     emit protocol->get20MessageSignal();
 
+///////////////////////////////////////////////////
+////    emit protocol->get20MessageSignal(); - получить 20 писем в emailsTable
+////    emit protocol->getMessageSignal(row+1); - получить текст писима в ViewFrame и имена файлов в fileTable и содержимое в fileList
+
+/*
+ * update button
+    emailsTable->clearContents();
+    emailsTable->setRowCount(0);
+    emit pop3->update();
+*/
+
+/*
+ * delete message
+ *
+ *  if(emailsTable->selectionModel()->selectedRows().count()==0) return;
+    while(!emailsTable->selectionModel()->selectedRows().isEmpty()){
+        emit protocol->deleteMessage(emailsTable->selectionModel()->selectedRows().takeFirst().row()+1);
+        emailsTable->removeRow(emailsTable->selectionModel()->selectedRows().takeFirst().row());
+    }
+    ViewFrame->setHtml("<html><body>Пустая страница</html></body>");
 
 
 
+    Двойной клик по таблице с именем файла для сейва файла
+
+    QString filename = QFileDialog::getSaveFileName(
+            this,
+            tr("Save Document"),
+            "C:\\Program Files\\Oracle\\VirtualBox\\",
+            tr("Documents (*.*)") );
+    if(!filename.isEmpty()){
+        QFile file(filename);
+        file.open(QFile::WriteOnly);
+        file.write(filelist.at(row));
+        file.close();
+    }
+
+    Тебе надо:
+    подключить кнопки update и next
+    вывести табличку fileTable, где содержаться имена прикреплённых файлов
+    вывести окно сообщений messageEdit, куда идут ошибки и сообщения
+    убрать прокси(без них норм будет)
+    подключить домены и логины наконец-то!!!
+    если не хочешь делать поиск, то убери его
+
+    класс imap аналогичен pop3, те же сигналы, теже конструкции
 
 
 
-
-
-
+ * /
+*/
 }
 MainWindow::~MainWindow()
 {
@@ -526,13 +583,27 @@ void MainWindow::On_Domain_Cursor_up(){
 }
 
 void MainWindow::OnSendMessageClicked(){
-    Smtp* smtp = new Smtp("ivanovsergey764@yandex.ru", "qwerty123", "smtp.yandex.ru", 465);
+
+
+
+    QString login="ivanovsergey764@yandex.ru";
+    QString password="qwerty123";
+    QString host="pop.yandex.ru";
+    QString hostsmtp="smtp.yandex.ru";
+    int port=995;
+    int portSmtp=465;
+
+
+
+
+    Smtp* smtp = new Smtp(login, password, hostsmtp, 465);
     connect(smtp, SIGNAL(status(QString)), this, SLOT(mailSent(QString)));
 
     if( !files.isEmpty() )
-        smtp->sendMail("ivanovsergey764@yandex.ru", recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText(), files );
+        smtp->sendMail(login, recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText(), files );
     else
-        smtp->sendMail("ivanovsergey764@yandex.ru", recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText());
+        smtp->sendMail(login, recipientsEdit->text() , themeEdit->text(),textEdit->toPlainText());
+
 
 }
 void MainWindow::mailSent(QString text){

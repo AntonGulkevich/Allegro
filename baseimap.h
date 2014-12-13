@@ -1,9 +1,9 @@
-#ifndef BASEPOP3_H
-#define BASEPOP3_H
+#ifndef BaseImap_H
+#define BaseImap_H
 
 #include <QObject>
 #include <QTimer>
-#include <pop3.h>
+#include <imap.h>
 #include <message.h>
 #include "quotedprintable.h"
 #include <qtextcodec.h>
@@ -16,10 +16,10 @@
 #include <QLocale>
 
 
-class BasePop3 : public QObject
+class BaseImap : public QObject
 {
     Q_OBJECT
-    Pop3* protocol;
+    Imap* protocol;
     int countReal;
     QTimer *timer;
     QString login;
@@ -27,9 +27,10 @@ class BasePop3 : public QObject
     QString host;
     int port;
     QSsl::SslProtocol sslProtolol;
+    int countTemp;
 public:
-    BasePop3(QString& login_,QString& password_,QString& host_,int port_,QSsl::SslProtocol sslProtolol_);
-    ~BasePop3();
+    BaseImap(QString& login_,QString& password_,QString& host_,int port_,QSsl::SslProtocol sslProtolol_);
+    ~BaseImap();
     void parsTop(Message& message,QByteArray& responseArr);
     void parsingPart(Message& msg,QByteArray response);
     void parsingMessage(Message& msg,QByteArray message);
@@ -47,4 +48,4 @@ public slots:
     void update();
 };
 
-#endif // BASEPOP3_H
+#endif // BaseImap_H

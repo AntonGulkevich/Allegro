@@ -33,6 +33,9 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
     ThreadPop3 *protocol;
+    QList<QByteArray> fileList;
+    QTextEdit * messageEdit;
+    QTableWidget * fileTable;
 private Q_SLOTS:
     void On_Domain_Cursor_up();
     void CreateLabelClicked();

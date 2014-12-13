@@ -24,10 +24,11 @@ bool Pop3::connectToHost(){
 
 bool Pop3::sendUser(){
     QString response (processingRequest("USER "+login+"\r\n"));
-    QRegExp ok("^+OK.*+OK");
+    QRegExp ok(".*OK.*OK.*");
+    ok.setMinimal(true);
     ok.indexIn(response);
-    if(!ok.cap(0).isEmpty()) return true;
-    return false;
+    if(ok.cap(0).isEmpty()) return false;
+    return true;
 }
 
 bool Pop3::sendPass(){
@@ -57,11 +58,13 @@ QByteArray Pop3::sendList(){
 
 QByteArray Pop3::sendRetr(int number){
     QByteArray response = processingRequest("RETR "+QString::number(number)+"\r\n");
+    if(response.isEmpty()) response = processingRequest("RETR "+QString::number(number)+"\r\n");
     return response;
 }
 
 QByteArray Pop3::sendTop(int number){
     QByteArray response = processingRequest("TOP "+QString::number(number)+" 0\r\n");
+    if(response.isEmpty()) response = processingRequest("TOP "+QString::number(number)+" 0\r\n");
     return response;
 }
 
@@ -70,12 +73,11 @@ QByteArray Pop3::processingRequest(QString request){
     qint64 writeResult = socket->write(request.toUtf8());
     if (writeResult < 0) return "";
     if (writeResult >= 0 && !socket->waitForBytesWritten()) return "";
-    if (!socket->waitForReadyRead()) return "";
     quint64 bytesAvailable = 0;
     do{
         QByteArray all(socket->readAll());
         response.append(all);
-        socket->waitForReadyRead(200);
+        socket->waitForReadyRead(400);
         bytesAvailable = socket->bytesAvailable();
     } while (bytesAvailable!=0);
     return response;

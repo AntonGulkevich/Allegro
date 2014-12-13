@@ -1,5 +1,5 @@
-#ifndef POP3_H
-#define POP3_H
+#ifndef Imap_H
+#define Imap_H
 
 #include <QObject>
 #include <QSslSocket>
@@ -9,7 +9,7 @@
 #include <QRegExp>
 #include <QDebug>
 
-class Pop3
+class Imap
 {
     QString login;
     QString password;
@@ -17,19 +17,22 @@ class Pop3
     int port;
     QSslSocket* socket;
     QSsl::SslProtocol sslProtolol;
+    int identificator;
+
 public:
-    Pop3(QString& login_,QString& password_,QString& host_,int port_,QSsl::SslProtocol sslProtolol_);
-    ~Pop3();
+    Imap(QString& login_,QString& password_,QString& host_,int port_,QSsl::SslProtocol sslProtolol_);
+    ~Imap();
     bool connectToHost();
-    bool sendUser();
-    bool sendPass();
-    void sendQuit();
+    bool sendLogin();
+    void sendLogout();
+    QString identificatorCommand();
+    QByteArray sendSelectInbox();
+    QByteArray sendFetchHead(int number);
+    QByteArray sendFetchMessage(int number);
     bool sendDele(int number);
     void sendNoop();
     QByteArray sendList();
-    QByteArray sendRetr(int number);
-    QByteArray sendTop(int number);
     QByteArray processingRequest(QString request);
 };
 
-#endif // POP3_H
+#endif // Imap_H

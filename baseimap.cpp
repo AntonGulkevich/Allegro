@@ -1,6 +1,6 @@
-#include "basepop3.h"
+#include "baseimap.h"
 
-BasePop3::BasePop3(QString& login_,QString& password_,QString& host_,int port_,QSsl::SslProtocol sslProtolol_)
+BaseImap::BaseImap(QString& login_,QString& password_,QString& host_,int port_,QSsl::SslProtocol sslProtolol_)
     :login(login_),
      password(password_),
      host(host_),
@@ -9,13 +9,13 @@ BasePop3::BasePop3(QString& login_,QString& password_,QString& host_,int port_,Q
 {
 }
 
-BasePop3::~BasePop3()
+BaseImap::~BaseImap()
 {
     delete protocol;
     delete timer;
 }
 
-void BasePop3::parsTop(Message &message, QByteArray &responseArr){
+void BaseImap::parsTop(Message &message, QByteArray &responseArr){
     QString response(responseArr);
     QRegExp fromReg("\\nFrom:(.*)[ <]<*([a-zA-Z0-9\\.\\-\\+\\_]*@[a-zA-Z0-9\\.\\-]*[\\.][a-zA-Z0-9\\.\\-]*)>*.*[\\r\\n]");
     fromReg.setMinimal(true);
@@ -128,102 +128,92 @@ void BasePop3::parsTop(Message &message, QByteArray &responseArr){
     message.head.append(head);
 }
 
-void BasePop3::run()
+void BaseImap::run()
 {
-    protocol = new Pop3(login,password,host,port,sslProtolol);
+    protocol = new Imap(login,password,host,port,sslProtolol);
     if(!protocol->connectToHost()){
         QString error("Ошибка соединения");
         emit Error(error);
-        return;
     }
-    if(!protocol->sendUser()){
-        QString error("Некорректный логин");
+    if(!protocol->sendLogin()){
+        QString error("Некорректный логин или пароль");
         emit Error(error);
         return;
     } else {
-        QString message("Логин подтверждён");
-        emit Error(message);
-    }
-    if(!protocol->sendPass()){
-        QString error("Некорректный пароль");
+        QString error("Выполнен вход");
         emit Error(error);
-        return;
-    } else{
-        QString message("Пароль подтверждён");
-        emit Error(message);
     }
     timer = new QTimer();
-    countReal = 0;
+    countReal = 1;
     connect(timer, SIGNAL(timeout()),this,SLOT(updateTCP()));
     timer->start(20000);
 }
 
-void BasePop3::updateTCP(){
+void BaseImap::updateTCP(){
     protocol->sendNoop();
     timer->start(20000);
 }
 
-void BasePop3::get20Message()
+void BaseImap::get20Message()
 {
     int start = countReal;
     countReal+=20;
-    QString response = QString::fromUtf8(protocol->sendList());
-    if(!response.startsWith("+OK")){
+    QString response = QString::fromUtf8(protocol->sendSelectInbox());
+    QRegExp countMess(".*\\* ([0-9]*) EXISTS.*");
+    countMess.indexIn(response);
+    if(countMess.cap(1).isEmpty()){
         QString error("Сервер не отвечает");
         emit Error(error);
         return;
     }
-    QStringList list = response.split("\r\n");
-    int countMessage = list.takeFirst().split(" ").at(1).toInt();
+    int countMessage = countMess.cap(1).toInt();
     if((start>countMessage)||(start<0)) return;
-    QRegExp strList("([0-9]*) (.*)");
-    strList.setMinimal(false);
-    for(int i =0;i<start;i++){
-        list.takeFirst();
-    }
-    for(int i =0; i<20;i++){
-        QString str = list.takeFirst();
-        if(str==".") break;
-        strList.indexIn(str,0);
+    for(int i =countMessage-start+1; i>countMessage-start+1-20;i--){
+        if(i>countMessage) break;
         Message msg;
-        msg.number = strList.cap(1).toInt();
-        msg.uidl.append(strList.cap(2));
-        QByteArray top = protocol->sendTop(msg.number);
+        msg.number = i;
+        QByteArray top = protocol->sendFetchHead(msg.number);
         parsTop(msg,top);
         emit MessageTopOK(msg);
     }
+    countTemp = countMessage;
 }
 
-void BasePop3::getMessage(int number){
-    QByteArray response = protocol->sendRetr(number);
+void BaseImap::getMessage(int number){
+    QString responseSelect = QString::fromUtf8(protocol->sendSelectInbox());
+    QRegExp countMess(".*\\* ([0-9]*) EXISTS.*");
+    countMess.indexIn(responseSelect);
+    if(countMess.cap(1).isEmpty()){
+        QString error("Сервер не отвечает");
+        emit Error(error);
+        return;
+    }
+    int countMessage = countMess.cap(1).toInt();
+    QByteArray response = protocol->sendFetchMessage(countMessage-number+1);
     Message msg;
     msg.number=number;
     parsingPart(msg,response);
     emit MessageOK(msg);
 }
 
-void BasePop3::deleteMessage(int number)
+void BaseImap::deleteMessage(int number)
 {
-    if(!protocol->sendDele(number)){
+    if(!protocol->sendDele(countTemp-number)){
         QString error("Ошибка соединения");
         emit Error(error);
     } else {
         QString message("Письмо удалено");
         emit Error(message);
     }
-    protocol->sendQuit();
-    protocol->connectToHost();
-    protocol->sendUser();
-    protocol->sendPass();
 }
 
-void BasePop3::update()
+void BaseImap::update()
 {
-    countReal=0;
+    countReal=1;
     get20Message();
 }
 
-void BasePop3::parsingMessage(Message& msg,QByteArray message){
+void BaseImap::parsingMessage(Message& msg,QByteArray message){
     QRegExp multipartReg("Content-Type: .*multipart.*boundary=\"(.*)\".*[\\r]");
     multipartReg.setMinimal(true);
     multipartReg.indexIn(message,0);
@@ -265,7 +255,7 @@ void BasePop3::parsingMessage(Message& msg,QByteArray message){
         msg.contentSubtypePartList.append(contentSubtype);
 }
 
-void BasePop3::parsingPart(Message& msg,QByteArray response){
+void BaseImap::parsingPart(Message& msg,QByteArray response){
     QRegExp multipartReg("Content-[Tt]ype: .*multipart.*boundary=\"(.*)\".*[\\r]");
     multipartReg.setMinimal(true);
     multipartReg.indexIn(response,0);

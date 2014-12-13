@@ -1,5 +1,5 @@
-#ifndef THREADPOP3_H
-#define THREADPOP3_H
+#ifndef THREADImap_H
+#define THREADImap_H
 #include <QThread>
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -8,12 +8,12 @@
 #include <message.h>
 #include <QTextEdit>
 
-#include "basepop3.h"
+#include "baseimap.h"
 
-class ThreadPop3 : public QObject
+class ThreadImap : public QObject
 {
     Q_OBJECT
-    BasePop3 * base;
+    BaseImap * base;
     QThread * thread;
     QTableWidget *tabl;
     QWebView * vie;
@@ -21,7 +21,7 @@ class ThreadPop3 : public QObject
     QTableWidget * filetabl;
     QList<QByteArray> * filelis;
 public:
-    ThreadPop3(QList<QByteArray> *filelist,QTableWidget * table,QWebView * view,QTextEdit * status,QTableWidget *fileTable,QString& login,QString& password,QString& host,int port,QSsl::SslProtocol ssl);
+    ThreadImap(QList<QByteArray> *filelist,QTableWidget * table,QWebView * view,QTextEdit * status,QTableWidget *fileTable,QString& login,QString& password,QString& host,int port,QSsl::SslProtocol ssl);
 signals:
     void get20MessageSignal();
     void getMessageSignal(int number);
@@ -34,4 +34,4 @@ public slots:
 };
 
 
-#endif // THREADPOP3_H
+#endif // THREADImap_H
