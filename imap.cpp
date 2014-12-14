@@ -45,7 +45,7 @@ QByteArray Imap::processingRequest(QString request){
     do{
         QByteArray all(socket->readAll());
         response.append(all);
-        socket->waitForReadyRead(400);
+        socket->waitForReadyRead(500);
         bytesAvailable = socket->bytesAvailable();
     } while (bytesAvailable!=0);
     return response;
@@ -90,6 +90,7 @@ QByteArray Imap::sendFetchHead(int number){
 QByteArray Imap::sendFetchMessage(int number)
 {
     QByteArray response = processingRequest(identificatorCommand()+" Fetch "+QString::number(number)+" body[]\r\n");
-     if(response.isEmpty()) response = processingRequest(identificatorCommand()+" Fetch "+QString::number(number)+" body[]\r\n");
+    if(response.isEmpty()) response = processingRequest(identificatorCommand()+" Fetch "+QString::number(number)+" body[]\r\n");
+    response = response.remove(response.count()-29,29);
     return response;
 }

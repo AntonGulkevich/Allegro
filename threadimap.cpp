@@ -32,6 +32,7 @@ void ThreadImap::getMessageTop(Message top){
 
 void ThreadImap::getMessage(Message msg){
     QString end("<html><body>Пусто</html></body>");
+    vie->setHtml(end);
     filelis->clear();
     filetabl->clearContents();
     filetabl->setRowCount(0);

@@ -169,7 +169,7 @@ void BaseImap::get20Message()
     int countMessage = countMess.cap(1).toInt();
     if((start>countMessage)||(start<0)) return;
     for(int i =countMessage-start+1; i>countMessage-start+1-20;i--){
-        if(i>countMessage) break;
+        if(i==0) break;
         Message msg;
         msg.number = i;
         QByteArray top = protocol->sendFetchHead(msg.number);

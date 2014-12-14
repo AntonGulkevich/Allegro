@@ -22,21 +22,19 @@ Smtp::Smtp( const QString &user, const QString &pass, const QString &host, int p
 
 void Smtp::sendMail(const QString &from, const QString &to, const QString &subject, const QString &body, QStringList files)
 {
-    message = "To: " + to + "\n";    
-    message.append("From: " + from + "\n");
-    message.append("Subject: " + subject + "\n");
+    message = "To: " + to + "\r\n";
+    message.append("From: " + from + "\r\n");
+    message.append("Subject: " + subject + "\r\n");
 
     //Let's intitiate multipart MIME with cutting boundary "frontier"
-    message.append("MIME-Version: 1.0\n");
-    message.append("Content-Type: multipart/mixed; boundary=frontier\n\n");
+    message.append("MIME-Version: 1.0\r\n");
+    message.append("Content-Type: multipart/mixed; boundary=\"--frontier\"\r\n\r\n");
 
-
-
-    message.append( "--frontier\n" );
-    //message.append( "Content-Type: text/html\n\n" );  //Uncomment this for HTML formating, coment the line below
-    message.append( "Content-Type: text/plain\n\n" );
+    message.append( "--frontier\r\n" );
+    //message.append( "Content-Type: text/html\r\n\r\n" );  //Uncomment this for HTML formating, coment the line below
+    message.append( "Content-Type: text/plain\r\n\r\n" );
     message.append(body);
-    message.append("\n\n");
+    message.append("\r\n\r\n");
 
     if(!files.isEmpty())
     {
@@ -49,14 +47,15 @@ void Smtp::sendMail(const QString &from, const QString &to, const QString &subje
                 if (!file.open(QIODevice::ReadOnly))
                 {
                     qDebug("Couldn't open the file");
-                    QMessageBox::warning( 0, tr( "Qt Simple SMTP client" ), tr( "Couldn't open the file\n\n" )  );
+                    QMessageBox::warning( 0, tr( "Qt Simple SMTP client" ), tr( "Couldn't open the file\r\n\r\n" )  );
                         return ;
                 }
                 QByteArray bytes = file.readAll();
-                message.append( "--frontier\n" );
-                message.append( "Content-Type: application/octet-stream\nContent-Disposition: attachment; filename="+ QFileInfo(file.fileName()).fileName() +";\nContent-Transfer-Encoding: base64\n\n" );
+                message.append( "--frontier\r\n" );
+                message.append( "Content-Type: application/octet-stream\r\nContent-Disposition: attachment; filename=\""+ QFileInfo(file.fileName()).fileName() +"\"\r\nContent-Transfer-Encoding: base64\r\n\r\n" );
+               //                                                                                            .*name=\"([a-zA-Z0-9\\.\\-\\_]*)\"[\\r]
                 message.append(bytes.toBase64());
-                message.append("\n");
+                message.append("\r\n");
             }
         }
     }
@@ -64,9 +63,9 @@ void Smtp::sendMail(const QString &from, const QString &to, const QString &subje
         qDebug() << "No attachments found";
 
 
-    message.append( "--frontier--\n" );
+    message.append( "--frontier--\r\n" );
 
-    message.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
+    message.replace( QString::fromLatin1( "\r\n" ), QString::fromLatin1( "\r\n" ) );
     message.replace( QString::fromLatin1( "\r\n.\r\n" ),QString::fromLatin1( "\r\n..\r\n" ) );
 
 
@@ -237,7 +236,7 @@ void Smtp::readyRead()
     else
     {
         // something broke.
-        QMessageBox::warning( 0, tr( "Qt Simple SMTP client" ), tr( "Unexpected reply from SMTP server:\n\n" ) + response );
+        QMessageBox::warning( 0, tr( "Qt Simple SMTP client" ), tr( "Unexpected reply from SMTP server:\r\n\r\n" ) + response );
         state = Close;
         emit status( tr( "Failed to send message" ) );
     }
