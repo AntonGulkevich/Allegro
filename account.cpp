@@ -21,4 +21,35 @@ QString Account::getDomainName(){
 void Account::setDomain(Domain *_domain){
     domain= _domain;
 }
+QString Account::GetLogin(){
+    return email;
+}
+
+QString Account::GetPassword(){
+    return password;
+}
+QString Account::GetPop3Host(){
+    return domain->GetPop3Host();
+}
+
+QString Account::GetImapHost(){
+    return domain->GetImapHost();
+}
+
+QString Account::GetSmtpHost(){
+    return domain->GetSmtpHost();
+}
+
+int Account::GetPop3PortEncr(){
+    return domain->GetPop3PortEncr();
+}
+
+int Account::GetImapPortEncr(){
+    return domain->GetImapPortEncr();
+}
+
+int Account::GetSmtpPortEncr(){
+    return domain->GetSmtpPortEncr();
+}
+
 

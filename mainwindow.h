@@ -88,6 +88,7 @@ private Q_SLOTS:
     void OnSendMessageClicked();
     void OnAddAttachmentsClicked();
     void mailSent(QString text);
+    void OnRefreshClicked();
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -186,18 +187,18 @@ private:
    Presto* fullDataBase;
    QString  delimiter;
 
-//   bool pop3;
-   bool imap;
-   bool TSLSSL;
-   bool encrNone;
+   bool usePop3;
+   bool useImap;
+   bool useTSLSSL;
+   bool useEncrNone;
 
    bool useURLproxy;
    bool useFILEproxy;
 
-   QCheckBox* useIMAP;
-   QCheckBox* usePOP3;
-   QCheckBox* useTSLSSL;
-   QCheckBox* useNone;
+   QCheckBox* useIMAPCB;
+   QCheckBox* usePOP3CB;
+   QCheckBox* useTSLSSLCB;
+   QCheckBox* useNoneCB;
 
    QCheckBox* useUrlCB;
    QCheckBox* useFileCB;

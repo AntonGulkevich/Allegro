@@ -16,12 +16,23 @@ private:
         bad,
         error,
     };
+
 public:
     Account();
     Account (const QString &_email,const QString &_password);
     ~Account();
     QString getDomainName();
     void setDomain(Domain* _domain);
+
+    QString GetLogin();
+    QString GetPassword();
+
+    QString GetPop3Host();
+    QString GetImapHost();
+    QString GetSmtpHost();
+    int GetPop3PortEncr();
+    int GetImapPortEncr();
+    int GetSmtpPortEncr();
 
 };
 

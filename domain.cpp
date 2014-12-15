@@ -2,15 +2,16 @@
 
 Domain::Domain(QString _name, QString _pop3host, int _pop3PortEncr,
                               QString _imaphost, int _imapPortEncr,
-                              QString _smtphost, int _smtpPortEncr):
+                              QString _smtphost, int _smtpPortEncr, int _count):
     name(_name),
     pop3Host(_pop3host),pop3PortEncr(_pop3PortEncr),
     imapHost(_imaphost), imapPortEncr(_imapPortEncr),
-    smtpHost(_smtphost), smtpPortEncr(_smtpPortEncr), selected(false)
+    smtpHost(_smtphost), smtpPortEncr(_smtpPortEncr), selected(false), count(_count)
 {
     checkBox= new QCheckBox;
     checkBox->setChecked(false);
     checkBox->setText("");
+    count=0;
 
 }
 Domain::Domain(const Domain &_domain)
@@ -31,6 +32,8 @@ Domain::Domain(const Domain &_domain)
     checkBox= new QCheckBox;
     checkBox->setChecked(selected);
     checkBox->setText("");
+
+    count=0;
 
 }
 Domain::~Domain(){
@@ -73,4 +76,38 @@ void Domain::UpdateSelection(){
     }
     else
         setSelected(false);
+}
+
+void Domain::IncCount(){
+    count++;
+}
+
+int Domain::GetCount(){
+    return count;
+}
+void Domain::SetZeroCount(){
+    count=0;
+}
+QString Domain::GetPop3Host(){
+    return pop3Host;
+}
+
+QString Domain::GetImapHost(){
+    return imapHost;
+}
+
+QString Domain::GetSmtpHost(){
+    return smtpHost;
+}
+
+int Domain::GetPop3PortEncr(){
+    return pop3PortEncr;
+}
+
+int Domain::GetImapPortEncr(){
+    return imapPortEncr;
+}
+
+int Domain::GetSmtpPortEncr(){
+    return smtpPortEncr;
 }

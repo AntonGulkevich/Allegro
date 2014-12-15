@@ -11,8 +11,10 @@
 #include <QStringList>
 #include <QRegExp>
 
+
 #include "domain.h"
 #include "account.h"
+#include "pop3.h"
 
 
 class Presto : public QObject
@@ -27,6 +29,9 @@ public:
     void setDomains(QVector<Domain> * domainsVector);
     QString  baseName();
     int getWarnings();
+    void Check();
+
+    QVector <Account> * goodAccountsVector;
 
 signals:
 

@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include <QTimer>
 
-
-
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent)
 {
@@ -13,10 +11,13 @@ MainWindow::MainWindow(QWidget *parent):
     domainVect=NULL;
     domainVect= new QVector<Domain>;
 
-    imap=false;
-//    pop3=false;
-    TSLSSL=false;
-    encrNone=false;
+    Domain unknownDomain("Unknown");
+    domainVect->push_back(unknownDomain);
+
+    useImap=true;
+    usePop3=true;
+    useTSLSSL=true;
+    useEncrNone=false;
 
     useURLproxy=false;
     useFILEproxy=false;
@@ -303,7 +304,7 @@ MainWindow::MainWindow(QWidget *parent):
 
     tabEmailLay->addLayout(contrButtonsLay, 0);
     tabEmailLay->addLayout(emailLay, 1);
-    emailLay->addWidget(ViewFrame, 1);
+    emailLay->addWidget(ViewFrame, 6);
     emailTab->setLayout(tabEmailLay);
 
     tabListLay->addLayout(contrButtonsListLay, 0);
@@ -451,6 +452,7 @@ MainWindow::MainWindow(QWidget *parent):
     connect(writeEmail, SIGNAL(clicked()), SLOT(OnWriteButtonClicked()));
     connect(sendEmail, SIGNAL(clicked()), SLOT(OnSendMessageClicked()));
     connect(attachment, SIGNAL(clicked()), SLOT(OnAddAttachmentsClicked()));
+    connect(refresh, SIGNAL(clicked()), SLOT(OnRefreshClicked()));
 
     connect(addNewDomain, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(proxyButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
@@ -462,12 +464,10 @@ MainWindow::MainWindow(QWidget *parent):
     connect(searchInEmail, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(previousMessage, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(nextMessage, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
-
     connect(writeEmail, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(refresh, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(searchInList, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(loadNextMessages, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
-
     connect(sendEmail, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(attachment, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(backToList2, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
@@ -488,32 +488,19 @@ MainWindow::MainWindow(QWidget *parent):
     windowBaseSearch= NULL;
 
     /*end of setup subwindows*/
-
-
-    /*
-    QString login="ivanovsergey764@yandex.ru";
-    QString password="qwerty123";
-    QString host="pop.yandex.ru";
-    QString hostsmtp="smtp.yandex.ru";
-    int port=995;
-    int portSmtp=465;
-    */
-
     messageEdit = new QTextEdit();
     fileTable = new QTableWidget();
     fileTable->setColumnCount(1);
 
-   // protocol = new ThreadPop3(&fileList,emailsTable,ViewFrame,messageEdit,fileTable,login,password,host,port,QSsl::SslV3);
 
     emailsTable->setColumnCount(5);
-
     emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("From(Name)") );
     emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("From(Adr)") );
     emailsTable->setHorizontalHeaderItem(2,new QTableWidgetItem("To") );
     emailsTable->setHorizontalHeaderItem(3,new QTableWidgetItem("Head") );
     emailsTable->setHorizontalHeaderItem(4,new QTableWidgetItem("Data") );
     emailsTable->setFrameStyle(0);
-    emailsTable->setRowCount(20);
+    //emailsTable->setRowCount(20);
     emailsTable->verticalHeader()->hide();
     emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -528,18 +515,18 @@ MainWindow::MainWindow(QWidget *parent):
 
     //emit protocol->get20MessageSignal();
 
-///////////////////////////////////////////////////
-////    emit protocol->get20MessageSignal(); - получить 20 писем в emailsTable
-////    emit protocol->getMessageSignal(row+1); - получить текст писима в ViewFrame и имена файлов в fileTable и содержимое в fileList
+    ///////////////////////////////////////////////////
+    ////    emit protocol->get20MessageSignal(); - получить 20 писем в emailsTable
+    ////    emit protocol->getMessageSignal(row+1); - получить текст писима в ViewFrame и имена файлов в fileTable и содержимое в fileList
 
-/*
+    /*
  * update button
     emailsTable->clearContents();
     emailsTable->setRowCount(0);
     emit pop3->update();
 */
 
-/*
+    /*
  * delete message
  *
  *  if(emailsTable->selectionModel()->selectedRows().count()==0) return;
@@ -570,15 +557,11 @@ MainWindow::MainWindow(QWidget *parent):
     вывести табличку fileTable, где содержаться имена прикреплённых файлов
     вывести окно сообщений messageEdit, куда идут ошибки и сообщения
     убрать прокси(без них норм будет)
-    подключить домены и логины наконец-то!!!
-    если не хочешь делать поиск, то убери его
-
-    класс imap аналогичен pop3, те же сигналы, теже конструкции
-
 
 
  * /
 */
+
 }
 MainWindow::~MainWindow()
 {
@@ -587,16 +570,8 @@ void MainWindow::On_Domain_Cursor_up(){
 
 
 }
-
 void MainWindow::OnSendMessageClicked(){
-    /*
-    QString login="ivanovsergey764@yandex.ru";
-    QString password="qwerty123";
-    QString host="pop.yandex.ru";
-    QString hostsmtp="smtp.yandex.ru";
-    int port=995;
-    int portSmtp=465;
-    */
+
     QString login=loginEdit->text();
     QString password=passEdit->text();
 
@@ -616,7 +591,6 @@ void MainWindow::OnSendMessageClicked(){
 void MainWindow::mailSent(QString text){
 
 }
-
 void MainWindow::OnAddAttachmentsClicked(){
     files.clear();
     QFileDialog dialog(this);
@@ -632,7 +606,6 @@ void MainWindow::OnAddAttachmentsClicked(){
 
     attachmentsLabel->setText( fileListString );
 }
-
 void MainWindow::CreateLabelClicked(){
     closeWindowIfOpened();
     MainBar->setText("Create a new domain");
@@ -682,7 +655,10 @@ void MainWindow::OnOpenDomainFile(){
         in>>count;
 
         domainVect->clear();
-
+        /*
+        Domain unknownDomain("Unknown");
+        domainVect->push_back(unknownDomain);
+        */
         while (count--){
             Domain temp;
             in>>temp;
@@ -837,10 +813,10 @@ void MainWindow::OnFullBaseClose(){
     qDebug()<<"OnFullBaseClose";
     delimiter=delLE->text();
 
-//    pop3=usePOP3->checkState();
-    imap=useIMAP->checkState();
-    encrNone=useNone->checkState();
-    TSLSSL=useTSLSSL->checkState();
+    usePop3=usePOP3CB->checkState();
+    useImap=useIMAPCB->checkState();
+    useEncrNone=useNoneCB->checkState();
+    useTSLSSL=useTSLSSLCB->checkState();
 }
 void MainWindow::OnGoodBaseClose(){
     qDebug()<<"OnGoodBaseClose";
@@ -949,10 +925,24 @@ void MainWindow::OnCloseDataFileCLB(){
     MainBar->setText(fullDataBase->baseName()+" closed.");
     delete fullDataBase;
     fullDataBase=NULL;
+    for(QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
+        it->SetZeroCount();
+    }
 
 }
 void MainWindow::OnCheckDataFileCLB(){
-
+    for(QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
+        qDebug()<<it->getName()<<it->GetCount();
+    }
+    fullDataBase->Check();
+    for(QVector<Account>::iterator it=fullDataBase->goodAccountsVector->begin(); it!=fullDataBase->goodAccountsVector->end(); ++it){
+        QString login=it->GetLogin();
+        QString pas=it->GetPassword();
+        QString host=it->GetPop3Host();
+        int port=it->GetPop3PortEncr();
+        protocol = new ThreadPop3(&fileList,emailsTable,ViewFrame,messageEdit,fileTable,login,pas,host,port,QSsl::SslV3);
+        emit protocol->get20MessageSignal();
+    }
 }
 void MainWindow::setupWindowDomainCreate(QWidget *prnt){
 
@@ -1111,7 +1101,6 @@ void MainWindow::setupWindowDomainOpen (QWidget *prnt){
     windowDomainOpen->AddBotLayout(botlay);
 
 }
-
 void MainWindow::setupWindowDomainManage (QWidget *prnt){
 
     windowDomainManage = new SubWindow(prnt, "CREATE", "OPEN", "MANAGE", 300, 400);
@@ -1218,7 +1207,6 @@ void MainWindow::OnEmailCliked(int row, int col){
     emit protocol->getMessageSignal(row+1);
     tabsForWork->tabBar()->setCurrentIndex(0);
 }
-
 void MainWindow::OnCellClicked(int a/*row*/, int b/*col*/){
     MainBar->setText(QString::number(a)+" "+ QString::number(b));
     int count=domainVect->count();
@@ -1231,7 +1219,6 @@ void MainWindow::OnCellClicked(int a/*row*/, int b/*col*/){
     }
 
 }
-
 void MainWindow::setupWindowProxyUrl (QWidget *prnt){
 
     windowProxyUrl = new SubWindow(prnt, "MANAGE", "URL", "OPEN");
@@ -1244,7 +1231,6 @@ void MainWindow::setupWindowProxyUrl (QWidget *prnt){
     connect(windowProxyUrl, SIGNAL(OnClose()), SLOT(OnCloseUrl()));
 
 }
-
 void MainWindow::setupWindowProxyFile (QWidget *prnt){
 
     windowProxyFile = new SubWindow(prnt, "MANAGE", "URL", "OPEN", 300, 160);
@@ -1305,7 +1291,6 @@ void MainWindow::setupWindowProxyFile (QWidget *prnt){
     windowProxyFile->AddBotLayout(botlay);
 
 }
-
 void MainWindow::setupWindowProxyManage (QWidget *prnt){
     windowProxyManage = new SubWindow(prnt, "MANAGE", "URL", "OPEN");
     windowProxyManage->move(proxyButton->pos().x(), proxyButton->pos().y()+40);
@@ -1399,7 +1384,6 @@ void MainWindow::setupWindowProxyManage (QWidget *prnt){
 
 
 }
-
 void MainWindow::setupWindowBaseFull(QWidget *prnt){
     windowBaseFull = new SubWindow(prnt, "All", "Only good", "Search");
     windowBaseFull->move(proxyButton->pos().x(), baseButton->pos().y()+40);
@@ -1419,10 +1403,10 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
     topMidlay->setMargin(0);
     topMidlay->setSpacing(10);
 
-    useIMAP = new QCheckBox;
-    usePOP3 = new QCheckBox;
-    useTSLSSL = new QCheckBox;
-    useNone = new QCheckBox;
+    useIMAPCB = new QCheckBox;
+    usePOP3CB = new QCheckBox;
+    useTSLSSLCB = new QCheckBox;
+    useNoneCB = new QCheckBox;
     QLabel* delLabel= new QLabel("Delimiter:");
     delLE=new QLineEdit;
     QLabel* fullBaseLabel = new QLabel("Current base:");
@@ -1442,25 +1426,25 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
     fullBaseLabel->setAlignment(Qt::AlignRight);
     fullBaseFileName->setAlignment(Qt::AlignLeft);
 
-    useIMAP->setFont(fnt1);
-    usePOP3->setFont(fnt1);
-    useTSLSSL->setFont(fnt1);
-    useNone->setFont(fnt1);
+    useIMAPCB->setFont(fnt1);
+    usePOP3CB->setFont(fnt1);
+    useTSLSSLCB->setFont(fnt1);
+    useNoneCB->setFont(fnt1);
 
     delLabel->setFont(fnt1);
     delLE->setFont(fnt1);
 
-    useIMAP->setText("IMAP");
-    usePOP3->setText("POP3");
-    useTSLSSL->setText("SSL/TLS");
-    useNone->setText  ("No encryption");
-    useTSLSSL->setMinimumWidth(120);
-    useNone->setMinimumWidth(120);
+    useIMAPCB->setText("IMAP");
+    usePOP3CB->setText("POP3");
+    useTSLSSLCB->setText("SSL/TLS");
+    useNoneCB->setText  ("No encryption");
+    useTSLSSLCB->setMinimumWidth(120);
+    useNoneCB->setMinimumWidth(120);
 
-//    usePOP3->setChecked(pop3);
-    useIMAP->setChecked(imap);
-    useTSLSSL->setChecked(TSLSSL);
-    useNone->setChecked(encrNone);
+    usePOP3CB->setChecked(usePop3);
+    useIMAPCB->setChecked(useImap);
+    useTSLSSLCB->setChecked(useTSLSSL);
+    useNoneCB->setChecked(useEncrNone);
 
     delLE->setText(delimiter);
     delLE->setMaxLength(1);
@@ -1484,19 +1468,16 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
 
     topMidlay->addWidget(fullBaseLabel);
     topMidlay->addWidget(fullBaseFileName);
-    midlay->addLayout(topMidlay,0, 0, 1, 3, Qt::AlignBottom );
-    midlay->addWidget(hor_line2,1, 0, 1, 3, Qt::AlignVCenter );
-    midlay->addWidget(usePOP3,  2, 0,       Qt::AlignTop | Qt::AlignHCenter);
-    midlay->addWidget(useTSLSSL,  2, 2,       Qt::AlignTop | Qt::AlignHCenter );
-    midlay->addWidget(useIMAP,3, 0,       Qt::AlignTop | Qt::AlignHCenter);
-    midlay->addWidget(useNone,  3, 2,       Qt::AlignTop | Qt::AlignHCenter);
-    midlay->addWidget(hor_line3,4, 0, 1, 3, Qt::AlignVCenter );
-    midlay->addWidget(delLabel, 5, 0,       Qt::AlignTop  |Qt::AlignRight );
-    midlay->addWidget(delLE,    5, 1,       Qt::AlignTop| Qt::AlignLeft);
-    midlay->addWidget(vLine,1, 1, 4, 1 );
-
-
-
+    midlay->addLayout(topMidlay,    0, 0, 1, 3, Qt::AlignBottom );
+    midlay->addWidget(hor_line2,    1, 0, 1, 3, Qt::AlignVCenter );
+    midlay->addWidget(usePOP3CB,    2, 0,       Qt::AlignTop | Qt::AlignHCenter);
+    midlay->addWidget(useTSLSSLCB,  2, 2,       Qt::AlignTop | Qt::AlignHCenter );
+    midlay->addWidget(useIMAPCB,    3, 0,       Qt::AlignTop | Qt::AlignHCenter);
+    midlay->addWidget(useNoneCB,    3, 2,       Qt::AlignTop | Qt::AlignHCenter);
+    midlay->addWidget(hor_line3,    4, 0, 1, 3, Qt::AlignVCenter );
+    midlay->addWidget(delLabel,     5, 0,       Qt::AlignTop  |Qt::AlignRight );
+    midlay->addWidget(delLE,        5, 1,       Qt::AlignTop| Qt::AlignLeft);
+    midlay->addWidget(vLine,        1, 1, 4, 1 );
 
     /*end mid lay*/
 
@@ -1558,7 +1539,6 @@ void MainWindow::setupWindowBaseFull(QWidget *prnt){
     windowBaseFull->AddBotLayout(botlay);
     delimiter=delLE->text();
 }
-
 void MainWindow::setupWindowBaseGood (QWidget *prnt){
 
     windowBaseGood = new SubWindow(prnt, "All", "Only good", "Search");
@@ -1575,7 +1555,6 @@ void MainWindow::setupWindowBaseGood (QWidget *prnt){
     QBoxLayout* midlay= new QBoxLayout(QBoxLayout::RightToLeft);
 
 }
-
 void MainWindow::setupWindowBaseSearch (QWidget *prnt){
     windowBaseSearch = new SubWindow(prnt, "Full", "Good", "Searched");
     windowBaseSearch->move(proxyButton->pos().x(), baseButton->pos().y()+40);
@@ -1607,7 +1586,7 @@ void MainWindow::OnAddDomainClicked(){
     if (fieldsComplete){
         Domain tmpDomain(d_name_le->text(),
                          d_pop3_host_le->text(),
-                         d_pop3_port_le->text().toInt(),                         
+                         d_pop3_port_le->text().toInt(),
                          d_imap_host_le->text(),
                          d_imap_port_le->text().toInt(),
                          d_smtp_host_le->text(),
@@ -1649,7 +1628,6 @@ Qt::Checked	2	The item is checked.
         it->UpdateSelection();
     }
 }
-
 bool MainWindow::checkLineEdit(QLineEdit *lineEdit){
     if (lineEdit->text().isEmpty()){
         lineEdit->setStyleSheet("QLineEdit { border: 1px solid red}");
@@ -1662,7 +1640,6 @@ bool MainWindow::checkLineEdit(QLineEdit *lineEdit){
 }
 void MainWindow::OnNextButtonClicked(){
     emit protocol->get20MessageSignal();
-
 }
 void MainWindow::OnPreviousButtonClicked(){
 
@@ -1676,9 +1653,13 @@ void MainWindow::OnHomeButtonClicked(){
 void MainWindow::OnWriteButtonClicked(){
     tabsForWork->tabBar()->setCurrentIndex(2);
 }
-
 void MainWindow::newWindow(QUrl url){
     QDesktopServices::openUrl(url);
+}
+void MainWindow::OnRefreshClicked(){
+    emailsTable->clearContents();
+    emailsTable->setRowCount(0);
+    emit protocol->update();
 }
 
 

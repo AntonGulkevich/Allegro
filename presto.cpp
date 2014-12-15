@@ -21,7 +21,7 @@ bool Presto::openBase(){
     ResultString=QString::fromUtf8(DBFile.readAll());
     DBFile.close();
 
-    fillVector(ResultString);    
+    fillVector(ResultString);
     return 1;
 }
 void Presto::setProgressBar(QProgressBar * bar){
@@ -65,10 +65,14 @@ void Presto::setDomains(QVector <Domain>* domainsVector){
 Domain* Presto::findDomain(const QString & domainName){
     for (QVector <Domain>::iterator it=domains->begin();it!=domains->end(); ++it){
         if (it->getName()== domainName){
+            it->IncCount();
             return it;
             break;
         }
     }
+    QVector <Domain>::iterator frst=domains->begin();
+    frst->IncCount();
+    return frst;
 }
 
 QString Presto::baseName(){
@@ -77,3 +81,45 @@ QString Presto::baseName(){
 int Presto::getWarnings(){
     return warnings;
 }
+void Presto::Check(){
+    goodAccountsVector = new QVector <Account>;
+    int cur=0;
+    progressBar->setValue(cur);
+    progressBar->setMaximum(accoutVector->count());
+
+    for (QVector <Account>::iterator it=accoutVector->begin();it!=accoutVector->end(); ++it){
+        if (it->GetImapHost()==""){
+            continue;
+            progressBar->setValue(cur++);
+        }
+        QString login = it->GetLogin();
+        QString pas = it->GetPassword();\
+        QString host = it->GetPop3Host();
+        int port = it->GetPop3PortEncr();
+
+        Pop3 *temp = new Pop3(login, pas, host,port , QSsl::SslV3);
+        temp->connectToHost();
+
+        if( temp->sendUser() ){
+            qDebug()<<it->GetLogin()<<" login is correct";
+            if (temp->sendPass()){
+                goodAccountsVector->push_back(*it);
+                qDebug()<<it->GetLogin()<<"pass is ok";
+            }
+            else{
+                qDebug()<<it->GetLogin()<<"pass is not ok";
+            }
+        }
+        else{
+            qDebug()<<it->GetLogin()<<" login uncorect";
+        }
+        temp->sendQuit();
+
+        delete temp;
+        progressBar->setValue(cur++);
+    }
+    progressBar->reset();
+}
+
+
+

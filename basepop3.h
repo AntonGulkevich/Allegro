@@ -19,6 +19,7 @@
 class BasePop3 : public QObject
 {
     Q_OBJECT
+
     Pop3* protocol;
     int countReal;
     QTimer *timer;
