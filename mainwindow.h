@@ -36,6 +36,7 @@ class MainWindow : public QMainWindow
     QList<QByteArray> fileList;
     QTextEdit * messageEdit;
     QTableWidget * fileTable;
+
 private Q_SLOTS:
     void On_Domain_Cursor_up();
     void CreateLabelClicked();
