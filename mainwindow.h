@@ -158,6 +158,8 @@ private:
    QLabel * attachmentsLabel;
    QLineEdit * recipientsEdit;
    QLineEdit * themeEdit;
+   QLineEdit * loginEdit;
+   QLineEdit * passEdit;
    QTextEdit * textEdit;
    /*END of GUI*/
 
@@ -177,8 +179,8 @@ private:
    QLineEdit *d_pop3_port_le;
    QLineEdit *d_imap_host_le;
    QLineEdit *d_imap_port_le;
-   QLineEdit *d_noEncr_pop3_port_le;
-   QLineEdit *d_noEncr_imap_port_le;
+   QLineEdit *d_smtp_host_le;
+   QLineEdit *d_smtp_port_le;
 
 
    Presto* fullDataBase;

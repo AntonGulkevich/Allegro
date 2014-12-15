@@ -15,19 +15,21 @@ private:
 
     QString pop3Host;
     int pop3PortEncr;
-    int pop3PortNoEncr;
 
     QString imapHost;
     int imapPortEncr;
-    int imapPortNoEncr;
+
+    QString smtpHost;
+    int smtpPortEncr;
 
     bool selected;
 
     QCheckBox * checkBox;
 
 public:
-    explicit Domain(QString _name="", QString _pop3host="", int _pop3PortEncr=0, int _pop3PortNoEncr=0,
-                                      QString _imaphost="", int _imapPortEncr=0, int _imapPortNoEncr=0);
+    explicit Domain(QString _name="", QString _pop3host="", int _pop3PortEncr=0,
+                                      QString _imaphost="", int _imapPortEncr=0,
+                                      QString _smtphost="", int _smtpPortEncr=0 );
     ~Domain();
     Domain(const Domain &_domain);
     bool isSelected();
@@ -36,6 +38,8 @@ public:
 
     QCheckBox *getChechBoxPtr();
     void UpdateSelection();
+
+
 
     friend QDataStream & operator <<(QDataStream & out, const Domain& domain_);
     friend QDataStream & operator >>(QDataStream & in, Domain& domain_ );

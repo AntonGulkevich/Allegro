@@ -291,28 +291,12 @@ MainWindow::MainWindow(QWidget *parent):
     QWidget * listTab = new QWidget;
     /*setup email table*/
     emailsTable= new QTableWidget();
-/*    emailsTable->setColumnCount(4);
-    emailsTable->setRowCount(20);
-    emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("From") );
-    emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("Header") );
-    emailsTable->setHorizontalHeaderItem(2,new QTableWidgetItem("Date") );
-    emailsTable->setHorizontalHeaderItem(3,new QTableWidgetItem("Text") );
-    emailsTable->setFrameStyle(0);
-    emailsTable->verticalHeader()->hide();
-    emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    emailsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    emailsTable->setSelectionMode(QAbstractItemView::NoSelection);
-    emailsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    emailsTable->horizontalHeader()->setStretchLastSection(true);
-    emailsTable->setVisible(true);
-*/
+
     connect(emailsTable, SIGNAL(cellDoubleClicked(int,int)), SLOT(OnEmailCliked(int,int)));
 
     /*end of setup email table*/
 
     ViewFrame =new QWebView(centralWidget());
-    ViewFrame->load(QUrl("http://www.example.com"));
 
     /*setup tabs layouts*/
 
@@ -345,6 +329,15 @@ MainWindow::MainWindow(QWidget *parent):
     textEdit->setStyleSheet("QTextEdit { border: none}");
     attachmentsLabel = new QLabel("Attachments: ");
 
+    loginEdit = new QLineEdit;
+    loginEdit->setPlaceholderText("Login");
+    loginEdit->setStyleSheet("QLineEdit { border: none }");
+
+    passEdit = new QLineEdit;
+    passEdit->setPlaceholderText("Password");
+    passEdit->setStyleSheet("QLineEdit { border: none }");
+
+
     QFrame *hor_line4 = new QFrame;
     hor_line4->setFrameStyle(QFrame::HLine| QFrame::Raised);
     hor_line4->setLineWidth(1);
@@ -360,11 +353,25 @@ MainWindow::MainWindow(QWidget *parent):
     hor_line6->setLineWidth(1);
     hor_line6->setMaximumHeight(5);
 
+    QFrame *hor_line7 = new QFrame;
+    hor_line7->setFrameStyle(QFrame::HLine| QFrame::Raised);
+    hor_line7->setLineWidth(1);
+    hor_line7->setMaximumHeight(5);
+
+    QBoxLayout * authLay = new QBoxLayout(QBoxLayout::LeftToRight);
+
+    authLay->addWidget(loginEdit, 1);
+    authLay->addWidget(passEdit, 1);
+
+    writeLay->addLayout(authLay,0);
+
+    writeLay->addWidget(hor_line7, 0);
 
     writeLay->addWidget(recipientsEdit, 0);
     writeLay->addWidget(hor_line4, 0);
     writeLay->addWidget(themeEdit, 0);
     writeLay->addWidget(hor_line5, 0);
+
     writeLay->addWidget(textEdit, 1);
     writeLay->addWidget(hor_line6, 0);
     writeLay->addWidget(attachmentsLabel, 0);
@@ -483,32 +490,30 @@ MainWindow::MainWindow(QWidget *parent):
     /*end of setup subwindows*/
 
 
-
+    /*
     QString login="ivanovsergey764@yandex.ru";
     QString password="qwerty123";
     QString host="pop.yandex.ru";
     QString hostsmtp="smtp.yandex.ru";
     int port=995;
     int portSmtp=465;
-
+    */
 
     messageEdit = new QTextEdit();
     fileTable = new QTableWidget();
     fileTable->setColumnCount(1);
 
-    protocol = new ThreadPop3(&fileList,emailsTable,ViewFrame,messageEdit,fileTable,login,password,host,port,QSsl::SslV3);
+   // protocol = new ThreadPop3(&fileList,emailsTable,ViewFrame,messageEdit,fileTable,login,password,host,port,QSsl::SslV3);
+
     emailsTable->setColumnCount(5);
-    QTableWidgetItem *fromName = new QTableWidgetItem("From(Name)");
-    QTableWidgetItem *fromAdr = new QTableWidgetItem("From(Adr)");
-    QTableWidgetItem *to = new QTableWidgetItem("To");
-    QTableWidgetItem *head = new QTableWidgetItem("Head");
-    QTableWidgetItem *data = new QTableWidgetItem("Data");
-    emailsTable->setHorizontalHeaderItem(0,fromName);
-    emailsTable->setHorizontalHeaderItem(1,fromAdr);
-    emailsTable->setHorizontalHeaderItem(2,to);
-    emailsTable->setHorizontalHeaderItem(3,head);
-    emailsTable->setHorizontalHeaderItem(5,data);
+
+    emailsTable->setHorizontalHeaderItem(0,new QTableWidgetItem("From(Name)") );
+    emailsTable->setHorizontalHeaderItem(1,new QTableWidgetItem("From(Adr)") );
+    emailsTable->setHorizontalHeaderItem(2,new QTableWidgetItem("To") );
+    emailsTable->setHorizontalHeaderItem(3,new QTableWidgetItem("Head") );
+    emailsTable->setHorizontalHeaderItem(4,new QTableWidgetItem("Data") );
     emailsTable->setFrameStyle(0);
+    emailsTable->setRowCount(20);
     emailsTable->verticalHeader()->hide();
     emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -520,7 +525,8 @@ MainWindow::MainWindow(QWidget *parent):
 
     connect(ViewFrame,SIGNAL(linkClicked(QUrl)),this,SLOT(newWindow(QUrl)));
     ViewFrame->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    emit protocol->get20MessageSignal();
+
+    //emit protocol->get20MessageSignal();
 
 ///////////////////////////////////////////////////
 ////    emit protocol->get20MessageSignal(); - получить 20 писем в emailsTable
@@ -583,20 +589,21 @@ void MainWindow::On_Domain_Cursor_up(){
 }
 
 void MainWindow::OnSendMessageClicked(){
-
-
-
+    /*
     QString login="ivanovsergey764@yandex.ru";
     QString password="qwerty123";
     QString host="pop.yandex.ru";
     QString hostsmtp="smtp.yandex.ru";
     int port=995;
     int portSmtp=465;
+    */
+    QString login=loginEdit->text();
+    QString password=passEdit->text();
 
+    QString hostsmtp="testhost";
+    int port=123;
 
-
-
-    Smtp* smtp = new Smtp(login, password, hostsmtp, 465);
+    Smtp* smtp = new Smtp(login, password, hostsmtp, port);
     connect(smtp, SIGNAL(status(QString)), this, SLOT(mailSent(QString)));
 
     if( !files.isEmpty() )
@@ -970,37 +977,34 @@ void MainWindow::setupWindowDomainCreate(QWidget *prnt){
     QLabel *d_name_l = new QLabel("Domain name:",windowDomainCreate);
 
     QLabel *d_pop3_host_l =new QLabel("POP3 host:", windowDomainCreate);
-    QLabel *d_pop3_port_l =new QLabel ("POP3 port encr:", windowDomainCreate);
-    QLabel *d_noEncr_pop3_port_l =new QLabel ("POP3 port no enrc:", windowDomainCreate);
+    QLabel *d_pop3_port_l =new QLabel ("POP3 port:", windowDomainCreate);
 
     QLabel *d_imap_host_l =new QLabel("IMAP host:", windowDomainCreate);
-    QLabel *d_imap_port_l =new QLabel ("IMAP port enrc:", windowDomainCreate);
-    QLabel *d_noEncr_imap_port_l =new QLabel ("IMAP port no enrc:", windowDomainCreate);
+    QLabel *d_imap_port_l =new QLabel ("IMAP port:", windowDomainCreate);
 
-
-
+    QLabel *d_smtp_host_l =new QLabel ("SMTP host:", windowDomainCreate);
+    QLabel *d_smtp_port_l =new QLabel ("SMTP port:", windowDomainCreate);
 
 
     d_name_le=new QLineEdit(windowDomainCreate);
-    d_name_le->setPlaceholderText("ex: gmail.com");
+    d_name_le->setPlaceholderText("ex: domain.com");
 
     d_pop3_host_le =new QLineEdit(windowDomainCreate);
     d_pop3_host_le->setPlaceholderText("ex: pop.domain.com");
     d_pop3_port_le =new QLineEdit (windowDomainCreate);
     d_pop3_port_le->setInputMask("999");
     d_pop3_port_le->setPlaceholderText("000");
-    d_noEncr_pop3_port_le =new QLineEdit (windowDomainCreate);
-    d_noEncr_pop3_port_le->setInputMask("999");
-    d_noEncr_pop3_port_le->setPlaceholderText("000");
+    d_smtp_host_le =new QLineEdit (windowDomainCreate);
+    d_smtp_host_le->setPlaceholderText("ex: smtp.domain.com");
 
     d_imap_host_le =new QLineEdit(windowDomainCreate);
     d_imap_host_le->setPlaceholderText("ex: imap.domain.com");
     d_imap_port_le =new QLineEdit (windowDomainCreate);
     d_imap_port_le->setInputMask("999");
     d_imap_port_le->setPlaceholderText("000");
-    d_noEncr_imap_port_le =new QLineEdit (windowDomainCreate);
-    d_noEncr_imap_port_le->setInputMask("999");
-    d_noEncr_imap_port_le->setPlaceholderText("000");
+    d_smtp_port_le =new QLineEdit (windowDomainCreate);
+    d_smtp_port_le->setInputMask("999");
+    d_smtp_port_le->setPlaceholderText("000");
 
 
 
@@ -1011,15 +1015,16 @@ void MainWindow::setupWindowDomainCreate(QWidget *prnt){
     midlay->addWidget(d_pop3_host_le,1 ,1 );
     midlay->addWidget(d_pop3_port_l,2 ,0 );
     midlay->addWidget(d_pop3_port_le,2 ,1 );
-    midlay->addWidget(d_noEncr_pop3_port_l,3 ,0 );
-    midlay->addWidget(d_noEncr_pop3_port_le,3 ,1 );
 
-    midlay->addWidget(d_imap_host_l,4 ,0 );
-    midlay->addWidget(d_imap_host_le,4 ,1 );
-    midlay->addWidget(d_imap_port_l,5 ,0 );
-    midlay->addWidget(d_imap_port_le,5 ,1 );
-    midlay->addWidget(d_noEncr_imap_port_l,6 ,0 );
-    midlay->addWidget(d_noEncr_imap_port_le,6 ,1 );
+    midlay->addWidget(d_imap_host_l,3 ,0 );
+    midlay->addWidget(d_imap_host_le,3 ,1 );
+    midlay->addWidget(d_imap_port_l,4 ,0 );
+    midlay->addWidget(d_imap_port_le,4 ,1 );
+
+    midlay->addWidget(d_smtp_host_l,5 ,0 );
+    midlay->addWidget(d_smtp_host_le,5 ,1 );
+    midlay->addWidget(d_smtp_port_l,6 ,0 );
+    midlay->addWidget(d_smtp_port_le,6 ,1 );
 
 
 
@@ -1594,19 +1599,19 @@ void MainWindow::OnAddDomainClicked(){
         fieldsComplete = false;
     if (checkLineEdit(d_imap_port_le))
         fieldsComplete = false;
-    if (checkLineEdit(d_noEncr_pop3_port_le))
+    if (checkLineEdit(d_smtp_host_le))
         fieldsComplete = false;
-    if (checkLineEdit(d_noEncr_imap_port_le))
+    if (checkLineEdit(d_smtp_port_le))
         fieldsComplete = false;
 
     if (fieldsComplete){
         Domain tmpDomain(d_name_le->text(),
                          d_pop3_host_le->text(),
-                         d_pop3_port_le->text().toInt(),
-                         d_noEncr_pop3_port_le->text().toInt(),
+                         d_pop3_port_le->text().toInt(),                         
                          d_imap_host_le->text(),
                          d_imap_port_le->text().toInt(),
-                         d_noEncr_imap_port_le->text().toInt());
+                         d_smtp_host_le->text(),
+                         d_smtp_port_le->text().toInt());
         tmpDomain.setSelected(true);
         domainVect->push_back(tmpDomain);
         ManageDomainsLabelClicked();

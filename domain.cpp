@@ -1,10 +1,12 @@
 #include "domain.h"
 
-Domain::Domain(QString _name, QString _pop3host, int _pop3PortEncr, int _pop3PortNoEncr,
-                              QString _imaphost, int _imapPortEncr, int _imapPortNoEncr):
+Domain::Domain(QString _name, QString _pop3host, int _pop3PortEncr,
+                              QString _imaphost, int _imapPortEncr,
+                              QString _smtphost, int _smtpPortEncr):
     name(_name),
-    pop3Host(_pop3host),pop3PortEncr(_pop3PortEncr), pop3PortNoEncr(_pop3PortNoEncr),
-    imapHost(_imaphost), imapPortEncr(_imapPortEncr), imapPortNoEncr(_imapPortNoEncr), selected(false)
+    pop3Host(_pop3host),pop3PortEncr(_pop3PortEncr),
+    imapHost(_imaphost), imapPortEncr(_imapPortEncr),
+    smtpHost(_smtphost), smtpPortEncr(_smtpPortEncr), selected(false)
 {
     checkBox= new QCheckBox;
     checkBox->setChecked(false);
@@ -15,11 +17,12 @@ Domain::Domain(const Domain &_domain)
 {
     pop3Host=_domain.pop3Host;
     pop3PortEncr=_domain.pop3PortEncr;
-    pop3PortNoEncr=_domain.pop3PortNoEncr;
 
     imapHost=_domain.imapHost;
     imapPortEncr=_domain.imapPortEncr;
-    imapPortNoEncr=_domain.imapPortNoEncr;
+
+    smtpHost=_domain.smtpHost;
+    smtpPortEncr=_domain.smtpPortEncr;
 
     name=_domain.name;
 
@@ -49,14 +52,16 @@ QCheckBox * Domain::getChechBoxPtr(){
 }
 QDataStream & operator<<(QDataStream & out, const Domain& domain_)
 {
-    out <<domain_.name<<domain_.imapHost<<domain_.imapPortEncr<<domain_.imapPortNoEncr<<
-         domain_.pop3Host<<domain_.pop3PortEncr<<domain_.pop3PortNoEncr<<domain_.selected;
+    out <<domain_.name<<domain_.imapHost<<domain_.imapPortEncr<<
+         domain_.pop3Host<<domain_.pop3PortEncr<<
+         domain_.smtpHost<<domain_.smtpPortEncr<<domain_.selected;
 
     return out;
 }
 QDataStream & operator >>(QDataStream & in, Domain& domain_ ){
-    in >>domain_.name>>domain_.imapHost>>domain_.imapPortEncr>>domain_.imapPortNoEncr>>
-         domain_.pop3Host>>domain_.pop3PortEncr>>domain_.pop3PortNoEncr>>domain_.selected;
+    in >>domain_.name>>domain_.imapHost>>domain_.imapPortEncr>>
+         domain_.pop3Host>>domain_.pop3PortEncr>>
+         domain_.smtpHost>>domain_.smtpPortEncr>>domain_.selected;
 
     return in;
 
