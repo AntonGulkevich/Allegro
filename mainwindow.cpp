@@ -230,10 +230,19 @@ MainWindow::MainWindow(QWidget *parent):
     loadNextMessages->setMaximumSize(40, 40);
     loadNextMessages->setHint("Load next messages");
 
+    AGButton *deleteMessageButton = new AGButton(centralWidget());
+    deleteMessageButton->setIconOnEnter(QIcon(":/data/close_sel.png"));
+    deleteMessageButton->setIconOnLeave(QIcon(":/data/close_def.png"));
+    deleteMessageButton->setText("");
+    deleteMessageButton->setIconSize(QSize(25, 25));
+    deleteMessageButton->setMaximumSize(40, 40);
+    deleteMessageButton->setHint("Delete message");
+
     contrButtonsListLay->addWidget(writeEmail, 0,Qt::AlignLeft |Qt::AlignTop);
     contrButtonsListLay->addWidget(refresh, 0,Qt::AlignLeft |Qt::AlignTop);
     contrButtonsListLay->addWidget(searchInList, 0,Qt::AlignLeft |Qt::AlignTop);
     contrButtonsListLay->addWidget(loadNextMessages, 0,Qt::AlignLeft |Qt::AlignTop);
+    contrButtonsListLay->addWidget(deleteMessageButton, 0,Qt::AlignLeft |Qt::AlignTop);
 
     contrButtonsListLay->addStretch(1);
 
@@ -276,6 +285,22 @@ MainWindow::MainWindow(QWidget *parent):
 
     /*end of setup controll buttons for new message*/
 
+
+    /*search in emil setup*/
+    searchBox = new QLineEdit();
+    word = new QString;
+    searchEmailWidget = new QWidget;
+    QBoxLayout * searchLay = new QBoxLayout(QBoxLayout::LeftToRight);
+
+    searchLay->addWidget(searchBox, 1);
+
+    searchEmailWidget->setLayout(searchLay);
+    searchEmailWidget->hide();
+
+    connect(searchBox,SIGNAL(returnPressed()),this, SLOT(scanPageForWord()));
+    /* end of search in emil setup*/
+
+
     /*setup of qwebwie*/
 
     tabsForWork = new QTabWidget(centralWidget());
@@ -292,8 +317,10 @@ MainWindow::MainWindow(QWidget *parent):
     QWidget * listTab = new QWidget;
     /*setup email table*/
     emailsTable= new QTableWidget();
+    fileTable = new QTableWidget();
 
     connect(emailsTable, SIGNAL(cellDoubleClicked(int,int)), SLOT(OnEmailCliked(int,int)));
+    connect(fileTable, SIGNAL(cellDoubleClicked(int,int)), SLOT(OnAttachmentSave(int,int)));
 
     /*end of setup email table*/
 
@@ -304,14 +331,15 @@ MainWindow::MainWindow(QWidget *parent):
 
     tabEmailLay->addLayout(contrButtonsLay, 0);
     tabEmailLay->addLayout(emailLay, 1);
+    emailLay->addWidget(searchEmailWidget, 0);
     emailLay->addWidget(ViewFrame, 6);
+    emailLay->addWidget(fileTable, 1);
     emailTab->setLayout(tabEmailLay);
 
     tabListLay->addLayout(contrButtonsListLay, 0);
     tabListLay->addLayout(listLay, 1);
     listLay->addWidget(emailsTable, 1);
     listTab->setLayout(tabListLay);
-
 
 
     QWidget *tabWrite = new QWidget;
@@ -449,10 +477,13 @@ MainWindow::MainWindow(QWidget *parent):
     connect(searchInEmail, SIGNAL(clicked()), SLOT(OnSearchButtonClicked()));
     connect(previousMessage, SIGNAL(clicked()), SLOT(OnPreviousButtonClicked()));
     connect(nextMessage, SIGNAL(clicked()), SLOT(OnNextButtonClicked()));
+    connect(loadNextMessages, SIGNAL(clicked()), SLOT(OnLoadNextMessages()));
     connect(writeEmail, SIGNAL(clicked()), SLOT(OnWriteButtonClicked()));
     connect(sendEmail, SIGNAL(clicked()), SLOT(OnSendMessageClicked()));
     connect(attachment, SIGNAL(clicked()), SLOT(OnAddAttachmentsClicked()));
     connect(refresh, SIGNAL(clicked()), SLOT(OnRefreshClicked()));
+    connect(deleteMessageButton, SIGNAL(clicked()), SLOT(onDelMessage()));
+
 
     connect(addNewDomain, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(proxyButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
@@ -471,6 +502,8 @@ MainWindow::MainWindow(QWidget *parent):
     connect(sendEmail, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(attachment, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
     connect(backToList2, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+    connect(deleteMessageButton, SIGNAL(showHint(QString)), MainBar, SLOT(setText(QString)));
+
 
     /*Setup subwindows*/
     activeWindow=NULL;
@@ -489,8 +522,13 @@ MainWindow::MainWindow(QWidget *parent):
 
     /*end of setup subwindows*/
     messageEdit = new QTextEdit();
-    fileTable = new QTableWidget();
+
     fileTable->setColumnCount(1);
+    fileTable->verticalHeader()->hide();
+    fileTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    fileTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    fileTable->horizontalHeader()->hide();
+    fileTable->setVisible(true);
 
 
     emailsTable->setColumnCount(5);
@@ -505,7 +543,7 @@ MainWindow::MainWindow(QWidget *parent):
     emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     emailsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    emailsTable->setSelectionMode(QAbstractItemView::NoSelection);
+    //emailsTable->setSelectionMode(QAbstractItemView::NoSelection);
     emailsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     emailsTable->horizontalHeader()->setStretchLastSection(true);
     emailsTable->setVisible(true);
@@ -513,30 +551,9 @@ MainWindow::MainWindow(QWidget *parent):
     connect(ViewFrame,SIGNAL(linkClicked(QUrl)),this,SLOT(newWindow(QUrl)));
     ViewFrame->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-    //emit protocol->get20MessageSignal();
-
-    ///////////////////////////////////////////////////
-    ////    emit protocol->get20MessageSignal(); - получить 20 писем в emailsTable
-    ////    emit protocol->getMessageSignal(row+1); - получить текст писима в ViewFrame и имена файлов в fileTable и содержимое в fileList
+    //   emit protocol->getMessageSignal(row+1); - получить текст писима в ViewFrame и имена файлов в fileTable и содержимое в fileList
 
     /*
- * update button
-    emailsTable->clearContents();
-    emailsTable->setRowCount(0);
-    emit pop3->update();
-*/
-
-    /*
- * delete message
- *
- *  if(emailsTable->selectionModel()->selectedRows().count()==0) return;
-    while(!emailsTable->selectionModel()->selectedRows().isEmpty()){
-        emit protocol->deleteMessage(emailsTable->selectionModel()->selectedRows().takeFirst().row()+1);
-        emailsTable->removeRow(emailsTable->selectionModel()->selectedRows().takeFirst().row());
-    }
-    ViewFrame->setHtml("<html><body>Пустая страница</html></body>");
-
-
 
     Двойной клик по таблице с именем файла для сейва файла
 
@@ -551,15 +568,7 @@ MainWindow::MainWindow(QWidget *parent):
         file.write(filelist.at(row));
         file.close();
     }
-
-    Тебе надо:
-    подключить кнопки update и next
     вывести табличку fileTable, где содержаться имена прикреплённых файлов
-    вывести окно сообщений messageEdit, куда идут ошибки и сообщения
-    убрать прокси(без них норм будет)
-
-
- * /
 */
 
 }
@@ -575,8 +584,8 @@ void MainWindow::OnSendMessageClicked(){
     QString login=loginEdit->text();
     QString password=passEdit->text();
 
-    QString hostsmtp="testhost";
-    int port=123;
+    QString hostsmtp="smtp."+login.right(login.length()-login.indexOf("@")-1);
+    int port=465;
 
     Smtp* smtp = new Smtp(login, password, hostsmtp, port);
     connect(smtp, SIGNAL(status(QString)), this, SLOT(mailSent(QString)));
@@ -931,6 +940,8 @@ void MainWindow::OnCloseDataFileCLB(){
 
 }
 void MainWindow::OnCheckDataFileCLB(){
+    closeWindowIfOpened();
+
     for(QVector<Domain>::iterator it = domainVect->begin(); it!=domainVect->end(); ++it){
         qDebug()<<it->getName()<<it->GetCount();
     }
@@ -943,6 +954,7 @@ void MainWindow::OnCheckDataFileCLB(){
         protocol = new ThreadPop3(&fileList,emailsTable,ViewFrame,messageEdit,fileTable,login,pas,host,port,QSsl::SslV3);
         emit protocol->get20MessageSignal();
     }
+
 }
 void MainWindow::setupWindowDomainCreate(QWidget *prnt){
 
@@ -1204,6 +1216,7 @@ void MainWindow::setupWindowDomainManage (QWidget *prnt){
 
 }
 void MainWindow::OnEmailCliked(int row, int col){
+    lastRow=row+1;
     emit protocol->getMessageSignal(row+1);
     tabsForWork->tabBar()->setCurrentIndex(0);
 }
@@ -1639,14 +1652,24 @@ bool MainWindow::checkLineEdit(QLineEdit *lineEdit){
     }
 }
 void MainWindow::OnNextButtonClicked(){
-    emit protocol->get20MessageSignal();
+    emit protocol->getMessageSignal(++lastRow);
+
 }
 void MainWindow::OnPreviousButtonClicked(){
+    emit protocol->getMessageSignal(--lastRow);
 
 }
 void MainWindow::OnSearchButtonClicked(){
+    if (searchEmailWidget->isHidden()){
+        searchEmailWidget->show();
+    }
+    else{
+        ViewFrame->findText("", QWebPage::HighlightAllOccurrences);
+        searchEmailWidget->hide();
+    }
 
 }
+
 void MainWindow::OnHomeButtonClicked(){
     tabsForWork->tabBar()->setCurrentIndex(1);
 }
@@ -1660,6 +1683,44 @@ void MainWindow::OnRefreshClicked(){
     emailsTable->clearContents();
     emailsTable->setRowCount(0);
     emit protocol->update();
+}
+void MainWindow::onDelMessage(){
+
+    if(emailsTable->selectionModel()->selectedRows().count()==0){
+        qDebug()<<"Zero selection";
+        return;
+    }
+    while(!emailsTable->selectionModel()->selectedRows().isEmpty()){
+        emit protocol->deleteMessage(emailsTable->selectionModel()->selectedRows().takeFirst().row()+1);
+        emailsTable->removeRow(emailsTable->selectionModel()->selectedRows().takeFirst().row());
+        qDebug()<<"Message deleted";
+    }
+    ViewFrame->setHtml("<html><body>Пустая страница</html></body>");
+
+}
+
+void MainWindow::OnAttachmentSave(int row, int col){
+    QString filename = QFileDialog::getSaveFileName(
+                this,
+                tr("Save Document"),
+                "C:\\Program Files\\Oracle\\VirtualBox\\",
+                tr("Documents (*.*)") );
+    if(!filename.isEmpty()){
+        QFile file(filename);
+        file.open(QFile::WriteOnly);
+        file.write(fileList.at(row));
+        file.close();
+    }
+}
+
+void MainWindow::OnLoadNextMessages(){
+    qDebug()<<"next 20 emails";
+    emit protocol->get20MessageSignal();
+}
+void MainWindow::scanPageForWord(){
+    qDebug()<<"scaning"<<*word;
+    *word=searchBox->text();
+    qDebug()<<ViewFrame->findText(*word,QWebPage::HighlightAllOccurrences);
 }
 
 

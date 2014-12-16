@@ -99,7 +99,7 @@ void Presto::Check(){
 
         Pop3 *temp = new Pop3(login, pas, host,port , QSsl::SslV3);
         temp->connectToHost();
-
+        qDebug()<<it->GetPop3Host()<<"  "<<it->GetPop3PortEncr();
         if( temp->sendUser() ){
             qDebug()<<it->GetLogin()<<" login is correct";
             if (temp->sendPass()){

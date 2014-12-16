@@ -84,11 +84,15 @@ private Q_SLOTS:
     void OnPreviousButtonClicked();
     void OnSearchButtonClicked();
     void OnEmailCliked(int row, int col);
+    void OnAttachmentSave(int row, int col);
     void OnWriteButtonClicked();
     void OnSendMessageClicked();
     void OnAddAttachmentsClicked();
     void mailSent(QString text);
     void OnRefreshClicked();
+    void onDelMessage();
+    void OnLoadNextMessages();
+    void scanPageForWord();
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -110,6 +114,7 @@ public:
     void setupWindowBaseFull(QWidget *prnt);
     void setupWindowBaseGood (QWidget *prnt);
     void setupWindowBaseSearch (QWidget *prnt);
+
 
 signals:
 
@@ -204,10 +209,17 @@ private:
    QCheckBox* useFileCB;
 
    int selectedRow;//returns selected row from "Domain Table"
+   int lastRow;
    QLabel* domainFileName;
    QWebView* ViewFrame;//viewer of emails
 
+   QLineEdit *searchBox;
+   QString * word;
+   QWidget * searchEmailWidget;
+
    QStringList files;
+
+
 
 
    /*END of LOGIC*/

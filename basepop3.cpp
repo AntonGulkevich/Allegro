@@ -160,7 +160,7 @@ void BasePop3::run()
 
 void BasePop3::updateTCP(){
     protocol->sendNoop();
-    timer->start(20000);
+    timer->start(30000);
 }
 
 void BasePop3::get20Message()
@@ -174,13 +174,17 @@ void BasePop3::get20Message()
         return;
     }
     QStringList list = response.split("\r\n");
-    int countMessage = list.takeFirst().split(" ").at(1).toInt();
+    //int countMessage = list.takeFirst().split(" ").at(1).toInt();
+    int countMessage=list.count()-3;
     if((start>countMessage)||(start<0)) return;
     QRegExp strList("([0-9]*) (.*)");
     strList.setMinimal(false);
+
     for(int i =0;i<start;i++){
         list.takeFirst();
     }
+    list.takeFirst();
+
     for(int i =0; i<20;i++){
         QString str = list.takeFirst();
         if(str==".") break;
