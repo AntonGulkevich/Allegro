@@ -26,8 +26,8 @@ void ThreadImap::getMessageTop(Message top){
     tabl->setItem(tabl->rowCount()-1,0,new QTableWidgetItem(top.fromMes));
     tabl->setItem(tabl->rowCount()-1,1,new QTableWidgetItem(top.from));
     tabl->setItem(tabl->rowCount()-1,2,new QTableWidgetItem(top.to));
-    tabl->setItem(tabl->rowCount()-1,3,new QTableWidgetItem(top.head));
-    tabl->setItem(tabl->rowCount()-1,4,new QTableWidgetItem(top.date));
+    tabl->setItem(tabl->rowCount()-1,3,new QTableWidgetItem(top.date));
+    tabl->setItem(tabl->rowCount()-1,4,new QTableWidgetItem(top.head));
 }
 
 void ThreadImap::getMessage(Message msg){
@@ -49,7 +49,7 @@ void ThreadImap::getMessage(Message msg){
         else msg = QString::fromUtf8(message);
         if((tempType=="text")){
             if(tempSubType == "html")
-            end =msg;
+                end =msg;
             else{
                 msg = "<html><body>"+msg+"</body></html>";
                 end = msg;

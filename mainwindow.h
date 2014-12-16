@@ -220,8 +220,6 @@ private:
    QStringList files;
 
 
-
-
    /*END of LOGIC*/
 
    /*TEST*/
