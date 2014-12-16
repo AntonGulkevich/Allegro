@@ -644,6 +644,7 @@ void MainWindow::ManageDomainsLabelClicked(){
 
 }
 void MainWindow::OnOpenDomainFile(){
+    closeWindowIfOpened();
     MainBar->setText("Choose file with domains list");
 
     QString fileName =QFileDialog::getOpenFileName(this,
