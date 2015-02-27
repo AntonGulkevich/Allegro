@@ -416,7 +416,6 @@ MainWindow::MainWindow(QWidget *parent):
 
     tabsForWork->addTab(emailTab,"Email"); //tab for email view
     tabsForWork->addTab(listTab, "Test"); // tab for list of emails
-    //tabsForWork->addTab()   //need tab for search results
     tabsForWork->addTab(tabWrite, "New Message"); // tab for new message
     tabsForWork->tabBar()->setVisible(false);
     tabsForWork->setStyleSheet("QTabWidget { border: none }");
@@ -428,7 +427,6 @@ MainWindow::MainWindow(QWidget *parent):
     1-list of email
     2-send email
     */
-    //frameLay->addWidget(tabsForWork,1 );
 
 
     tabsLay->addWidget(tabsForWork, 1);
@@ -458,7 +456,10 @@ MainWindow::MainWindow(QWidget *parent):
     tablelay->addWidget(v_line);
     tablelay->addLayout(tabsLay);
 
-    smainlay->addLayout(buttonsLeftLay, 0);
+    QWidget * leftButtonsWidget = new QWidget;
+    leftButtonsWidget->setLayout(buttonsLeftLay);
+
+    smainlay->addWidget(leftButtonsWidget, 0);
     smainlay->addLayout(tablelay, 1);
 
     mainlay->addLayout(cblay);
@@ -538,7 +539,6 @@ MainWindow::MainWindow(QWidget *parent):
     emailsTable->setHorizontalHeaderItem(3,new QTableWidgetItem("Data") );
     emailsTable->setHorizontalHeaderItem(4,new QTableWidgetItem("Head") );
     emailsTable->setFrameStyle(0);
-    //emailsTable->setRowCount(20);
     emailsTable->verticalHeader()->hide();
     emailsTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     emailsTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -550,26 +550,6 @@ MainWindow::MainWindow(QWidget *parent):
 
     connect(ViewFrame,SIGNAL(linkClicked(QUrl)),this,SLOT(newWindow(QUrl)));
     ViewFrame->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-
-    //   emit protocol->getMessageSignal(row+1); - получить текст писима в ViewFrame и имена файлов в fileTable и содержимое в fileList
-
-    /*
-
-    Двойной клик по таблице с именем файла для сейва файла
-
-    QString filename = QFileDialog::getSaveFileName(
-            this,
-            tr("Save Document"),
-            "C:\\Program Files\\Oracle\\VirtualBox\\",
-            tr("Documents (*.*)") );
-    if(!filename.isEmpty()){
-        QFile file(filename);
-        file.open(QFile::WriteOnly);
-        file.write(filelist.at(row));
-        file.close();
-    }
-    вывести табличку fileTable, где содержаться имена прикреплённых файлов
-*/
 
 }
 MainWindow::~MainWindow()
@@ -960,7 +940,7 @@ void MainWindow::OnCheckDataFileCLB(){
 void MainWindow::setupWindowDomainCreate(QWidget *prnt){
 
     windowDomainCreate = new SubWindow(prnt, "CREATE", "OPEN", "MANAGE", 300, 300);
-    windowDomainCreate->move(addNewDomain->pos().x(), addNewDomain->pos().y()+40);
+    windowDomainCreate->move(addNewDomain->pos().x(), addNewDomain->pos().y()+100);
     windowDomainCreate->SetActiveFirstLabel(true);
 
     connect(windowDomainCreate, SIGNAL(OnSecondLabelClicked()), SLOT(OpenDomainLabelClicked()));
